@@ -1312,7 +1312,7 @@
     toggleHub() {
       if (!this.hubUnlocked()) {
         AudioFX.play('error');
-        this.toast('Гильдия Ахджин', 'Штаб откроется после главы 8 — гильдию ещё нужно основать.', {
+        this.toast('Гильдия Ахджин', 'Штаб откроется после главы 9 — гильдию ещё нужно основать.', {
           color: '#c08cff', duration: 4200
         });
         return;
@@ -1475,7 +1475,7 @@
         el('div', 'hub-shadow-level', info).textContent = 'Ур. ' + g.shadowLevel(id);
       }
       el('div', 'hub-guild-line', squad).textContent =
-        'Мастер: Сон Чжин Ву · Вице-мастер: Ю Джин Хо';
+        'Мастер: Сон Джин-Ву · Вице-мастер: Ю Джин-Хо';
 
       const supply = el('section', 'hub-section hub-supply', side);
       const phead = el('div', 'hub-sec-head', supply);

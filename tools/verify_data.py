@@ -74,6 +74,8 @@ for c in characters:
     for key in ("hp", "atk", "def"):
         check(isinstance(c.get("stats", {}).get(key), int), "stats.%s у %s не int" % (key, c["id"]))
 
+NARRATORS = ("Система", "Голос храма", "Герольд Монархов")
+
 # ---------- Главы ----------
 chapter_ids = []
 prev = 0
@@ -88,7 +90,8 @@ for ch in chapters:
         check(png_size(bg_rel) == (640, 360), "Фон %s должен быть 640x360" % bg_rel)
     check(bool(ch.get("dialogues")), "Нет диалогов в главе %s" % cid)
     for d in ch.get("dialogues", []):
-        check(d.get("speaker") in char_by_id, "Спикер %r из главы %s не найден" % (d.get("speaker"), cid))
+        check(d.get("speaker") in char_by_id or d.get("speaker") in NARRATORS,
+              "Спикер %r из главы %s не найден" % (d.get("speaker"), cid))
     check(isinstance(ch.get("summary"), str) and len(ch.get("summary", "")) >= 40,
           "Глава %s: нет сюжетного summary" % cid)
     for field in ("storyIntro", "bossDialogue", "storyOutro"):
@@ -97,7 +100,7 @@ for ch in chapters:
         for entry in (entries or []):
             speaker = entry.get("speaker")
             check(bool(speaker) and bool(entry.get("text")), "Глава %s/%s: пустая реплика" % (cid, field))
-            check(speaker in char_by_id or speaker in ("Система", "Герольд войны"),
+            check(speaker in char_by_id or speaker in NARRATORS,
                   "Глава %s/%s: неизвестный спикер %r" % (cid, field, speaker))
     for ref in ch.get("characters", []):
         check(ref in char_by_id, "Персонаж %r из главы %s не найден" % (ref, cid))
@@ -263,7 +266,8 @@ for cid in chapter_ids:
         check(prev_end <= world_w, "levels.%s: зона %s выходит за мир" % (cid, z.get("id")))
         for line in z.get("story", []):
             sp = line.get("speaker")
-            check(sp == "Система" or sp in char_by_id, "levels.%s: неизвестный спикер зоны %r" % (cid, sp))
+            check(sp in NARRATORS or sp in char_by_id,
+                  "levels.%s: неизвестный спикер зоны %r" % (cid, sp))
             check(bool(line.get("text")), "levels.%s: пустая реплика зоны" % cid)
     check(prev_end == world_w, "levels.%s: зоны не покрывают мир (%d/%d)" % (cid, prev_end, world_w))
     boss_x = int(lv.get("bossX", world_w - 470))
@@ -358,7 +362,8 @@ for cid in chapter_ids:
             check(exists(sc["cutin"]), "levels.%s: нет cut-in сцены %r" % (cid, sc["cutin"]))
         for line in sc.get("lines", []):
             sp = line.get("speaker")
-            check(sp == "Система" or sp in char_by_id, "levels.%s: спикер сцены %r" % (cid, sp))
+            check(sp in NARRATORS or sp in char_by_id,
+                  "levels.%s: спикер сцены %r" % (cid, sp))
             check(bool(line.get("text")), "levels.%s: пустая реплика сцены %r" % (cid, sid))
     check(bool(arena) and bool(cutin) and len(lv.get("scenes", [])) >= 2,
           "levels.%s: нужны арена, cut-in и 2 сюжетные сцены" % cid)

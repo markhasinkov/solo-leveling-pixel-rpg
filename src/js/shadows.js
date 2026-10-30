@@ -18,7 +18,7 @@
       ]
     },
     baruka: {
-      id: 'baruka', name: 'Барика', title: 'Вождь ледяных эльфов',
+      id: 'baruka', name: 'Барука', title: 'Вождь ледяных эльфов',
       portrait: 'assets/sprites/portraits/baruka.png', cutin: 'assets/sprites/cutins/cutin_baruka.jpg',
       animId: 'baruka', drawW: 76, drawH: 76, color: '#bfe6f7', chapter: 5,
       atkPct: 0.38, attackCd: 0.9, range: 340, moveSpeed: 195, style: 'projectile',
@@ -29,22 +29,22 @@
       lines: [
         { speaker: 'Система', text: 'Тень ледяного вождя достаточно сильна, чтобы служить. Извлечение доступно.' },
         { speaker: 'baruka', text: 'Мой клан не исчезнет. Если мои клинки нужны тебе — я приму твою волю.' },
-        { speaker: 'Система', text: 'Тень Барики присоединилась к армии теней.' }
+        { speaker: 'Система', text: 'Тень Баруки присоединилась к армии теней.' }
       ]
     },
     beru: {
-      id: 'beru', name: 'Бер', title: 'Король муравьёв',
+      id: 'beru', name: 'Беру', title: 'Король муравьёв',
       portrait: 'assets/sprites/portraits/beru.png', cutin: 'assets/sprites/cutins/cutin_beru.jpg',
       animId: 'beru', drawW: 86, drawH: 86, color: '#c08cff', chapter: 8,
       atkPct: 0.46, attackCd: 0.55, range: 52, moveSpeed: 265, style: 'multi',
       lifesteal: 0.08,
       passive: 'Лечит игрока на 8% нанесённого урона.',
       upgrade: '+12% урона и +4% скорости атаки за уровень.',
-      quote: 'Хо-хо. Бер служит сильнейшему.',
+      quote: 'Хо-хо. Беру служит сильнейшему.',
       lines: [
         { speaker: 'Система', text: 'Тень короля улья отзывается на силу победителя. Извлечение доступно.' },
-        { speaker: 'beru', text: 'Хо-хо... Сильнейший победил Бера. Теперь Бер будет служить тебе, Монарх.' },
-        { speaker: 'Система', text: 'Тень Бера присоединилась к армии теней.' }
+        { speaker: 'beru', text: 'Хо-хо... Сильнейший победил Беру. Теперь Беру будет служить тебе, Монарх.' },
+        { speaker: 'Система', text: 'Тень Беру присоединилась к армии теней.' }
       ]
     }
   };

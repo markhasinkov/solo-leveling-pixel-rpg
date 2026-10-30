@@ -790,6 +790,17 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(chapterReport.every((r) => r.secret && r.puzzle !== '—'), 'в каждой главе есть секрет и загадка');
   assert(chapterReport.every((r) => r.arena && r.cutin && r.scenes >= 2),
     'в каждой главе есть арена, cut-in и две сцены');
+  const storyChapters = new Map(data.chapters.map((c) => [c.id, c]));
+  assert(!storyChapters.get(1).characters.includes('architect'),
+    'Архитектор не участвует в двойном подземелье');
+  assert(!storyChapters.get(5).characters.includes('lee-joo-hee'),
+    'Ли Джу-Хи не участвует в Красных вратах');
+  assert(!storyChapters.get(6).title.includes('Демоническ'),
+    'глава 6 — квест на смену класса, а не Демонический замок');
+  assert(JSON.stringify(storyChapters.get(7)).includes('Святой источник жизни'),
+    'пробуждение мамы связано со Святым источником жизни');
+  assert(chapterReport.find((r) => r.id === 6).boss === 'Игрис', 'глава 6: босс — Игрис');
+  assert(chapterReport.find((r) => r.id === 10).boss === 'Эхо Осборна', 'глава 10: босс — эхо Осборна');
   const bossIdentities = {
     2: ['Тень испытания', 'architect', 'shadow-trial'],
     3: ['Древний страж шахты', 'statue-of-god', 'mine-guardian'],
@@ -808,7 +819,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('болот') >= 0,
     'у камышового босса свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 10).bossSubtitle.indexOf('Монарх') >= 0,
-    'у Эшборна свой подзаголовок');
+    'у Осборна свой подзаголовок');
   advance(100);
 
   // ---------- Враги глав 3–5 ----------
@@ -888,8 +899,8 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.onBossPhase({ name: 'Камышовый босс', bossData: game.bossesData['reed-boss'] }, 1);
   assert(sandbox.UI.bossBarkText.textContent.indexOf('Логово') >= 0, 'у камышового босса есть фазовая реплика');
   clearQuestChapter(4);
-  game.onBossPhase({ name: 'Барики', bossData: game.bossesData.baruka }, 1);
-  assert(sandbox.UI.bossBarkText.textContent.indexOf('клан') >= 0, 'у Барики есть фазовая реплика');
+  game.onBossPhase({ name: 'Барука', bossData: game.bossesData.baruka }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('клан') >= 0, 'у Баруки есть фазовая реплика');
 
   // ---------- Глава 6: новые враги, доспехи, фазы и тень ----------
   game.startChapter(5, { replay: true });
@@ -974,11 +985,11 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
   game.damageMonster(game.boss, 99999999, { source: 'basic' });
   advance(200);
-  assert(game._shadowExtractionId === 'baruka', 'после победы над Барикой доступна его тень');
+  assert(game._shadowExtractionId === 'baruka', 'после победы над Барукой доступна его тень');
   advance(1200);
   while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
   advance(100);
-  assert(game.hasShadow('baruka'), 'тень Барики извлечена');
+  assert(game.hasShadow('baruka'), 'тень Баруки извлечена');
 
   game.startChapter(7, { replay: true });
   advance(100);
@@ -988,22 +999,22 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
   game.damageMonster(game.boss, 99999999, { source: 'basic' });
   advance(200);
-  assert(game._shadowExtractionId === 'beru', 'после победы над Бером доступна его тень');
+  assert(game._shadowExtractionId === 'beru', 'после победы над Беру доступна его тень');
   advance(1200);
   while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
   advance(100);
-  assert(game.hasShadow('beru'), 'тень Бера извлечена');
+  assert(game.hasShadow('beru'), 'тень Беру извлечена');
   assert(game.shadows.equipped.length === 2 && game.shadows.equipped.indexOf('beru') < 0,
-    'при заполненных слотах Бер остаётся в резерве');
+    'при заполненных слотах Беру остаётся в резерве');
   game.toggleShadow('beru');
   assert(game.shadows.equipped.indexOf('beru') < 0, 'третий слот не активируется');
   game.toggleShadow('igris');
   game.toggleShadow('beru');
-  assert(game.shadows.equipped.indexOf('beru') >= 0, 'Бер занимает освободившийся слот');
+  assert(game.shadows.equipped.indexOf('beru') >= 0, 'Беру занимает освободившийся слот');
   assert(game.allies.some((a) => a.shadowId === 'baruka' && a.attackStyle === 'projectile'),
-    'Барика атакует ледяными снарядами');
+    'Барука атакует ледяными снарядами');
   assert(game.allies.some((a) => a.shadowId === 'beru' && a.attackStyle === 'multi'),
-    'Бер использует быстрые множественные удары');
+    'Беру использует быстрые множественные удары');
 
   sandbox.UI.toggleShadows();
   assert(sandbox.UI.shadowPanel.style.display !== 'none', 'панель теневой армии открывается');

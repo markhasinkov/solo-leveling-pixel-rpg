@@ -8,21 +8,21 @@
   const FALLBACK_CHAPTERS = [
     {
       id: 1, title: 'Глава 1. Двойное подземелье', location: 'double-dungeon',
-      characters: ['sung-jin-woo', 'song-chi-yul', 'lee-joo-hee', 'architect', 'statue-of-god'],
+      characters: ['sung-jin-woo', 'song-chi-yul', 'lee-joo-hee', 'statue-of-god'],
       dialogues: [
-        { speaker: 'song-chi-yul', text: 'Чжин Ву, за этой дверью — двойное подземелье. Нам не справиться без тебя.' },
+        { speaker: 'song-chi-yul', text: 'Джин-Ву, за этой дверью — двойное подземелье. Нам не справиться без тебя.' },
         { speaker: 'lee-joo-hee', text: 'Я поддержу вас лечением... Пожалуйста, будьте осторожны!' },
         { speaker: 'sung-jin-woo', text: 'Я пойду первым. Если что-то пойдёт не так — бегите.' },
-        { speaker: 'architect', text: 'Скрытая комната открыта. Добро пожаловать в храм Картенона.' },
+        { speaker: 'Голос храма', text: 'Скрытая комната открыта. Добро пожаловать в Храм Картенон.' },
         { speaker: 'statue-of-god', text: '...Система активирована. Кандидат принят.' }
       ],
-      quest: 'Выжить в храме Картенона и стать Игроком Системы.'
+      quest: 'Выжить в Храме Картенон и стать Игроком Системы.'
     },
     {
       id: 2, title: 'Глава 2. Пробуждение в больнице', location: 'hospital',
       characters: ['sung-jin-woo', 'lee-joo-hee', 'ahn-sang-min', 'woo-jin-chul'],
       dialogues: [
-        { speaker: 'ahn-sang-min', text: 'Доброе утро, Чжин Ву-сси. Врачи удивлены — травмы заживают быстрее нормы.' },
+        { speaker: 'ahn-sang-min', text: 'Доброе утро, Джин-Ву-сси. Врачи удивлены — травмы заживают быстрее нормы.' },
         { speaker: 'woo-jin-chul', text: 'Вы единственный выживший из партии. Нам понадобится ваше заявление.' },
         { speaker: 'lee-joo-hee', text: 'Я так боялась, что ты не очнёшься. Спасибо, что спас нас тогда.' }
       ],
@@ -31,10 +31,10 @@
   ];
   const FALLBACK_CHARACTERS = [
     { id: 'sung-jin-woo', name: 'Сон Джин-Ву', role: 'Охотник E-ранга', sprite: 'assets/sprites/sung-jin-woo.png', stats: { hp: 850, atk: 120, def: 70 } },
-    { id: 'song-chi-yul', name: 'Сон Чхиёль', role: 'Охотник C-ранга', sprite: 'assets/sprites/song-chi-yul.png', stats: { hp: 300, atk: 45, def: 30 } },
-    { id: 'lee-joo-hee', name: 'Ли Чжу Хи', role: 'Целительница B-ранга', sprite: 'assets/sprites/lee-joo-hee.png', stats: { hp: 260, atk: 20, def: 20 } },
+    { id: 'song-chi-yul', name: 'Сон Чи-Ёль', role: 'Охотник C-ранга', sprite: 'assets/sprites/song-chi-yul.png', stats: { hp: 300, atk: 45, def: 30 } },
+    { id: 'lee-joo-hee', name: 'Ли Джу-Хи', role: 'Целительница B-ранга', sprite: 'assets/sprites/lee-joo-hee.png', stats: { hp: 260, atk: 20, def: 20 } },
     { id: 'ahn-sang-min', name: 'Ан Сан Мин', role: 'Сотрудник Ассоциации', sprite: 'assets/sprites/ahn-sang-min.png', stats: { hp: 220, atk: 25, def: 18 } },
-    { id: 'woo-jin-chul', name: 'У Чжин Чхоль', role: 'Ассоциация охотников', sprite: 'assets/sprites/woo-jin-chul.png', stats: { hp: 340, atk: 50, def: 35 } },
+    { id: 'woo-jin-chul', name: 'У Джин-Чоль', role: 'Ассоциация охотников', sprite: 'assets/sprites/woo-jin-chul.png', stats: { hp: 340, atk: 50, def: 35 } },
     { id: 'architect', name: 'Архитектор', role: 'Создатель Системы', sprite: 'assets/sprites/architect.png', stats: { hp: 900, atk: 135, def: 75 } },
     { id: 'goblin', name: 'Гоблин', role: 'Монстр E-рангового подземелья', sprite: 'assets/sprites/goblin.png', stats: { hp: 60, atk: 18, def: 5 } },
     { id: 'statue-of-god', name: 'Статуя Бога', role: 'Босс храма Картенона', sprite: 'assets/sprites/statue-of-god.png', stats: { hp: 1200, atk: 150, def: 90 } }
@@ -1647,7 +1647,7 @@
         this.persist();
         Dialogue.start(outro.concat([{
           speaker: 'Система',
-          text: 'Антарас пал. Врата между мирами закрыты. Сон Джин-Ву стал Монархом Теней и защитил свой мир. История завершена — спасибо, что играли!'
+          text: 'Антарес пал. Врата между мирами закрыты. Сон Джин-Ву стал Монархом Теней и защитил свой мир. История завершена — спасибо, что играли!'
         }]), () => {
           this.state = 'play';
           UI.showVictory(this);
