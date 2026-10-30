@@ -826,12 +826,13 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(chapterReport.find((r) => r.id === 10).boss === 'Ча Хэ-Ин', 'глава 10: босс — Ча Хэ-Ин');
   assert(chapterReport.find((r) => r.id === 11).boss === 'Архитектор', 'глава 11: босс — Архитектор');
   const bossIdentities = {
-    2: ['Тень испытания', 'architect', 'shadow-trial'],
-    3: ['Древний страж шахты', 'statue-of-god', 'mine-guardian'],
+    2: ['Гигантская многоножка', 'giant-centipede', 'giant-centipede'],
+    3: ['Касака', 'kasaka', 'kasaka'],
+    4: ['Каргалган', 'kargalgan', 'kargalgan'],
     5: ['Игрис', 'igris', 'igris'],
     6: ['Барука', 'baruka', 'baruka'],
     7: ['Баран', 'baran', 'baran'],
-    8: ['Измерительный голем', 'architect', 'measure-golem'],
+    8: ['Магический измеритель', 'measurement-device', 'measurement-device'],
     10: ['Ча Хэ-Ин', 'cha-hae-in', 'cha-hae-in'],
     11: ['Архитектор', 'architect', 'architect'],
     12: ['Хокхан, Монарх Холода', 'baruka', 'hokhan']
@@ -844,10 +845,16 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     assert(game.bossesData[expected[2]] && game.bossesData[expected[2]].title === expected[0],
       'у главы ' + cid + ' свой профиль босса');
   }
-  assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('болот') >= 0,
-    'у камышового босса свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 2).bossSubtitle.indexOf('Штрафной') >= 0,
+    'у гигантской многоножки свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 3).bossSubtitle.indexOf('мгновенного') >= 0,
+    'у Касаки свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('высоких орков') >= 0,
+    'у Каргалгана свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 7).bossSubtitle.indexOf('Король демонов') >= 0,
     'у Барана свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 8).bossSubtitle.indexOf('шкалы') >= 0,
+    'у магического измерителя свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 10).bossSubtitle.indexOf('Охотники') >= 0,
     'у Ча Хэ-Ин свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 11).bossSubtitle.indexOf('Храм') >= 0,
@@ -922,14 +929,14 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.world.questObjects.every((o) => o.done), 'зажжённые жаровни сохраняются');
 
+  clearQuestChapter(1);
+  game.onBossPhase({ name: 'Гигантская многоножка', bossData: game.bossesData['giant-centipede'] }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('Штрафная зона') >= 0, 'у гигантской многоножки есть фазовая реплика');
+  game.onBossEnrage({ name: 'Гигантская многоножка', bossData: game.bossesData['giant-centipede'] });
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('Яд уже') >= 0, 'у гигантской многоножки есть реплика ярости');
   clearQuestChapter(2);
-  game.onBossPhase({ name: 'Древний страж шахты', bossData: game.bossesData.guardian }, 1);
-  assert(sandbox.UI.bossBarkText.textContent.indexOf('трещиной') >= 0, 'у стража шахты есть фазовая реплика');
-  game.onBossEnrage({ name: 'Древний страж шахты', bossData: game.bossesData.guardian });
-  assert(sandbox.UI.bossBarkText.textContent.indexOf('Стены содрогаются') >= 0, 'у стража шахты есть реплика ярости');
-  clearQuestChapter(3);
-  game.onBossPhase({ name: 'Камышовый босс', bossData: game.bossesData['reed-boss'] }, 1);
-  assert(sandbox.UI.bossBarkText.textContent.indexOf('Логово') >= 0, 'у камышового босса есть фазовая реплика');
+  game.onBossPhase({ name: 'Касака', bossData: game.bossesData.kasaka }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('подземелье') >= 0, 'у Касаки есть фазовая реплика');
   clearQuestChapter(5);
   game.onBossPhase({ name: 'Барука', bossData: game.bossesData.baruka }, 1);
   assert(sandbox.UI.bossBarkText.textContent.indexOf('клан') >= 0, 'у Баруки есть фазовая реплика');

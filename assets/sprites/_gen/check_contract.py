@@ -10,28 +10,29 @@ import zlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.dirname(HERE)
 
-# 38 id персонажей из characters.json
+# 38 персонажей из characters.json + боссы-спрайты без отдельных записей
 CHARACTERS = [
     'sung-jin-woo', 'yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul',
     'lee-joo-hee', 'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul',
     'choi-jong-in', 'min-byung-gu', 'park-hee-jin', 'han-song-yi',
     'sung-jin-ah', 'sung-il-hwan', 'esil-radiru',
     'ashborn', 'architect', 'antares', 'beru', 'hokhan',
-    'baran', 'igris', 'baruka', 'statue-of-god', 'reed-boss', 'goblin', 'orc',
+    'baran', 'igris', 'baruka', 'statue-of-god', 'kargalgan', 'goblin', 'orc',
     'knight-ant', 'ice-bear', 'demon-knight', 'hellhound',
     'goblin-shaman', 'cave-spider', 'orc-berserker', 'ice-elf-ranger', 'frost-wolf',
+    'giant-centipede', 'kasaka', 'measurement-device',
 ]
 TILES = ['tile_floor', 'tile_wall', 'tile_door', 'tile_stairs', 'tile_portal']
 BGS = ['bg_double-dungeon', 'bg_e-rank-dungeon', 'bg_hospital', 'bg_red-gate',
        'bg_jeju-island', 'bg_ahjin-guild', 'bg_theme_castle', 'bg_theme_throne',
        'bg_demon-castle']
 ARENAS = ['arena_cartenon', 'arena_baruka', 'arena_igris', 'arena_beru', 'arena_antares',
-          'arena_trial_hospital', 'arena_mine_guardian', 'arena_reed_throne',
+          'arena_penalty_zone', 'arena_hapjeong', 'arena_high_orc_gate',
           'arena_measure_hall', 'arena_ahjin_sparring', 'arena_ashborn_relicary',
           'arena_war_monarchs', 'arena_demon_castle']
 CUTINS = ['cutin_jinwoo', 'cutin_statue', 'cutin_baruka', 'cutin_igris', 'cutin_beru', 'cutin_antares',
-          'cutin_trial_examiner', 'cutin_mine_guardian', 'cutin_reed_shaman',
-          'cutin_measurement_golem', 'cutin_shadow_duelist', 'cutin_ashborn',
+          'cutin_giant_centipede', 'cutin_kasaka', 'cutin_kargalgan',
+          'cutin_measurement_device', 'cutin_shadow_duelist', 'cutin_ashborn',
           'cutin_war_herald', 'cutin_hokhan', 'cutin_baran', 'cutin_cha_hae_in', 'cutin_architect']
 
 EXPECTED = {c + '.png': (64, 64) for c in CHARACTERS}

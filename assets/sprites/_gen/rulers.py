@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Боссы 64x64, часть 2: Эшборн, Архитектор, Статуя Бога, Камышовый шаман."""
+"""Боссы 64x64, часть 2: Осборн, Архитектор, Статуя Бога, Баран."""
 from . import png, pixelart
 
 put, rect, hx = png.put, png.rect, png.hx
@@ -305,93 +305,6 @@ def statue_of_god():
     return r
 
 
-def reed_boss():
-    """Камышовый шаман: маска, тростниковая корона, лозы, мох и стяг."""
-    body, dark, light = hx('#4f6b3a'), hx('#2a3c1e'), hx('#7fa054')
-    moss = hx('#8fbf5a')
-    reed, reed_d = hx('#c8b45a'), hx('#7a6a2a')
-    cloth, cloth_d = hx('#3a5a4a'), hx('#22382e')
-    wood = hx('#5b3f22')
-    eye, eye_l = hx('#ffd23c'), hx('#fff2a0')
-    r = png.blank(64, 64)
-
-    # стяг
-    box = lambda x0, y0, x1, y1, c: rect(r, x0, y0, x1, y1, c)
-    box(56, 8, 58, 60, wood)
-    line(r, 57, 9, 57, 59, hx('#7a5a30'))
-    poly(r, [(47, 10), (55, 10), (55, 26), (51, 23), (47, 27)], cloth)
-    poly(r, [(48, 11), (54, 11), (54, 23), (51, 21), (48, 24)], cloth_d)
-    box(50, 14, 53, 19, reed)
-    put(r, 51, 15, eye); put(r, 52, 17, reed_d)
-
-    # ноги-корни
-    box(23, 46, 30, 57, body)
-    box(34, 46, 41, 57, body)
-    box(23, 46, 24, 56, light)
-    box(40, 46, 41, 56, dark)
-    box(21, 56, 31, 60, dark)
-    box(33, 56, 43, 60, dark)
-    for x in (22, 27, 34, 39, 43):
-        line(r, x, 59, x + (-3 if x < 32 else 3), 63, wood)
-    # мох
-    for (x, y) in ((24, 58), (36, 59), (41, 57)):
-        put(r, x, y, moss)
-
-    # торс из стеблей
-    poly(r, [(20, 26), (44, 26), (45, 39), (42, 48), (22, 48), (19, 39)], body)
-    poly(r, [(21, 27), (32, 27), (30, 47), (20, 38)], light)
-    poly(r, [(32, 27), (43, 27), (44, 39), (31, 47)], shade(body, -0.15))
-    for x in (25, 30, 35, 40):
-        line(r, x, 29, x - 1 + (x % 2), 46, dark)
-    # накидка из листьев
-    poly(r, [(20, 30), (44, 30), (43, 36), (21, 36)], cloth)
-    poly(r, [(22, 31), (32, 31), (31, 35), (21, 35)], shade(cloth, 0.16))
-    box(29, 30, 35, 36, reed)
-    box(31, 31, 33, 35, reed_d)
-    # амулет
-    poly(r, [(32, 37), (36, 40), (32, 45), (28, 40)], moss)
-    put(r, 32, 39, eye)
-
-    # руки-лозы
-    poly(r, [(20, 28), (13, 31), (11, 42), (16, 46), (21, 37)], body)
-    poly(r, [(44, 28), (51, 31), (53, 42), (48, 46), (43, 37)], body)
-    for i in range(5):
-        line(r, 12 - i, 41 + i, 8 - i, 48 + i, dark)
-        line(r, 52 + i, 41 + i, 56 + i, 48 + i, dark)
-        put(r, 9 - i, 47 + i, moss)
-        put(r, 55 + i, 47 + i, moss)
-    # шипы на лозах
-    put(r, 16, 35, reed); put(r, 48, 35, reed)
-    put(r, 14, 39, reed_d); put(r, 50, 39, reed_d)
-
-    # голова и маска
-    ellipse(r, 32, 17, 11, 10, body)
-    poly(r, [(21, 14), (24, 8), (40, 8), (43, 14), (42, 23), (32, 27), (22, 23)], dark)
-    poly(r, [(23, 13), (26, 9), (38, 9), (41, 13), (40, 21), (32, 24), (24, 21)], hx('#3a3018'))
-    # глаза маски
-    poly(r, [(25, 13), (30, 12), (30, 16), (26, 17)], eye)
-    poly(r, [(39, 13), (34, 12), (34, 16), (38, 17)], eye)
-    put(r, 27, 13, eye_l); put(r, 37, 13, eye_l)
-    box(28, 15, 29, 16, hx('#2a1a08'))
-    box(35, 15, 36, 16, hx('#2a1a08'))
-    # резной рот и узоры
-    for x in (27, 30, 33, 36):
-        put(r, x, 19, reed)
-        put(r, x + 1, 20, reed_d)
-    line(r, 24, 11, 26, 14, reed_d)
-    line(r, 40, 11, 38, 14, reed_d)
-    # корона из тростника
-    for x in range(21, 44, 3):
-        line(r, x, 9, x - 2, 1, reed)
-        line(r, x + 1, 9, x - 1, 2, reed_d)
-        put(r, x - 2, 0, moss)
-    # мох на плечах
-    for (x, y) in ((18, 27), (46, 29), (23, 33), (41, 34)):
-        put(r, x, y, moss)
-        put(r, x + 1, y + 1, dark)
-    return r
-
-
 def baran():
     """Король демонов: рога, корона, багровый плащ, чёрная броня и молниевый клинок."""
     skin, skin_d = hx('#bcaeb0'), hx('#6e5558')
@@ -497,7 +410,6 @@ BOSSES2 = {
     'ashborn': ashborn,
     'architect': architect,
     'statue-of-god': statue_of_god,
-    'reed-boss': reed_boss,
 }
 
 

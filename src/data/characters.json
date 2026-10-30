@@ -275,17 +275,6 @@
     }
   },
   {
-    "id": "reed-boss",
-    "name": "Босс камышового логова",
-    "role": "Монстр-босс камышового логова",
-    "sprite": "assets/sprites/reed-boss.png",
-    "stats": {
-      "hp": 700,
-      "atk": 95,
-      "def": 45
-    }
-  },
-  {
     "id": "goblin",
     "name": "Гоблин",
     "role": "Монстр E-рангового подземелья",
@@ -415,6 +404,17 @@
       "hp": 200,
       "atk": 38,
       "def": 12
+    }
+  },
+  {
+    "id": "kargalgan",
+    "name": "Каргалган",
+    "role": "Шаман высоких орков, босс врат гильдии «Охотники»",
+    "sprite": "assets/sprites/kargalgan.png",
+    "stats": {
+      "hp": 750,
+      "atk": 100,
+      "def": 50
     }
   }
 ]

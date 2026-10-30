@@ -110,7 +110,7 @@
   };
 
   const BOSS_SIZE = {
-    'statue-of-god': 108, 'reed-boss': 104, 'baruka': 100, 'igris': 104,
+    'statue-of-god': 108, 'kargalgan': 118, 'giant-centipede': 118, 'kasaka': 118, 'measurement-device': 112, 'baruka': 100, 'igris': 104,
     'baran': 124, 'beru': 112, 'ashborn': 108, 'antares': 140, 'architect': 110,
     'guardian': 100
   };
@@ -619,7 +619,7 @@
       const roleLc = (e) => ((e.c.role || '') + '').toLowerCase();
       const isBossRole = (e) => /босс|монарх|король|вождь/.test(roleLc(e));
       let bossIdx = enemyEntries.findIndex(isBossRole);
-      if (bossIdx < 0) bossIdx = enemyEntries.findIndex((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
+      if (bossIdx < 0) bossIdx = enemyEntries.findIndex((e) => ['statue-of-god', 'kargalgan', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
 
       const encounters = Array.isArray(levelData.encounters) && levelData.encounters.length
         ? levelData.encounters : null;
@@ -720,7 +720,7 @@
       if (id === 'baran') return chapterId === 7;
       if (id === 'beru') return chapterId === 9;
       if (id === 'ashborn') return false;
-      if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
+      if (['antares', 'baruka', 'statue-of-god', 'kargalgan', 'giant-centipede', 'kasaka', 'measurement-device'].includes(id)) return true;
       const role = ((c && c.role) || '').toLowerCase();
       return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
     },
@@ -1724,7 +1724,7 @@
       if (hasGear) return;
       const byBoss = {
         'statue-of-god': 'hunter-dagger',
-        'reed-boss': 'frost-blade',
+        'kargalgan': 'frost-blade',
         'baruka': 'frost-mail',
         'igris': 'demon-knight-blade',
         'baran': 'demon-knight-blade',
@@ -2113,7 +2113,7 @@
     },
 
     onBossEngaged(boss) {
-      UI.toast('Босс пробудился', boss.name + ' заметил вас. Готовьтесь!', { color: '#ff8a8a', duration: 2800 });
+      UI.toast('Босс пробудился', boss.name + ' преграждает путь. Готовьтесь!', { color: '#ff8a8a', duration: 2800 });
       AudioFX.play('boss');
       Camera.addTrauma(0.25);
       if (!this._bossDlgPlayed && !this.contractRun && this.chapter && this.chapter.bossDialogue) {

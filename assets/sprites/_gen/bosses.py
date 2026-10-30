@@ -4,6 +4,8 @@
 Крупные силуэты с крыльями, рогами, плащами и свечением — читаются
 на фоне арены и не распадаются на прямоугольники.
 """
+import math
+
 from . import png, pixelart
 
 put, rect, hx = png.put, png.rect, png.hx
@@ -430,11 +432,274 @@ def baruka():
     return r
 
 
+def giant_centipede():
+    """Ядовитозубая гигантская многоножка Штрафной зоны."""
+    shell, shell_d, shell_l = hx('#6a4526'), hx('#2e1d10'), hx('#a87a42')
+    leg, leg_l = hx('#3a2412'), hx('#7a5a2a')
+    venom, venom_l = hx('#9cff4a'), hx('#eaffb0')
+    eye = hx('#ffd23c')
+    r = png.blank(64, 64)
+
+    # ноги: восемь пар, уходят в песок
+    for i, (x, y) in enumerate(((9, 47), (15, 45), (21, 43), (27, 41), (33, 38), (39, 35), (44, 31))):
+        for side, dy in ((-1, 11), (1, 9)):
+            x2 = x + side * (10 + i)
+            y2 = y + dy + (i % 2) * 2
+            line(r, x, y + 3, x2, y2, leg)
+            line(r, x + 1, y + 4, x2 + side, y2 + 2, leg_l)
+            put(r, x2, y2 + 2, leg)
+
+    # сегменты тела от хвоста к голове
+    segs = ((8, 51, 7, 5), (14, 49, 8, 6), (21, 47, 8, 6), (28, 44, 8, 6),
+            (35, 41, 8, 6), (41, 37, 7, 6), (46, 32, 7, 6))
+    for i, (x, y, rx, ry) in enumerate(segs):
+        c = shell_l if i % 2 == 0 else shell
+        ellipse(r, x, y, rx, ry, shell_d)
+        ellipse(r, x, y - 1, rx - 1, ry - 1, c)
+        line(r, x - rx + 2, y - ry + 2, x + rx - 2, y - ry + 2, shell_d)
+        put(r, x, y - ry + 3, venom)
+        for lx in (x - 3, x + 2):
+            line(r, lx, y - 2, lx - 1, y + 3, shell_d)
+
+    # хвостовые клешни
+    line(r, 4, 49, 0, 44, shell)
+    line(r, 4, 53, 0, 58, shell)
+    put(r, 0, 44, venom); put(r, 0, 58, venom)
+
+    # голова и жвала
+    ellipse(r, 51, 27, 10, 9, shell_d)
+    ellipse(r, 51, 26, 8, 7, shell)
+    poly(r, [(45, 21), (51, 17), (57, 20), (59, 28), (55, 35), (47, 33), (43, 27)], shell)
+    poly(r, [(46, 23), (50, 20), (55, 22), (56, 27), (53, 32), (48, 30)], shell_l)
+    rect(r, 47, 23, 49, 26, eye)
+    rect(r, 54, 23, 56, 26, eye)
+    put(r, 47, 23, venom_l); put(r, 54, 23, venom_l)
+    # усики
+    line(r, 43, 23, 36, 16, leg_l)
+    line(r, 43, 25, 34, 22, leg_l)
+    # жвала и яд
+    line(r, 45, 33, 39, 40, shell_l)
+    line(r, 55, 33, 60, 40, shell_l)
+    put(r, 38, 41, venom); put(r, 61, 41, venom)
+    # ядовитые капли
+    for (x, y) in ((34, 49), (24, 52), (57, 36), (18, 56)):
+        put(r, x, y, venom)
+        put(r, x, y + 1, venom_l)
+    return r
+
+
+def kasaka():
+    """Синий ядовитозубый Касака, хозяин затопленного подземелья."""
+    blue, blue_d, blue_l = hx('#1e4f86'), hx('#0a1c36'), hx('#59a8d8')
+    fin, fin_l = hx('#2a7aa8'), hx('#9ce8ff')
+    belly = hx('#b8d8e8')
+    venom, venom_l = hx('#b6ff5a'), hx('#f0ffc0')
+    eye, eye_l = hx('#ffd23c'), hx('#fff2a0')
+    r = png.blank(64, 64)
+
+    # свернувшееся тело
+    ellipse(r, 30, 54, 25, 7, blue_d)
+    ellipse(r, 30, 52, 24, 6, blue)
+    ellipse(r, 38, 47, 17, 6, blue_d)
+    ellipse(r, 38, 46, 16, 5, blue_l)
+    for x in (17, 23, 29, 35, 41, 47):
+        line(r, x, 49, x + 5, 55, blue_d)
+        put(r, x + 1, 49, belly)
+
+    # поднимающаяся шея
+    poly(r, [(42, 46), (53, 40), (55, 27), (48, 18), (39, 22), (36, 34)], blue_d)
+    poly(r, [(42, 44), (51, 39), (52, 28), (47, 21), (41, 24), (39, 34)], blue)
+    for y in (27, 32, 37, 42):
+        line(r, 41, y, 49, y - 2, fin)
+        put(r, 40, y, belly)
+    # плавник на затылке
+    poly(r, [(47, 20), (53, 12), (58, 16), (55, 24), (49, 25)], fin)
+    line(r, 49, 20, 55, 15, fin_l)
+
+    # голова
+    ellipse(r, 44, 19, 12, 9, blue_d)
+    ellipse(r, 43, 18, 10, 7, blue)
+    poly(r, [(32, 18), (39, 13), (48, 12), (54, 17), (50, 24), (40, 26), (33, 23)], blue)
+    poly(r, [(33, 19), (40, 15), (37, 23), (32, 23)], blue_l)
+    rect(r, 36, 15, 39, 18, eye)
+    put(r, 37, 15, eye_l)
+    # пасть, клыки и язык
+    poly(r, [(32, 22), (45, 24), (47, 29), (38, 29), (31, 26)], blue_d)
+    line(r, 35, 23, 34, 28, belly)
+    line(r, 43, 24, 44, 29, belly)
+    line(r, 32, 28, 25, 33, venom)
+    line(r, 31, 29, 24, 35, venom_l)
+    put(r, 33, 28, venom)
+    # жаберные плавники
+    for y in (15, 20, 25):
+        poly(r, [(52, y), (60, y - 4), (58, y + 1), (52, y + 4)], fin)
+        put(r, 59, y - 3, fin_l)
+    # чешуя
+    for (x, y) in ((42, 34), (47, 31), (44, 39), (49, 37), (24, 50), (33, 51)):
+        put(r, x, y, fin_l)
+        put(r, x + 1, y + 1, blue_d)
+    # яд
+    for (x, y) in ((22, 36), (55, 35), (60, 42), (29, 58)):
+        put(r, x, y, venom)
+        put(r, x, y + 1, venom_l)
+    return r
+
+
+def kargalgan():
+    """Каргалган, шаман высоких орков."""
+    skin, skin_d, skin_l = hx('#4f7a3a'), hx('#2a4a22'), hx('#7fa054')
+    robe, robe_d, robe_l = hx('#5a1a22'), hx('#2a0c12'), hx('#8a2e30')
+    bone, bone_d = hx('#d8d0b8'), hx('#8a826a')
+    gold, gold_l = hx('#d8b45a'), hx('#fff0b0')
+    magic, magic_l = hx('#8aff5a'), hx('#eaffc0')
+    wood = hx('#5b3f22')
+    eye, eye_l = hx('#ff3c3c'), hx('#ffd0c0')
+    r = png.blank(64, 64)
+
+    # посох с черепом
+    rect(r, 56, 8, 58, 58, wood)
+    line(r, 57, 9, 57, 57, hx('#8a6a3a'))
+    ellipse(r, 57, 9, 7, 6, bone_d)
+    ellipse(r, 57, 9, 6, 5, bone)
+    rect(r, 53, 7, 55, 9, hx('#2a1a08'))
+    rect(r, 59, 7, 61, 9, hx('#2a1a08'))
+    poly(r, [(53, 13), (57, 10), (61, 13), (57, 16)], magic)
+    line(r, 52, 18, 62, 18, gold)
+
+    # ноги
+    rect(r, 22, 47, 29, 59, skin_d)
+    rect(r, 35, 47, 42, 59, skin_d)
+    rect(r, 23, 47, 28, 57, skin)
+    rect(r, 36, 47, 41, 57, skin)
+    rect(r, 20, 58, 30, 62, robe_d)
+    rect(r, 34, 58, 44, 62, robe_d)
+    for x in (22, 27, 37, 42):
+        line(r, x, 61, x + (-2 if x < 32 else 2), 63, bone_d)
+
+    # шкуры и роба
+    poly(r, [(18, 26), (46, 26), (48, 40), (44, 50), (20, 50), (17, 40)], robe)
+    poly(r, [(19, 27), (32, 27), (30, 49), (19, 39)], robe_l)
+    poly(r, [(32, 27), (45, 27), (47, 40), (32, 49)], robe_d)
+    poly(r, [(14, 30), (22, 28), (21, 44), (14, 38)], bone_d)
+    poly(r, [(42, 28), (50, 30), (49, 38), (42, 44)], bone_d)
+    for i in range(4):
+        line(r, 17 + i * 8, 30, 16 + i * 8, 48, robe_d)
+    # ожерелье из костей
+    for x in (24, 28, 32, 36, 40):
+        put(r, x, 29, bone)
+        put(r, x, 30, bone_d)
+    poly(r, [(28, 30), (36, 30), (34, 38), (32, 41), (30, 38)], bone)
+    put(r, 32, 35, magic)
+
+    # руки и кулаки
+    poly(r, [(18, 27), (10, 30), (8, 42), (15, 47), (20, 35)], skin_d)
+    poly(r, [(46, 27), (53, 30), (55, 42), (49, 47), (44, 35)], skin_d)
+    rect(r, 8, 41, 16, 47, skin)
+    rect(r, 48, 41, 55, 47, skin)
+    for i in range(3):
+        line(r, 9 + i * 3, 46, 7 + i * 3, 50, bone_d)
+        line(r, 54 - i * 3, 46, 56 - i * 3, 50, bone_d)
+
+    # голова: зелёный орк с клыками
+    ellipse(r, 32, 17, 12, 11, skin_d)
+    ellipse(r, 32, 17, 10, 9, skin)
+    poly(r, [(21, 15), (25, 8), (39, 8), (43, 15), (42, 23), (32, 28), (22, 23)], skin)
+    poly(r, [(23, 15), (26, 10), (38, 10), (41, 15), (40, 21), (32, 25), (24, 21)], skin_l)
+    # уши
+    poly(r, [(21, 14), (14, 10), (17, 19), (22, 18)], skin)
+    poly(r, [(43, 14), (50, 10), (47, 19), (42, 18)], skin)
+    # глаза и брови
+    rect(r, 25, 14, 30, 17, eye)
+    rect(r, 35, 14, 40, 17, eye)
+    put(r, 27, 14, eye_l); put(r, 37, 14, eye_l)
+    line(r, 24, 12, 30, 11, skin_d)
+    line(r, 35, 11, 41, 12, skin_d)
+    # нос и клыки
+    rect(r, 31, 17, 34, 20, skin_d)
+    poly(r, [(25, 21), (39, 21), (37, 25), (32, 27), (27, 25)], skin_d)
+    line(r, 26, 22, 25, 28, bone)
+    line(r, 38, 22, 39, 28, bone)
+    put(r, 25, 28, bone); put(r, 39, 28, bone)
+    line(r, 28, 25, 36, 25, hx('#2a1a08'))
+    # рогатый головной убор
+    line(r, 22, 10, 15, 2, bone)
+    line(r, 42, 10, 49, 2, bone)
+    put(r, 14, 1, bone); put(r, 50, 1, bone)
+    rect(r, 23, 8, 41, 10, gold)
+    for x in (25, 30, 35, 40):
+        put(r, x, 8, gold_l)
+    # татуировки и искры
+    line(r, 24, 18, 27, 21, magic)
+    line(r, 37, 18, 40, 21, magic)
+    for (x, y) in ((11, 34), (52, 35), (17, 50), (46, 51), (59, 22)):
+        put(r, x, y, magic)
+        put(r, x, y + 1, magic_l)
+    return r
+
+
+def measurement_device():
+    """Магический измеритель Ассоциации: кристалл, кольца и печати."""
+    steel, steel_d, steel_l = hx('#5a6a82'), hx('#263244'), hx('#9ab0c8')
+    blue, blue_l = hx('#3a8ae0'), hx('#bff4ff')
+    gold, gold_l = hx('#d8b45a'), hx('#fff0b0')
+    red = hx('#ff5a5a')
+    r = png.blank(64, 64)
+
+    # основание
+    ellipse(r, 32, 59, 20, 4, steel_d)
+    rect(r, 16, 55, 48, 59, steel)
+    rect(r, 18, 55, 46, 56, steel_l)
+    rect(r, 24, 50, 40, 55, steel_d)
+    rect(r, 26, 50, 38, 51, steel_l)
+    # стойки
+    rect(r, 17, 30, 20, 55, steel_d)
+    rect(r, 44, 30, 47, 55, steel_d)
+    rect(r, 18, 30, 19, 54, steel_l)
+    rect(r, 45, 30, 46, 54, steel_l)
+    # печати по бокам
+    for x in (22, 40):
+        rect(r, x, 34, x + 6, 43, steel_d)
+        rect(r, x + 1, 35, x + 5, 42, blue)
+        line(r, x + 3, 36, x + 3, 41, blue_l)
+        line(r, x + 1, 38, x + 5, 38, blue_l)
+    # кольца
+    for (cy, rx, ry) in ((31, 22, 5), (37, 18, 4)):
+        for i in range(28):
+            a = i / 28 * math.pi * 2
+            put(r, 32 + round(math.cos(a) * rx), cy + round(math.sin(a) * ry), gold)
+    # центральный кристалл
+    poly(r, [(32, 11), (43, 27), (36, 45), (32, 49), (27, 45), (20, 27)], blue)
+    poly(r, [(32, 13), (39, 27), (34, 44), (32, 47), (30, 44), (24, 27)], blue_l)
+    poly(r, [(32, 17), (36, 28), (33, 40), (32, 42), (29, 40), (27, 28)], (225, 250, 255, 235))
+    line(r, 32, 18, 32, 40, hx('#ffffff'))
+    # грани
+    line(r, 32, 12, 26, 27, hx('#8ad8ff'))
+    line(r, 32, 12, 38, 27, hx('#8ad8ff'))
+    line(r, 26, 27, 32, 47, hx('#2a6aa8'))
+    line(r, 38, 27, 32, 47, hx('#2a6aa8'))
+    # трещины и перегрузка
+    line(r, 30, 20, 34, 26, red)
+    line(r, 34, 26, 29, 33, red)
+    line(r, 29, 33, 33, 39, red)
+    put(r, 30, 20, hx('#ffd0d0')); put(r, 33, 39, hx('#ffd0d0'))
+    # энергетические дуги
+    for (x, y, x2, y2) in ((16, 27, 8, 20), (48, 25, 56, 18), (18, 44, 10, 50), (47, 44, 55, 52)):
+        line(r, x, y, x2, y2, blue_l)
+        put(r, x2, y2, blue_l)
+    # предупреждающий индикатор
+    put(r, 29, 52, red); put(r, 30, 52, red); put(r, 34, 52, gold_l)
+    return r
+
+
 BOSSES1 = {
     'beru': beru,
     'antares': antares,
     'igris': igris,
     'baruka': baruka,
+    'giant-centipede': giant_centipede,
+    'kasaka': kasaka,
+    'kargalgan': kargalgan,
+    'measurement-device': measurement_device,
 }
 
 

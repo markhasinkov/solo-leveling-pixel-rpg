@@ -27,7 +27,7 @@ function isEnemy(id, c, chapter) {
   if (id === 'beru') return chapter === 9;
   if (id === 'hokhan') return chapter === 12;
   if (id === 'ashborn') return false;
-  if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
+  if (['antares', 'baruka', 'statue-of-god', 'kargalgan'].includes(id)) return true;
   const role = (c.role || '').toLowerCase();
   return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
 }
@@ -35,7 +35,7 @@ function isEnemy(id, c, chapter) {
 function bossId(list, chapter) {
   const roleBoss = list.find((e) => /босс|монарх|король|вождь/.test((e.c.role || '').toLowerCase()));
   if (roleBoss) return roleBoss.id;
-  const known = list.find((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
+  const known = list.find((e) => ['statue-of-god', 'kargalgan', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
   if (known) return known.id;
   return null;
 }

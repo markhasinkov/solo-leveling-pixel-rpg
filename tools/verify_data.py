@@ -346,8 +346,9 @@ for cid in chapter_ids:
     custom_boss = lv.get("boss")
     if custom_boss:
         check(bool(custom_boss.get("name")), "levels.%s: у босса нет имени" % cid)
-        check(custom_boss.get("animId") in char_by_id,
-              "levels.%s: неизвестный animId босса %r" % (cid, custom_boss.get("animId")))
+        anim_id = custom_boss.get("animId")
+        check(anim_id in char_by_id or os.path.exists(os.path.join(ROOT, "assets", "sprites", anim_id + ".png")),
+              "levels.%s: неизвестный animId босса %r" % (cid, anim_id))
         check(60 <= int(custom_boss.get("size", 0)) <= 180, "levels.%s: размер босса" % cid)
         check(custom_boss.get("bossData") in bosses,
               "levels.%s: неизвестный bossData %r" % (cid, custom_boss.get("bossData")))
@@ -383,7 +384,7 @@ def is_enemy(cid, c, chapter_id):
         return chapter_id == 9
     if cid == "ashborn":
         return chapter_id == 11
-    if cid in ("antares", "baruka", "statue-of-god", "reed-boss"):
+    if cid in ("antares", "baruka", "statue-of-god", "kargalgan"):
         return True
     role = (c.get("role") or "").lower()
     return any(k in role for k in ("монстр", "босс", "зверь", "вождь", "король", "рыцарь кров"))
@@ -408,7 +409,7 @@ for ch in chapters:
             continue
         role = (c.get("role") or "").lower()
         if any(k in role for k in ("босс", "монарх", "король", "вождь")) or ref in (
-                "statue-of-god", "reed-boss", "baruka", "igris", "beru", "ashborn", "antares", "architect"):
+                "statue-of-god", "kargalgan", "baruka", "igris", "beru", "ashborn", "antares", "architect"):
             boss_candidates.append(ref)
     if not boss_candidates:
         enemies.append("guardian")

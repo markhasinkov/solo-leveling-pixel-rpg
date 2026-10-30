@@ -42,12 +42,16 @@ REQUIRED = [
     'Ча Хэ-Ин', 'Сон Чи-Ёль', 'Ли Джу-Хи', 'Ю Джин-Хо', 'У Джин-Чоль',
     'Бэк Юн-Хо', 'Чхве Чон-Ин', 'Мин Бён-Гю', 'гильдии «Охотники»',
     'Святой источник жизни', 'Баран', 'Пак Хи-Джин', 'Хан Сон-И', 'Айрон',
+    'Касака', 'Каргалган', 'Гигантская многоножка', 'Магический измеритель',
 ]
 REQUIRED_FILES = [
     (ROOT / 'src' / 'data' / 'chapters.json', 'Сон Джин-Ву'),
     (ROOT / 'src' / 'data' / 'chapters.json', 'Святой источник жизни'),
     (ROOT / 'src' / 'data' / 'levels.json', 'Ча Хэ-Ин'),
     (ROOT / 'src' / 'data' / 'levels.json', 'Архитектор'),
+    (ROOT / 'src' / 'data' / 'levels.json', 'Касака'),
+    (ROOT / 'src' / 'data' / 'levels.json', 'Каргалган'),
+    (ROOT / 'src' / 'data' / 'levels.json', 'Магический измеритель'),
 ]
 
 failures = []
@@ -122,6 +126,26 @@ if 'куб времени' in json.dumps(ch13, ensure_ascii=False).lower():
 architect = next((c for c in characters if c['id'] == 'architect'), {})
 if 'Статуя Бога' in (architect.get('role') or ''):
     failures.append('Архитектор ошибочно назван Статуей Бога')
+
+expected_bosses = {2: 'Гигантская многоножка', 3: 'Касака', 8: 'Магический измеритель'}
+for cid, name in expected_bosses.items():
+    if (levels.get(str(cid), {}).get('boss') or {}).get('name') != name:
+        failures.append(f'глава {cid}: босс должен быть «{name}»')
+    if (levels.get(str(cid), {}).get('boss') or {}).get('bossData') not in bosses:
+        failures.append(f'глава {cid}: нет профиля босса «{name}»')
+if 'kargalgan' not in bosses or 'kargalgan' not in [c.get('id') for c in characters]:
+    failures.append('глава 4: нет Каргалгана в bosses.json или characters.json')
+if 'Трон Каргалгана' not in (levels.get('4', {}).get('arena') or {}).get('name', ''):
+    failures.append('глава 4: нет арены «Трон Каргалгана»')
+for cid, needle in ((2, 'arena_penalty_zone'), (3, 'arena_hapjeong'), (4, 'arena_high_orc_gate'), (8, 'arena_measure_hall')):
+    if needle not in json.dumps(levels.get(str(cid), {}), ensure_ascii=False):
+        failures.append(f'глава {cid}: не подключена арена {needle}')
+for cid, needle in ((2, 'cutin_giant_centipede'), (3, 'cutin_kasaka'), (4, 'cutin_kargalgan'), (8, 'cutin_measurement_device')):
+    if needle not in json.dumps(levels.get(str(cid), {}), ensure_ascii=False):
+        failures.append(f'глава {cid}: не подключён cut-in {needle}')
+for old in ('shadow-trial', 'mine-guardian', 'reed-boss', 'measure-golem'):
+    if old in bosses:
+        failures.append(f'bosses.json: остался авторский босс {old}')
 
 if 'baran' not in bosses or bosses['baran'].get('hpBase', 0) <= 0:
     failures.append('bosses.json: нет профиля Барана')
