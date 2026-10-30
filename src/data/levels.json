@@ -1314,472 +1314,6 @@
     ]
   },
   "4": {
-    "theme": "cave",
-    "worldW": 7400,
-    "worldH": 900,
-    "floorY": 820,
-    "startX": 90,
-    "bossX": 6780,
-    "zones": [
-      {
-        "id": "camp",
-        "name": "Лагерь рейда",
-        "subtitle": "Партия D-ранга идёт в логово",
-        "kind": "camp",
-        "x": 0,
-        "w": 1600,
-        "props": [
-          "tent",
-          "crate",
-          "barrel",
-          "brazier",
-          "banner",
-          "support"
-        ],
-        "story": []
-      },
-      {
-        "id": "reeds",
-        "name": "Пещеры высоких орков",
-        "subtitle": "Здесь пахнет кровью и тотемным дымом",
-        "kind": "hall",
-        "x": 1600,
-        "w": 2000,
-        "props": [
-          "fern",
-          "vine",
-          "bones",
-          "totem",
-          "rubble",
-          "brazier"
-        ],
-        "story": [
-          {
-            "speaker": "yoo-jinho",
-            "text": "Джин-Ву-хён, я... я не отстану. Обещаю!"
-          }
-        ]
-      },
-      {
-        "id": "altar",
-        "name": "Алтарь шамана",
-        "subtitle": "Каргалган ждёт",
-        "kind": "sanctum",
-        "x": 3600,
-        "w": 1800,
-        "props": [
-          "altar",
-          "totem",
-          "bones",
-          "brazier",
-          "rubble",
-          "banner"
-        ],
-        "story": [
-          {
-            "speaker": "song-chi-yul",
-            "text": "Шаман высоких орков не прощает ошибок. Держите строй."
-          }
-        ]
-      },
-      {
-        "id": "throne",
-        "name": "Трон Каргалгана",
-        "subtitle": "Здесь закончился рейд пропавшей партии",
-        "kind": "arena",
-        "x": 5400,
-        "w": 2000,
-        "props": [
-          "totem",
-          "bones",
-          "vine",
-          "brazier",
-          "rubble",
-          "banner"
-        ],
-        "story": [
-          {
-            "speaker": "song-chi-yul",
-            "text": "Это логово... Оно живое. Не дайте тотемам схватить вас."
-          }
-        ]
-      }
-    ],
-    "platforms": [
-      {
-        "x": 864,
-        "y": 692,
-        "w": 170,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 1309,
-        "y": 608,
-        "w": 130,
-        "h": 18,
-        "kind": "wood"
-      },
-      {
-        "x": 1941,
-        "y": 636,
-        "w": 150,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 2424,
-        "y": 552,
-        "w": 120,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 2923,
-        "y": 610,
-        "w": 180,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 3314,
-        "y": 520,
-        "w": 120,
-        "h": 18,
-        "kind": "wood"
-      },
-      {
-        "x": 3920,
-        "y": 636,
-        "w": 150,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 4341,
-        "y": 552,
-        "w": 120,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 4803,
-        "y": 610,
-        "w": 180,
-        "h": 18,
-        "kind": "stone"
-      },
-      {
-        "x": 5154,
-        "y": 520,
-        "w": 120,
-        "h": 18,
-        "kind": "wood"
-      },
-      {
-        "x": 6420,
-        "y": 646,
-        "w": 150,
-        "h": 20,
-        "kind": "arena"
-      },
-      {
-        "x": 6700,
-        "y": 558,
-        "w": 140,
-        "h": 20,
-        "kind": "arena"
-      },
-      {
-        "x": 6970,
-        "y": 620,
-        "w": 150,
-        "h": 20,
-        "kind": "arena"
-      },
-      {
-        "x": 2840,
-        "y": 714,
-        "w": 170,
-        "h": 18,
-        "kind": "treasure"
-      }
-    ],
-    "npcs": [
-      {
-        "id": "song-chi-yul",
-        "x": 1180,
-        "lines": [
-          {
-            "speaker": "song-chi-yul",
-            "text": "Партия D-ранга идёт в логово орков. Джин-Ву, пойдёшь с нами?"
-          },
-          {
-            "speaker": "song-chi-yul",
-            "text": "Твоя выносливость заметно выросла. Я вижу."
-          }
-        ],
-        "repeat": [
-          "Не отрывайся от партии."
-        ]
-      },
-      {
-        "id": "yoo-jinho",
-        "x": 2520,
-        "lines": [
-          {
-            "speaker": "yoo-jinho",
-            "text": "П-привет! Я Ю Джин-Хо, D-ранг! Буду рад работать с тобой в одной партии!"
-          },
-          {
-            "speaker": "yoo-jinho",
-            "text": "Я куплю снаряжение, только охоться со мной!"
-          }
-        ],
-        "repeat": [
-          "Джин-Ву-хён, ты видел, как я держал щит?"
-        ]
-      }
-    ],
-    "encounters": [
-      {
-        "id": "orc",
-        "x": 3050,
-        "count": 2,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
-        "id": "orc-berserker",
-        "x": 3900,
-        "count": 2,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
-        "id": "orc",
-        "x": 4550,
-        "count": 1,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
-        "id": "orc-berserker",
-        "x": 5200,
-        "count": 1,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
-        "id": "orc",
-        "x": 6000,
-        "count": 1,
-        "elite": true,
-        "name": "Орк-громила",
-        "spread": 76
-      }
-    ],
-    "lore": [
-      {
-        "x": 780,
-        "title": "Дневник пропавшего охотника",
-        "text": "«Мы нашли логово высоких орков. Шаман Каргалган смеётся над нами из огня. Я не вернусь».",
-        "kind": "corpse",
-        "xp": 20
-      },
-      {
-        "x": 2860,
-        "title": "Тотем орков",
-        "text": "Кости, перья и бирки охотников. Самые свежие — с гербом партии, пропавшей здесь много лет назад.",
-        "kind": "banner",
-        "xp": 22
-      },
-      {
-        "x": 4380,
-        "title": "Молитва высоких орков",
-        "text": "«Кровь — это плата. Огонь — это ответ. Тот, кто войдёт в круг, останется в нём».",
-        "kind": "tablet",
-        "xp": 24
-      },
-      {
-        "x": 5800,
-        "title": "Бирка павшей партии",
-        "text": "Металлическая бирка с именем. На обратной стороне — рисунок маленькой дочери.",
-        "kind": "corpse",
-        "xp": 26
-      }
-    ],
-    "shrines": [
-      {
-        "x": 2350,
-        "name": "Алтарь рейда"
-      },
-      {
-        "x": 5580,
-        "name": "Алтарь перед логовом"
-      }
-    ],
-    "hazards": [
-      {
-        "x": 3300,
-        "w": 120,
-        "type": "thorns",
-        "damage": 14
-      },
-      {
-        "x": 5000,
-        "w": 130,
-        "type": "acid",
-        "damage": 16
-      }
-    ],
-    "decor": [
-      {
-        "type": "tent",
-        "x": 500
-      },
-      {
-        "type": "altar",
-        "x": 4780
-      },
-      {
-        "type": "totem",
-        "x": 3350
-      },
-      {
-        "type": "vine",
-        "x": 6200
-      }
-    ],
-    "secret": {
-      "type": "chest",
-      "name": "Схрон партии",
-      "chest": "rare",
-      "lore": "Партия, погибшая здесь раньше, оставила припасы под слоем пепла.",
-      "x": 2620
-    },
-    "puzzle": {
-      "type": "runes",
-      "name": "Алтарь шамана",
-      "sequence": [
-        1,
-        0,
-        2
-      ],
-      "hint": "II · I · III",
-      "chest": "rare",
-      "lore": "Алтарь высоких орков помнит имена тех, кто приходил сюда до вас.",
-      "x": 4650
-    },
-    "chests": [
-      {
-        "x": 1300,
-        "chest": "common"
-      },
-      {
-        "x": 3200,
-        "chest": "rare"
-      },
-      {
-        "x": 6100,
-        "chest": "epic"
-      },
-      {
-        "x": 2925,
-        "y": 688,
-        "chest": "rare",
-        "high": true
-      }
-    ],
-    "arena": {
-      "bg": "assets/sprites/arenas/arena_high_orc_gate.jpg",
-      "name": "Трон Каргалгана",
-      "x": 5750
-    },
-    "cutin": "assets/sprites/cutins/cutin_kargalgan.jpg",
-    "scenes": [
-      {
-        "id": "ch4-party",
-        "x": 3420,
-        "title": "Долг партии",
-        "subtitle": "Пещеры высоких орков",
-        "lines": [
-          {
-            "speaker": "song-chi-yul",
-            "text": "Пропавшая партия так и не вернулась. Их бирки — на тотемах."
-          },
-          {
-            "speaker": "yoo-jinho",
-            "text": "Джин-Ву-хён, я не отстану. Обещаю."
-          },
-          {
-            "speaker": "sung-jin-woo",
-            "text": "Держись рядом. Здесь высокие орки забирают неосторожных."
-          }
-        ],
-        "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
-      },
-      {
-        "id": "ch4-reed",
-        "x": 5850,
-        "title": "Голос Каргалгана",
-        "subtitle": "Трон Каргалгана",
-        "lines": [
-          {
-            "speaker": "Система",
-            "text": "Обнаружен хозяин врат. Уровень угрозы: высокий."
-          },
-          {
-            "speaker": "yoo-jinho",
-            "text": "Этот голос... он идёт из самого огня!"
-          },
-          {
-            "speaker": "sung-jin-woo",
-            "text": "Значит, Каргалган ответит мне за каждого охотника."
-          }
-        ],
-        "cutin": "assets/sprites/cutins/cutin_kargalgan.jpg"
-      }
-    ],
-    "bossBarks": {
-      "phase": [
-        "Ты силён, охотник. Но высокие орки не склоняются перед людьми.",
-        "Мои боги уже пробудились. Ты опоздал."
-      ],
-      "enrage": "Кровь высоких орков не прольётся напрасно!"
-    },
-    "questObjects": [
-      {
-        "kind": "hunter",
-        "x": 1850,
-        "event": "rescue",
-        "title": "Раненый охотник",
-        "enemy": "orc",
-        "enemyCount": 1
-      },
-      {
-        "kind": "hunter",
-        "x": 3500,
-        "event": "rescue",
-        "title": "Раненый охотник",
-        "enemy": "orc",
-        "enemyCount": 1
-      },
-      {
-        "kind": "hunter",
-        "x": 5300,
-        "event": "rescue",
-        "title": "Раненый охотник",
-        "enemy": "orc",
-        "enemyCount": 1
-      }
-    ]
-  },
-  "5": {
     "theme": "castle",
     "worldW": 7800,
     "worldH": 900,
@@ -2200,7 +1734,7 @@
       }
     ]
   },
-  "6": {
+  "5": {
     "theme": "ice",
     "worldW": 7800,
     "worldH": 900,
@@ -2711,7 +2245,7 @@
       }
     ]
   },
-  "7": {
+  "6": {
     "theme": "castle",
     "worldW": 8200,
     "worldH": 900,
@@ -3150,6 +2684,472 @@
           }
         ],
         "cutin": "assets/sprites/cutins/cutin_baran.jpg"
+      }
+    ]
+  },
+  "7": {
+    "theme": "cave",
+    "worldW": 7400,
+    "worldH": 900,
+    "floorY": 820,
+    "startX": 90,
+    "bossX": 6780,
+    "zones": [
+      {
+        "id": "camp",
+        "name": "Лагерь рейда",
+        "subtitle": "Партия D-ранга идёт в логово",
+        "kind": "camp",
+        "x": 0,
+        "w": 1600,
+        "props": [
+          "tent",
+          "crate",
+          "barrel",
+          "brazier",
+          "banner",
+          "support"
+        ],
+        "story": []
+      },
+      {
+        "id": "reeds",
+        "name": "Пещеры высоких орков",
+        "subtitle": "Здесь пахнет кровью и тотемным дымом",
+        "kind": "hall",
+        "x": 1600,
+        "w": 2000,
+        "props": [
+          "fern",
+          "vine",
+          "bones",
+          "totem",
+          "rubble",
+          "brazier"
+        ],
+        "story": [
+          {
+            "speaker": "yoo-jinho",
+            "text": "Джин-Ву-хён, я... я не отстану. Обещаю!"
+          }
+        ]
+      },
+      {
+        "id": "altar",
+        "name": "Алтарь шамана",
+        "subtitle": "Каргалган ждёт",
+        "kind": "sanctum",
+        "x": 3600,
+        "w": 1800,
+        "props": [
+          "altar",
+          "totem",
+          "bones",
+          "brazier",
+          "rubble",
+          "banner"
+        ],
+        "story": [
+          {
+            "speaker": "song-chi-yul",
+            "text": "Шаман высоких орков не прощает ошибок. Держите строй."
+          }
+        ]
+      },
+      {
+        "id": "throne",
+        "name": "Трон Каргалгана",
+        "subtitle": "Здесь закончился рейд пропавшей партии",
+        "kind": "arena",
+        "x": 5400,
+        "w": 2000,
+        "props": [
+          "totem",
+          "bones",
+          "vine",
+          "brazier",
+          "rubble",
+          "banner"
+        ],
+        "story": [
+          {
+            "speaker": "song-chi-yul",
+            "text": "Это логово... Оно живое. Не дайте тотемам схватить вас."
+          }
+        ]
+      }
+    ],
+    "platforms": [
+      {
+        "x": 864,
+        "y": 692,
+        "w": 170,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 1309,
+        "y": 608,
+        "w": 130,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 1941,
+        "y": 636,
+        "w": 150,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 2424,
+        "y": 552,
+        "w": 120,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 2923,
+        "y": 610,
+        "w": 180,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 3314,
+        "y": 520,
+        "w": 120,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 3920,
+        "y": 636,
+        "w": 150,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 4341,
+        "y": 552,
+        "w": 120,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 4803,
+        "y": 610,
+        "w": 180,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 5154,
+        "y": 520,
+        "w": 120,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 6420,
+        "y": 646,
+        "w": 150,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 6700,
+        "y": 558,
+        "w": 140,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 6970,
+        "y": 620,
+        "w": 150,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 2840,
+        "y": 714,
+        "w": 170,
+        "h": 18,
+        "kind": "treasure"
+      }
+    ],
+    "npcs": [
+      {
+        "id": "song-chi-yul",
+        "x": 1180,
+        "lines": [
+          {
+            "speaker": "song-chi-yul",
+            "text": "Партия D-ранга идёт в логово орков. Джин-Ву, пойдёшь с нами?"
+          },
+          {
+            "speaker": "song-chi-yul",
+            "text": "Твоя выносливость заметно выросла. Я вижу."
+          }
+        ],
+        "repeat": [
+          "Не отрывайся от партии."
+        ]
+      },
+      {
+        "id": "yoo-jinho",
+        "x": 2520,
+        "lines": [
+          {
+            "speaker": "yoo-jinho",
+            "text": "П-привет! Я Ю Джин-Хо, D-ранг! Буду рад работать с тобой в одной партии!"
+          },
+          {
+            "speaker": "yoo-jinho",
+            "text": "Я куплю снаряжение, только охоться со мной!"
+          }
+        ],
+        "repeat": [
+          "Джин-Ву-хён, ты видел, как я держал щит?"
+        ]
+      }
+    ],
+    "encounters": [
+      {
+        "id": "orc",
+        "x": 3050,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "orc-berserker",
+        "x": 3900,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "orc",
+        "x": 4550,
+        "count": 1,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "orc-berserker",
+        "x": 5200,
+        "count": 1,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "orc",
+        "x": 6000,
+        "count": 1,
+        "elite": true,
+        "name": "Орк-громила",
+        "spread": 76
+      }
+    ],
+    "lore": [
+      {
+        "x": 780,
+        "title": "Дневник пропавшего охотника",
+        "text": "«Мы нашли логово высоких орков. Шаман Каргалган смеётся над нами из огня. Я не вернусь».",
+        "kind": "corpse",
+        "xp": 20
+      },
+      {
+        "x": 2860,
+        "title": "Тотем орков",
+        "text": "Кости, перья и бирки охотников. Самые свежие — с гербом партии, пропавшей здесь много лет назад.",
+        "kind": "banner",
+        "xp": 22
+      },
+      {
+        "x": 4380,
+        "title": "Молитва высоких орков",
+        "text": "«Кровь — это плата. Огонь — это ответ. Тот, кто войдёт в круг, останется в нём».",
+        "kind": "tablet",
+        "xp": 24
+      },
+      {
+        "x": 5800,
+        "title": "Бирка павшей партии",
+        "text": "Металлическая бирка с именем. На обратной стороне — рисунок маленькой дочери.",
+        "kind": "corpse",
+        "xp": 26
+      }
+    ],
+    "shrines": [
+      {
+        "x": 2350,
+        "name": "Алтарь рейда"
+      },
+      {
+        "x": 5580,
+        "name": "Алтарь перед логовом"
+      }
+    ],
+    "hazards": [
+      {
+        "x": 3300,
+        "w": 120,
+        "type": "thorns",
+        "damage": 14
+      },
+      {
+        "x": 5000,
+        "w": 130,
+        "type": "acid",
+        "damage": 16
+      }
+    ],
+    "decor": [
+      {
+        "type": "tent",
+        "x": 500
+      },
+      {
+        "type": "altar",
+        "x": 4780
+      },
+      {
+        "type": "totem",
+        "x": 3350
+      },
+      {
+        "type": "vine",
+        "x": 6200
+      }
+    ],
+    "secret": {
+      "type": "chest",
+      "name": "Схрон партии",
+      "chest": "rare",
+      "lore": "Партия, погибшая здесь раньше, оставила припасы под слоем пепла.",
+      "x": 2620
+    },
+    "puzzle": {
+      "type": "runes",
+      "name": "Алтарь шамана",
+      "sequence": [
+        1,
+        0,
+        2
+      ],
+      "hint": "II · I · III",
+      "chest": "rare",
+      "lore": "Алтарь высоких орков помнит имена тех, кто приходил сюда до вас.",
+      "x": 4650
+    },
+    "chests": [
+      {
+        "x": 1300,
+        "chest": "common"
+      },
+      {
+        "x": 3200,
+        "chest": "rare"
+      },
+      {
+        "x": 6100,
+        "chest": "epic"
+      },
+      {
+        "x": 2925,
+        "y": 688,
+        "chest": "rare",
+        "high": true
+      }
+    ],
+    "arena": {
+      "bg": "assets/sprites/arenas/arena_high_orc_gate.jpg",
+      "name": "Трон Каргалгана",
+      "x": 5750
+    },
+    "cutin": "assets/sprites/cutins/cutin_kargalgan.jpg",
+    "scenes": [
+      {
+        "id": "ch4-party",
+        "x": 3420,
+        "title": "Долг партии",
+        "subtitle": "Пещеры высоких орков",
+        "lines": [
+          {
+            "speaker": "song-chi-yul",
+            "text": "Пропавшая партия так и не вернулась. Их бирки — на тотемах."
+          },
+          {
+            "speaker": "yoo-jinho",
+            "text": "Джин-Ву-хён, я не отстану. Обещаю."
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Держись рядом. Здесь высокие орки забирают неосторожных."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
+      },
+      {
+        "id": "ch4-reed",
+        "x": 5850,
+        "title": "Голос Каргалгана",
+        "subtitle": "Трон Каргалгана",
+        "lines": [
+          {
+            "speaker": "Система",
+            "text": "Обнаружен хозяин врат. Уровень угрозы: высокий."
+          },
+          {
+            "speaker": "yoo-jinho",
+            "text": "Этот голос... он идёт из самого огня!"
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Значит, Каргалган ответит мне за каждого охотника."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_kargalgan.jpg"
+      }
+    ],
+    "bossBarks": {
+      "phase": [
+        "Ты силён, охотник. Но высокие орки не склоняются перед людьми.",
+        "Мои боги уже пробудились. Ты опоздал."
+      ],
+      "enrage": "Кровь высоких орков не прольётся напрасно!"
+    },
+    "questObjects": [
+      {
+        "kind": "hunter",
+        "x": 1850,
+        "event": "rescue",
+        "title": "Раненый охотник",
+        "enemy": "orc",
+        "enemyCount": 1
+      },
+      {
+        "kind": "hunter",
+        "x": 3500,
+        "event": "rescue",
+        "title": "Раненый охотник",
+        "enemy": "orc",
+        "enemyCount": 1
+      },
+      {
+        "kind": "hunter",
+        "x": 5300,
+        "event": "rescue",
+        "title": "Раненый охотник",
+        "enemy": "orc",
+        "enemyCount": 1
       }
     ]
   },

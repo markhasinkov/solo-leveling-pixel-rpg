@@ -297,8 +297,8 @@ for cid in chapter_ids:
         check(int(h.get("damage", 0)) > 0, "levels.%s: опасность без урона" % cid)
     for r in lv.get("racks", []):
         check(in_world(r.get("x", 0)), "levels.%s: стойка доспехов вне мира" % cid)
-    if cid == 5:
-        check(len(lv.get("racks", [])) == 4, "levels.5: нужно 4 проклятые стойки")
+    if cid == 4:
+        check(len(lv.get("racks", [])) == 4, "levels.4: нужно 4 проклятые стойки")
     for q in lv.get("questObjects", []):
         check(in_world(q.get("x", 0)), "levels.%s: объект задания вне мира" % cid)
         check(q.get("kind") in ("miner", "hunter", "brazier"), "levels.%s: тип объекта задания" % cid)
@@ -307,7 +307,7 @@ for cid in chapter_ids:
         if q.get("enemy"):
             check(q.get("enemy") in char_by_id, "levels.%s: неизвестный враг засады %r" % (cid, q.get("enemy")))
         check(1 <= int(q.get("enemyCount", 1)) <= 4, "levels.%s: enemyCount" % cid)
-    if cid in (3, 4, 6):
+    if cid in (3, 5, 7):
         check(len(lv.get("questObjects", [])) == 3, "levels.%s: нужно 3 объекта локального задания" % cid)
         check(bool(lv.get("bossBarks", {}).get("phase")) and bool(lv.get("bossBarks", {}).get("enrage")),
               "levels.%s: нет фазовых реплик босса" % cid)
@@ -377,9 +377,9 @@ def is_enemy(cid, c, chapter_id):
     if cid in humans:
         return False
     if cid == "igris":
-        return chapter_id == 5
+        return chapter_id == 4
     if cid == "baran":
-        return chapter_id == 7
+        return chapter_id == 6
     if cid == "beru":
         return chapter_id == 9
     if cid == "ashborn":

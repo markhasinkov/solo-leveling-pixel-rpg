@@ -85,27 +85,29 @@ if len(chapters) != 13:
     failures.append(f'глав должно быть 13, найдено {len(chapters)}')
 
 by_id = {c['id']: c for c in chapters}
-ch1, ch5, ch6, ch7 = by_id.get(1, {}), by_id.get(5, {}), by_id.get(6, {}), by_id.get(7, {})
+ch1, ch4, ch5, ch6, ch7 = by_id.get(1, {}), by_id.get(4, {}), by_id.get(5, {}), by_id.get(6, {}), by_id.get(7, {})
 ch8, ch10, ch11, ch12, ch13 = by_id.get(8, {}), by_id.get(10, {}), by_id.get(11, {}), by_id.get(12, {}), by_id.get(13, {})
 
 if 'architect' in (ch1.get('characters') or []):
     failures.append('глава 1: Архитектор не должен присутствовать в двойном подземелье')
-if any(x not in (ch6.get('characters') or []) for x in ('park-hee-jin', 'han-song-yi', 'kim-chul')):
-    failures.append('глава 6: нужны Пак Хи-Джин, Хан Сон-И и Ким Чхоль')
-if 'lee-joo-hee' in (ch6.get('characters') or []) or 'yoo-jinho' in (ch6.get('characters') or []):
-    failures.append('глава 6: Ли Джу-Хи и Ю Джин-Хо не участвовали в Красных вратах')
-if 'igris' not in (ch5.get('characters') or []):
-    failures.append('глава 5: Игрис должен быть боссом смены класса')
-if 'Демоническ' in (ch5.get('title') or ''):
-    failures.append('глава 5: квест на смену класса не должен называться Демоническим замком')
-if 'Красные ворота' not in (ch6.get('title') or '') or 'baruka' not in (ch6.get('characters') or []):
-    failures.append('глава 6: должны быть Красные врата с Барукой')
-if 'Демонический замок' not in (ch7.get('title') or '') or 'baran' not in (ch7.get('characters') or []):
-    failures.append('глава 7: нужен Демонический замок с Бараном')
-if 'Святой источник' not in json.dumps(ch7, ensure_ascii=False):
-    failures.append('глава 7: Святой источник жизни должен быть целью замка')
-if 'армия теней' in json.dumps(ch5, ensure_ascii=False):
-    failures.append('глава 5: тени ещё не пробуждены до смены класса')
+if any(x not in (ch5.get('characters') or []) for x in ('park-hee-jin', 'han-song-yi', 'kim-chul')):
+    failures.append('глава 5: нужны Пак Хи-Джин, Хан Сон-И и Ким Чхоль')
+if 'lee-joo-hee' in (ch5.get('characters') or []) or 'yoo-jinho' in (ch5.get('characters') or []):
+    failures.append('глава 5: Ли Джу-Хи и Ю Джин-Хо не участвовали в Красных вратах')
+if 'igris' not in (ch4.get('characters') or []):
+    failures.append('глава 4: Игрис должен быть боссом смены класса')
+if 'Демоническ' in (ch4.get('title') or ''):
+    failures.append('глава 4: квест на смену класса не должен называться Демоническим замком')
+if 'Красные ворота' not in (ch5.get('title') or '') or 'baruka' not in (ch5.get('characters') or []):
+    failures.append('глава 5: должны быть Красные врата с Барукой')
+if 'Демонический замок' not in (ch6.get('title') or '') or 'baran' not in (ch6.get('characters') or []):
+    failures.append('глава 6: нужен Демонический замок с Бараном')
+if 'Святой источник' not in json.dumps(ch6, ensure_ascii=False):
+    failures.append('глава 6: Святой источник жизни должен быть целью замка')
+if 'армия теней' in json.dumps(ch4, ensure_ascii=False):
+    failures.append('глава 4: тени ещё не пробуждены до смены класса')
+if 'Каргалган' not in (ch7.get('title') or '') or 'kargalgan' not in (ch7.get('characters') or []):
+    failures.append('глава 7: нужны врата гильдии «Охотники» с Каргалганом')
 if 'Святой источник' not in json.dumps(ch8, ensure_ascii=False):
     failures.append('глава 8: пробуждение мамы должно быть связано со Святым источником жизни')
 if any(word in json.dumps(ch8, ensure_ascii=False) for word in ('операци', 'пересадк')):
@@ -134,13 +136,13 @@ for cid, name in expected_bosses.items():
     if (levels.get(str(cid), {}).get('boss') or {}).get('bossData') not in bosses:
         failures.append(f'глава {cid}: нет профиля босса «{name}»')
 if 'kargalgan' not in bosses or 'kargalgan' not in [c.get('id') for c in characters]:
-    failures.append('глава 4: нет Каргалгана в bosses.json или characters.json')
-if 'Трон Каргалгана' not in (levels.get('4', {}).get('arena') or {}).get('name', ''):
-    failures.append('глава 4: нет арены «Трон Каргалгана»')
-for cid, needle in ((2, 'arena_penalty_zone'), (3, 'arena_hapjeong'), (4, 'arena_high_orc_gate'), (8, 'arena_measure_hall')):
+    failures.append('глава 7: нет Каргалгана в bosses.json или characters.json')
+if 'Трон Каргалгана' not in (levels.get('7', {}).get('arena') or {}).get('name', ''):
+    failures.append('глава 7: нет арены «Трон Каргалгана»')
+for cid, needle in ((2, 'arena_penalty_zone'), (3, 'arena_hapjeong'), (7, 'arena_high_orc_gate'), (8, 'arena_measure_hall')):
     if needle not in json.dumps(levels.get(str(cid), {}), ensure_ascii=False):
         failures.append(f'глава {cid}: не подключена арена {needle}')
-for cid, needle in ((2, 'cutin_giant_centipede'), (3, 'cutin_kasaka'), (4, 'cutin_kargalgan'), (8, 'cutin_measurement_device')):
+for cid, needle in ((2, 'cutin_giant_centipede'), (3, 'cutin_kasaka'), (7, 'cutin_kargalgan'), (8, 'cutin_measurement_device')):
     if needle not in json.dumps(levels.get(str(cid), {}), ensure_ascii=False):
         failures.append(f'глава {cid}: не подключён cut-in {needle}')
 for old in ('shadow-trial', 'mine-guardian', 'reed-boss', 'measure-golem'):
@@ -151,12 +153,12 @@ if 'baran' not in bosses or bosses['baran'].get('hpBase', 0) <= 0:
     failures.append('bosses.json: нет профиля Барана')
 if 'baran' not in [c.get('id') for c in characters]:
     failures.append('characters.json: нет Барана')
-if (levels.get('7', {}).get('arena') or {}).get('name') != 'Трон короля демонов':
-    failures.append('глава 7: нет арены «Трон короля демонов»')
-if 'arena_demon_castle' not in json.dumps(levels.get('7', {}), ensure_ascii=False):
-    failures.append('глава 7: не подключена арена Демонического замка')
-if 'cutin_baran' not in json.dumps(levels.get('7', {}), ensure_ascii=False):
-    failures.append('глава 7: не подключён cut-in Барана')
+if (levels.get('6', {}).get('arena') or {}).get('name') != 'Трон короля демонов':
+    failures.append('глава 6: нет арены «Трон короля демонов»')
+if 'arena_demon_castle' not in json.dumps(levels.get('6', {}), ensure_ascii=False):
+    failures.append('глава 6: не подключена арена Демонического замка')
+if 'cutin_baran' not in json.dumps(levels.get('6', {}), ensure_ascii=False):
+    failures.append('глава 6: не подключён cut-in Барана')
 
 if failures:
     print('LORE LINT: найдены расхождения:')

@@ -22,8 +22,8 @@ const HUMANS = new Set(['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul',
 
 function isEnemy(id, c, chapter) {
   if (HUMANS.has(id)) return false;
-  if (id === 'igris') return chapter === 5;
-  if (id === 'baran') return chapter === 7;
+  if (id === 'igris') return chapter === 4;
+  if (id === 'baran') return chapter === 6;
   if (id === 'beru') return chapter === 9;
   if (id === 'hokhan') return chapter === 12;
   if (id === 'ashborn') return false;

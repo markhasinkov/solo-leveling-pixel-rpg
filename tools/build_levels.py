@@ -1074,6 +1074,11 @@ cinematic(ch, "assets/sprites/arenas/arena_antares.jpg", "Арена Антар�
 CHAPTERS.append(ch)
 
 
+# Канонический порядок: квест на смену класса → Красные врата →
+# Демонический замок → врата гильдии «Охотники» (Каргалган).
+CHAPTERS[:] = [CHAPTERS[i] for i in (0, 1, 2, 4, 5, 6, 3, 7, 8, 9, 10, 11, 12)]
+
+
 def main():
     data = {str(i + 1): ch for i, ch in enumerate(CHAPTERS)}
     with open(OUT, "w", encoding="utf-8") as f:

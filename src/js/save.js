@@ -1,9 +1,9 @@
-// save.js — сохранение v4: миграция v1–v3, теневой легион, настройки, квесты, мир.
+// save.js — сохранение v5: миграция v1–v4, теневой легион, настройки, квесты, мир.
 (function () {
   'use strict';
 
   const SAVE_KEY = 'solo-leveling-save';
-  const VERSION = 4;
+  const VERSION = 5;
 
   const LEGACY_ITEM_MAP = {
     'Гоблин': 'goblin-fang',
@@ -24,14 +24,58 @@
   const OLD_CHAPTER_TO_NEW = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 5, 7: 8, 8: 9, 9: 10, 10: 11, 11: 12, 12: 13 };
   const OLD_UNLOCKED_TO_NEW = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12];
 
-  function remapKeys(source) {
+  // v4 → v5: врата гильдии «Охотники» (Каргалган) перенесены после
+  // Демонического замка. Главы 4–7 циклически меняют места.
+  const V4_CHAPTER_TO_V5 = { 1: 1, 2: 2, 3: 3, 4: 7, 5: 4, 6: 5, 7: 6, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13 };
+  const V4_INDEX_TO_V5 = [0, 1, 2, 3, 4, 4, 5, 6, 8, 9, 10, 11, 12];
+
+  function remapKeys(source, map) {
     const out = {};
     if (!source || typeof source !== 'object') return out;
     Object.keys(source).forEach((key) => {
-      const mapped = OLD_CHAPTER_TO_NEW[key | 0];
+      const mapped = (map || OLD_CHAPTER_TO_NEW)[key | 0];
       if (mapped) out[mapped] = source[key];
     });
     return out;
+  }
+
+  function remapQuestTalked(quests, map) {
+    if (!quests || typeof quests !== 'object') return quests;
+    const out = Object.assign({}, quests);
+    if (quests.talked && typeof quests.talked === 'object') {
+      out.talked = {};
+      Object.keys(quests.talked).forEach((key) => {
+        const mapped = map[key | 0];
+        if (mapped) out.talked[mapped] = quests.talked[key];
+      });
+    }
+    return out;
+  }
+
+  function mapV4Index(index) {
+    const i = Math.max(0, Math.min(12, index | 0));
+    return V4_INDEX_TO_V5[i];
+  }
+
+  function migrateV4ToV5(data) {
+    const last = 12;
+    const oldIndex = Math.max(0, Math.min(12, data.chapterIndex | 0));
+    const oldUnlocked = Math.max(0, Math.min(12, data.unlocked | 0));
+    const finished = !!data.finished;
+    let chapterIndex = finished ? last : mapV4Index(oldIndex);
+    let unlocked = finished ? last : Math.max(chapterIndex, mapV4Index(oldUnlocked));
+    unlocked = Math.max(0, Math.min(last, unlocked));
+    return Object.assign({}, data, {
+      version: VERSION,
+      chapterIndex,
+      unlocked,
+      world: remapKeys(data.world, V4_CHAPTER_TO_V5),
+      storySeen: remapKeys(data.storySeen, V4_CHAPTER_TO_V5),
+      quests: remapQuestTalked(data.quests, V4_CHAPTER_TO_V5),
+      contracts: { day: null, list: [] },
+      migrated: true,
+      migratedLore: true
+    });
   }
 
   function migrateChapterOrder(data) {
@@ -42,16 +86,17 @@
     let chapterIndex = finished ? last : (oldIndex <= 3 ? oldIndex : oldIndex <= 5 ? 4 : 6);
     let unlocked = finished ? last : Math.max(chapterIndex, OLD_UNLOCKED_TO_NEW[oldUnlocked] || 0);
     unlocked = Math.max(0, Math.min(last, unlocked));
-    return Object.assign({}, data, {
-      version: VERSION,
+    return migrateV4ToV5(Object.assign({}, data, {
+      version: 4,
       chapterIndex,
       unlocked,
       world: remapKeys(data.world),
       storySeen: remapKeys(data.storySeen),
+      quests: remapQuestTalked(data.quests, OLD_CHAPTER_TO_NEW),
       contracts: { day: null, list: [] },
       migrated: true,
       migratedLore: true
-    });
+    }));
   }
 
   function migrateV1(old) {
@@ -115,7 +160,8 @@
         if (typeof data.chapterIndex !== 'number' || typeof data.unlocked !== 'number') return null;
         const version = data.version || 1;
         if (version < VERSION) {
-          const migrated = version >= 3 ? migrateV3(data) : version >= 2 ? migrateV2(data) : migrateV1(data);
+          const migrated = version >= 4 ? migrateV4ToV5(data)
+            : version >= 3 ? migrateV3(data) : version >= 2 ? migrateV2(data) : migrateV1(data);
           this.write(migrated);
           return migrated;
         }
@@ -164,7 +210,8 @@
         if (cloud && (!local || (cloud.savedAt || 0) > (local.savedAt || 0))) {
           const version = cloud.version || 1;
           if (version < VERSION) {
-            const migrated = version >= 3 ? migrateV3(cloud) : version >= 2 ? migrateV2(cloud) : migrateV1(cloud);
+            const migrated = version >= 4 ? migrateV4ToV5(cloud)
+              : version >= 3 ? migrateV3(cloud) : version >= 2 ? migrateV2(cloud) : migrateV1(cloud);
             this.write(migrated);
             return migrated;
           }

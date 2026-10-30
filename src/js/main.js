@@ -716,8 +716,8 @@
         'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in',
         'min-byung-gu', 'architect'];
       if (HUMANS.includes(id)) return false;
-      if (id === 'igris') return chapterId === 5;
-      if (id === 'baran') return chapterId === 7;
+      if (id === 'igris') return chapterId === 4;
+      if (id === 'baran') return chapterId === 6;
       if (id === 'beru') return chapterId === 9;
       if (id === 'ashborn') return false;
       if (['antares', 'baruka', 'statue-of-god', 'kargalgan', 'giant-centipede', 'kasaka', 'measurement-device'].includes(id)) return true;
@@ -1564,7 +1564,7 @@
         // История зоны не должна перебивать церемонию извлечения.
         this._pendingZoneStory = null;
       }
-      if (this.chapter && this.chapter.id === 6) {
+      if (this.chapter && this.chapter.id === 5) {
         this.npcs = this.npcs.filter((n) => n.charId !== 'kim-chul');
       }
       if (this.chapter && this.chapter.id === 9) {
@@ -1617,7 +1617,7 @@
       this.state = 'chapterEnd';
       const ch = this.chapter;
       window.Quests.emit('chapter', { chapterId: ch.id, amount: 1 });
-      if (ch.id === 6 && !this.hasShadow('iron')) {
+      if (ch.id === 5 && !this.hasShadow('iron')) {
         this.grantShadow('iron');
         UI.toast('Теневая армия', 'Айрон, тень Ким Чхоля, присоединился к армии.', {
           color: '#8a8aa0', duration: 4200

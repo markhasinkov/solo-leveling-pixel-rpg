@@ -603,9 +603,9 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   const raw = storage.get('solo-leveling-save');
   assert(!!raw, 'сохранение записано');
   const saved = JSON.parse(raw);
-  assert(saved.version === 4 && saved.progress && saved.inventory, 'сохранение v4 содержит прогресс, инвентарь и теней');
+  assert(saved.version === 5 && saved.progress && saved.inventory, 'сохранение v5 содержит прогресс, инвентарь и теней');
   const loaded = sandbox.SaveSystem.load();
-  assert(loaded && loaded.version === 4 && loaded.chapterIndex === 1, 'сохранение читается обратно');
+  assert(loaded && loaded.version === 5 && loaded.chapterIndex === 1, 'сохранение читается обратно');
 
   // ---------- UI-панели ----------
   try {
@@ -745,7 +745,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.persist();
   const savedContracts = JSON.parse(storage.get('solo-leveling-save')).contracts;
   assert(savedContracts && savedContracts.day === '2026-10-30' && savedContracts.list.length === 3,
-    'ежедневные контракты сохраняются в v4');
+    'ежедневные контракты сохраняются в v5');
   game.ensureContracts('2026-10-31');
   assert(game.contracts.day === '2026-10-31' &&
     game.contracts.list.every((c) => c.status === 'available'),
@@ -808,30 +808,30 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   const storyChapters = new Map(data.chapters.map((c) => [c.id, c]));
   assert(!storyChapters.get(1).characters.includes('architect'),
     'Архитектор не участвует в двойном подземелье');
-  assert(storyChapters.get(5).title.includes('смену класса') &&
-    storyChapters.get(5).characters.includes('igris'),
-    'глава 5 — квест на смену класса с Игрисом');
-  assert(storyChapters.get(6).title.includes('Красные ворота') &&
-    ['park-hee-jin', 'han-song-yi', 'kim-chul'].every((id) => storyChapters.get(6).characters.includes(id)) &&
-    !storyChapters.get(6).characters.includes('lee-joo-hee') &&
-    !storyChapters.get(6).characters.includes('yoo-jinho'),
-    'глава 6 — Красные врата с Пак Хи-Джин, Хан Сон-И и Ким Чхолем');
-  assert(storyChapters.get(7).title.includes('Демонический замок') &&
-    storyChapters.get(7).characters.includes('baran') &&
-    JSON.stringify(storyChapters.get(7)).includes('Святой источник жизни'),
-    'глава 7 — Демонический замок с Бараном и Святым источником');
-  assert(chapterReport.find((r) => r.id === 5).boss === 'Игрис', 'глава 5: босс — Игрис');
-  assert(chapterReport.find((r) => r.id === 6).boss === 'Барука', 'глава 6: босс — Барука');
-  assert(chapterReport.find((r) => r.id === 7).boss === 'Баран', 'глава 7: босс — Баран');
+  assert(storyChapters.get(4).title.includes('смену класса') &&
+    storyChapters.get(4).characters.includes('igris'),
+    'глава 4 — квест на смену класса с Игрисом');
+  assert(storyChapters.get(5).title.includes('Красные ворота') &&
+    ['park-hee-jin', 'han-song-yi', 'kim-chul'].every((id) => storyChapters.get(5).characters.includes(id)) &&
+    !storyChapters.get(5).characters.includes('lee-joo-hee') &&
+    !storyChapters.get(5).characters.includes('yoo-jinho'),
+    'глава 5 — Красные врата с Пак Хи-Джин, Хан Сон-И и Ким Чхолем');
+  assert(storyChapters.get(6).title.includes('Демонический замок') &&
+    storyChapters.get(6).characters.includes('baran') &&
+    JSON.stringify(storyChapters.get(6)).includes('Святой источник жизни'),
+    'глава 6 — Демонический замок с Бараном и Святым источником');
+  assert(chapterReport.find((r) => r.id === 4).boss === 'Игрис', 'глава 4: босс — Игрис');
+  assert(chapterReport.find((r) => r.id === 5).boss === 'Барука', 'глава 5: босс — Барука');
+  assert(chapterReport.find((r) => r.id === 6).boss === 'Баран', 'глава 6: босс — Баран');
   assert(chapterReport.find((r) => r.id === 10).boss === 'Ча Хэ-Ин', 'глава 10: босс — Ча Хэ-Ин');
   assert(chapterReport.find((r) => r.id === 11).boss === 'Архитектор', 'глава 11: босс — Архитектор');
   const bossIdentities = {
     2: ['Гигантская многоножка', 'giant-centipede', 'giant-centipede'],
     3: ['Касака', 'kasaka', 'kasaka'],
-    4: ['Каргалган', 'kargalgan', 'kargalgan'],
-    5: ['Игрис', 'igris', 'igris'],
-    6: ['Барука', 'baruka', 'baruka'],
-    7: ['Баран', 'baran', 'baran'],
+    4: ['Игрис', 'igris', 'igris'],
+    5: ['Барука', 'baruka', 'baruka'],
+    6: ['Баран', 'baran', 'baran'],
+    7: ['Каргалган', 'kargalgan', 'kargalgan'],
     8: ['Магический измеритель', 'measurement-device', 'measurement-device'],
     10: ['Ча Хэ-Ин', 'cha-hae-in', 'cha-hae-in'],
     11: ['Архитектор', 'architect', 'architect'],
@@ -849,10 +849,12 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     'у гигантской многоножки свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 3).bossSubtitle.indexOf('мгновенного') >= 0,
     'у Касаки свой подзаголовок');
-  assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('высоких орков') >= 0,
-    'у Каргалгана свой подзаголовок');
-  assert(chapterReport.find((r) => r.id === 7).bossSubtitle.indexOf('Король демонов') >= 0,
+  assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('Рыцарь крови') >= 0,
+    'у Игриса свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 6).bossSubtitle.indexOf('Король демонов') >= 0,
     'у Барана свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 7).bossSubtitle.indexOf('высоких орков') >= 0,
+    'у Каргалгана свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 8).bossSubtitle.indexOf('шкалы') >= 0,
     'у магического измерителя свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 10).bossSubtitle.indexOf('Охотники') >= 0,
@@ -873,7 +875,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   const shaman = game.monsters.find((m) => m.lootId === 'goblin-shaman');
   assert(shaman.trait.ranged && shaman.trait.projectileSlow > 0, 'шаман стреляет замедляющим снарядом');
 
-  game.startChapter(3, { replay: true });
+  game.startChapter(6, { replay: true });
   advance(80);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   const berserker = game.monsters.find((m) => m.lootId === 'orc-berserker');
@@ -883,7 +885,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   advance(80);
   assert(berserker.berserked && berserker.speed > normalSpeed, 'орк-берсерк впадает в ярость при низком HP');
 
-  game.startChapter(5, { replay: true });
+  game.startChapter(4, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   const iceIds = game.monsters.map((m) => m.lootId);
@@ -915,16 +917,16 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(miners.length === 3 && miners.every((o) => o.done), 'шахтёры спасаются интерактивно');
   assert(sandbox.Quests.stateOf('side-3c').status === 'completed', 'квест «Заживо погребённые» завершается');
 
-  clearQuestChapter(3);
+  clearQuestChapter(6);
   const hunters = interactAll();
   assert(hunters.length === 3 && hunters.every((o) => o.done), 'раненые охотники выводятся');
   assert(sandbox.Quests.stateOf('side-4c').status === 'completed', 'квест «Долг партии» завершается');
 
-  clearQuestChapter(5);
+  clearQuestChapter(4);
   const braziers = interactAll();
   assert(braziers.length === 3 && braziers.every((o) => o.done), 'жаровни зажигаются');
   assert(sandbox.Quests.stateOf('side-5c').status === 'completed', 'квест «Тепло для живых» завершается');
-  game.startChapter(5, { replay: true });
+  game.startChapter(4, { replay: true });
   advance(80);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.world.questObjects.every((o) => o.done), 'зажжённые жаровни сохраняются');
@@ -937,12 +939,12 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   clearQuestChapter(2);
   game.onBossPhase({ name: 'Касака', bossData: game.bossesData.kasaka }, 1);
   assert(sandbox.UI.bossBarkText.textContent.indexOf('подземелье') >= 0, 'у Касаки есть фазовая реплика');
-  clearQuestChapter(5);
+  clearQuestChapter(4);
   game.onBossPhase({ name: 'Барука', bossData: game.bossesData.baruka }, 1);
   assert(sandbox.UI.bossBarkText.textContent.indexOf('клан') >= 0, 'у Баруки есть фазовая реплика');
 
-  // ---------- Глава 5: новые враги, доспехи, фазы и тень ----------
-  game.startChapter(4, { replay: true });
+  // ---------- Глава 4: новые враги, доспехи, фазы и тень ----------
+  game.startChapter(3, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   game.player.invulnTimer = 999;
@@ -981,13 +983,13 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   });
   assert(sandbox.Quests.stateOf('side-6c') && sandbox.Quests.stateOf('side-6c').status === 'completed',
     'квест «Освободить доспехи павших» завершается');
-  game.startChapter(4, { replay: true });
+  game.startChapter(3, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.world.racks.every((r) => r.broken), 'разбитые стойки сохраняются после перезапуска главы');
 
   // Извлечение тени Игриса
-  game.startChapter(4, { replay: true });
+  game.startChapter(3, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   game.player.invulnTimer = 999;
@@ -1001,7 +1003,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   advance(100);
   assert(game.hasShadow('igris') && game.shadows.equipped.indexOf('igris') >= 0, 'тень Игриса извлечена и экипирована');
 
-  game.startChapter(5, { replay: true });
+  game.startChapter(4, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.allies.some((a) => a.shadowId === 'igris'), 'тень Игриса сопровождает игрока в следующей главе');
@@ -1016,7 +1018,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.upgradeShadow('igris') && game.shadowLevel('igris') === 2, 'тень Игриса прокачивается эссенцией');
   assert(game.inventory.count('shadow-essence') === essenceBefore - 1, 'прокачка тратит эссенцию');
 
-  game.startChapter(5, { replay: true });
+  game.startChapter(4, { replay: true });
   advance(100);
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   game.player.invulnTimer = 999;
@@ -1071,7 +1073,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     level: 4, kills: 7, items: [{ name: 'Гоблин', qty: 2 }]
   }));
   const migrated = sandbox.SaveSystem.load();
-  assert(migrated && migrated.version === 4, 'старое сохранение v1 мигрирует в v4');
+  assert(migrated && migrated.version === 5, 'старое сохранение v1 мигрирует в v5');
   assert(migrated && migrated.progress.level === 4 && migrated.inventory.items.length === 1, 'миграция сохраняет уровень и трофеи');
   storage.set('solo-leveling-save', JSON.stringify({
     version: 2, savedAt: 1, chapterIndex: 3, unlocked: 4,
@@ -1079,19 +1081,33 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     stats: {}, settings: {}, finished: false
   }));
   const migratedV2 = sandbox.SaveSystem.load();
-  assert(migratedV2 && migratedV2.version === 4 && migratedV2.progress.level === 6 &&
-    migratedV2.shadows && Array.isArray(migratedV2.shadows.equipped), 'сохранение v2 мигрирует в v4 без потери прогресса');
+  assert(migratedV2 && migratedV2.version === 5 && migratedV2.progress.level === 6 &&
+    migratedV2.shadows && Array.isArray(migratedV2.shadows.equipped), 'сохранение v2 мигрирует в v5 без потери прогресса');
   storage.set('solo-leveling-save', JSON.stringify({
     version: 3, savedAt: 1, chapterIndex: 5, unlocked: 6,
     progress: { level: 10 }, inventory: { items: [] }, world: { 5: 'red-gate', 6: 'job-change' },
     storySeen: { 5: true, 6: true }, stats: {}, settings: {}, finished: false
   }));
   const migratedV3 = sandbox.SaveSystem.load();
-  assert(migratedV3 && migratedV3.version === 4 && migratedV3.chapterIndex === 4 &&
-    migratedV3.unlocked === 7, 'сохранение v3 переставляет главы 5/6 и открывает Демонический замок');
-  assert(migratedV3.world[5] === 'job-change' && migratedV3.world[6] === 'red-gate' &&
-    migratedV3.storySeen[5] === true && migratedV3.storySeen[6] === true,
+  assert(migratedV3 && migratedV3.version === 5 && migratedV3.chapterIndex === 4 &&
+    migratedV3.unlocked === 6, 'сохранение v3 мигрирует в v5 с новым порядком глав');
+  assert(migratedV3.world[4] === 'job-change' && migratedV3.world[5] === 'red-gate' &&
+    migratedV3.storySeen[4] === true && migratedV3.storySeen[5] === true,
     'миграция v3 переносит мир и просмотренные сцены');
+  storage.set('solo-leveling-save', JSON.stringify({
+    version: 4, savedAt: 1, chapterIndex: 4, unlocked: 4,
+    progress: { level: 10 }, inventory: { items: [] },
+    world: { 4: 'hunters-gate', 5: 'job-change' },
+    storySeen: { 4: true, 5: true },
+    quests: { state: {}, counters: {}, talked: { 4: { 'kim-chul': true } } },
+    stats: {}, settings: {}, finished: false
+  }));
+  const migratedV4 = sandbox.SaveSystem.load();
+  assert(migratedV4 && migratedV4.version === 5 && migratedV4.chapterIndex === 4 &&
+    migratedV4.unlocked === 4, 'сохранение v4 переносит Каргалгана в главу 7');
+  assert(migratedV4.world[7] === 'hunters-gate' && migratedV4.world[4] === 'job-change' &&
+    migratedV4.storySeen[7] === true && migratedV4.quests.talked[7]['kim-chul'] === true,
+    'миграция v4 переносит мир, сцены и разговоры');
   if (currentSave) storage.set('solo-leveling-save', currentSave);
 
   // ---------- Финальная отрисовка ----------

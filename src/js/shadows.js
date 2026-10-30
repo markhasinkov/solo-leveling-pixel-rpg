@@ -6,7 +6,7 @@
     igris: {
       id: 'igris', name: 'Игрис', title: 'Рыцарь крови',
       portrait: 'assets/sprites/portraits/igris.png', cutin: 'assets/sprites/cutins/cutin_igris.jpg',
-      animId: 'igris', drawW: 78, drawH: 78, color: '#a06cff', chapter: 5,
+      animId: 'igris', drawW: 78, drawH: 78, color: '#a06cff', chapter: 4,
       atkPct: 0.5, attackCd: 0.8, range: 54, moveSpeed: 235, style: 'slash',
       passive: 'Удары иногда оглушают противника.',
       upgrade: '+12% урона и +4% скорости атаки за уровень.',
@@ -20,7 +20,7 @@
     baruka: {
       id: 'baruka', name: 'Барука', title: 'Вождь ледяных эльфов',
       portrait: 'assets/sprites/portraits/baruka.png', cutin: 'assets/sprites/cutins/cutin_baruka.jpg',
-      animId: 'baruka', drawW: 76, drawH: 76, color: '#bfe6f7', chapter: 6,
+      animId: 'baruka', drawW: 76, drawH: 76, color: '#bfe6f7', chapter: 5,
       atkPct: 0.38, attackCd: 0.9, range: 340, moveSpeed: 195, style: 'projectile',
       slow: 1.5,
       passive: 'Ледяные клинки замедляют врагов.',
@@ -35,7 +35,7 @@
     iron: {
       id: 'iron', name: 'Айрон', title: 'Тень Ким Чхоля',
       portrait: 'assets/sprites/portraits/kim-chul.png', cutin: 'assets/sprites/cutins/cutin_shadow_duelist.jpg',
-      animId: 'kim-chul', drawW: 74, drawH: 74, color: '#8a8aa0', chapter: 6,
+      animId: 'kim-chul', drawW: 74, drawH: 74, color: '#8a8aa0', chapter: 5,
       atkPct: 0.34, attackCd: 0.9, range: 56, moveSpeed: 220, style: 'slash',
       passive: 'Айрон бьёт тяжёлым клинком и иногда оглушает.',
       upgrade: '+12% урона и +4% скорости атаки за уровень.',
