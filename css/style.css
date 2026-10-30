@@ -1267,6 +1267,7 @@ img { image-rendering: pixelated; }
 #ui-root.cinematic .joystick-base,
 #ui-root.cinematic .attack-btn,
 #ui-root.cinematic .jump-btn,
+#ui-root.cinematic .dodge-btn,
 #ui-root.cinematic .potion-btn-touch {
   opacity: 0 !important;
   pointer-events: none !important;
@@ -1561,6 +1562,47 @@ img { image-rendering: pixelated; }
   50% { opacity: 1; }
 }
 
+/* ============ Комбо ============ */
+.combo-badge {
+  position: absolute;
+  right: 28px;
+  bottom: 190px;
+  z-index: 13;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  pointer-events: none;
+}
+.combo-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(12, 14, 26, 0.84);
+  border: 2px solid rgba(160, 108, 255, 0.55);
+  box-shadow: 0 3px 0 #000, 0 0 14px rgba(160, 108, 255, 0.18);
+}
+.combo-count {
+  font-size: 16px;
+  line-height: 1;
+  color: #e8dcff;
+  text-shadow: 0 0 10px rgba(160, 108, 255, 0.7);
+}
+.combo-word { font-size: 7px; letter-spacing: 1px; color: var(--sl-violet-lt); }
+.combo-pips { display: flex; gap: 4px; }
+.combo-pip { display: block; width: 18px; height: 3px; background: #2a3350; border: 1px solid #0a0b14; }
+.combo-pip.on { background: var(--sl-violet); box-shadow: 0 0 6px rgba(160, 108, 255, 0.7); }
+.combo-timer { width: 92px; height: 3px; background: #0a0c14; border: 1px solid #2a3350; }
+.combo-fill { display: block; width: 100%; height: 100%; background: var(--sl-gold); }
+.combo-badge.finisher .combo-main {
+  border-color: var(--sl-gold);
+  box-shadow: 0 0 18px rgba(232, 199, 106, 0.35), 0 3px 0 #000;
+}
+.combo-badge.finisher .combo-count { color: #ffe9a8; text-shadow: 0 0 12px rgba(232, 199, 106, 0.8); }
+.combo-badge.finisher .combo-word { color: var(--sl-gold); }
+.combo-badge.finisher .combo-pip.on { background: var(--sl-gold); box-shadow: 0 0 6px rgba(232, 199, 106, 0.7); }
+
 /* ============ Touch-управление ============ */
 .touch-controls {
   position: absolute;
@@ -1626,6 +1668,8 @@ img { image-rendering: pixelated; }
 }
 .attack-btn { right: 0; bottom: 0; width: 78px; height: 78px; font-size: 12px; background: rgba(150, 40, 58, 0.82); border-color: #ff9a9a; }
 .jump-btn { right: 88px; bottom: 2px; width: 62px; height: 62px; font-size: 8px; }
+.dodge-btn { right: 140px; bottom: 74px; width: 54px; height: 54px; font-size: 8px; background: rgba(30, 70, 110, 0.82); border-color: #7ad7ff; }
+.dodge-btn.cooling { opacity: 0.55; font-size: 12px; }
 .interact-btn { right: 6px; bottom: 90px; width: 54px; height: 54px; font-size: 15px; background: rgba(40, 90, 120, 0.82); border-color: #8ad4ff; }
 .potion-btn-touch { right: 72px; bottom: 92px; width: 48px; height: 48px; font-size: 14px; background: rgba(30, 110, 70, 0.82); border-color: #6aff9a; }
 
@@ -1634,6 +1678,7 @@ body.left-handed .joystick { left: auto; right: 22px; }
 body.left-handed .touch-actions { right: auto; left: 16px; }
 body.left-handed .attack-btn { right: auto; left: 0; }
 body.left-handed .jump-btn { right: auto; left: 88px; }
+body.left-handed .dodge-btn { right: auto; left: 140px; }
 body.left-handed .interact-btn { right: auto; left: 6px; }
 body.left-handed .potion-btn-touch { right: auto; left: 72px; }
 
@@ -1656,6 +1701,8 @@ body.left-handed .potion-btn-touch { right: auto; left: 72px; }
 .touch .skill-cd { font-size: 17px; }
 .touch .potion-slot { width: 54px; }
 .touch .jump-btn { font-size: 9px; }
+.touch .dodge-btn { font-size: 9px; }
+.touch .combo-badge { right: 20px; bottom: 206px; transform: scale(1.06); transform-origin: bottom right; }
 .touch .boss-bar { top: 156px; width: 430px; }
 .touch .boss-name { font-size: 12px; }
 .touch .boss-phase { font-size: 10px; }

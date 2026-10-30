@@ -288,6 +288,75 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.playerAttack(game.player);
   assert(target.hp < hpBefore, 'обычная атака наносит урон (' + hpBefore + ' → ' + target.hp + ')');
 
+  // ---------- Комбо-цепочки ----------
+  game.player.invulnTimer = 999;
+  game.player.comboStep = 0;
+  game.player.comboTimer = 0;
+  game.player.x = 590;
+  game.player.y = game.world.floorY - game.player.h;
+  game.player.face = 1;
+  const dummy = game.spawnEnemy('goblin', 620, { stats: { hp: 99999, atk: 0, def: 0 } });
+  dummy.update = () => {};
+  const originalPlayerDamage = sandbox.Combat.playerDamage;
+  const comboMults = [];
+  sandbox.Combat.playerDamage = (g, m, mult) => {
+    comboMults.push(mult);
+    return { dmg: 0, crit: false };
+  };
+  try {
+    game.playerAttack(game.player);
+    assert(game.player.comboStep === 1, 'первый удар открывает комбо');
+    game.playerAttack(game.player);
+    assert(game.player.comboStep === 2, 'второй удар продолжает комбо');
+    game.playerAttack(game.player);
+    assert(game.player.comboStep === 3, 'третий удар завершает комбо');
+    assert(comboMults.length === 3 && comboMults[2] > comboMults[1] && comboMults[1] > comboMults[0],
+      'удары комбо усиливаются к финишеру');
+  } finally {
+    sandbox.Combat.playerDamage = originalPlayerDamage;
+    game.monsters = game.monsters.filter((m) => m !== dummy);
+  }
+  sandbox.UI.update(game);
+  assert(sandbox.UI.comboBadge.style.display !== 'none' &&
+    sandbox.UI.comboCount.textContent === '×3' &&
+    sandbox.UI.comboWord.textContent === 'ФИНИШЕР', 'HUD показывает финишер комбо');
+  advance(1100);
+  assert(game.player.comboStep === 0, 'комбо сбрасывается по таймеру');
+  sandbox.UI.update(game);
+  assert(sandbox.UI.comboBadge.style.display === 'none', 'HUD скрывает завершённое комбо');
+
+  // ---------- Рывок с i-frames ----------
+  game.player.invulnTimer = 0;
+  game.player.comboStep = 2;
+  game.player.comboTimer = 0.8;
+  game.hurtPlayer(10, { source: 'test' });
+  assert(game.player.comboStep === 0, 'полученный урон сбрасывает комбо');
+  game.player.hp = game.player.maxHp;
+  game.player.x = 90;
+  game.player.y = game.world.floorY - game.player.h;
+  game.player.dodgeCd = 0;
+  game.player.dashTimer = 0;
+  game.player.dodgeInvuln = 0;
+  game.player.invulnTimer = 0;
+  game.player.onGround = true;
+  game.player.mp = 10;
+  press('shift');
+  advance(32);
+  release('shift');
+  assert(game.player.dodgeCd > 0.8, 'рывок уходит в кулдаун');
+  assert(game.player.invulnTimer > 0.2 && game.player.dodgeInvuln > 0, 'рывок даёт кадры неуязвимости');
+  const dodgeHp = game.player.hp;
+  const dodgeMp = game.player.mp;
+  const dodgeHit = game.hurtPlayer(50, { source: 'melee' });
+  assert(dodgeHit === 0 && game.player.hp === dodgeHp, 'i-frames блокируют урон');
+  assert(game.player.mp === Math.min(game.player.maxMp, dodgeMp + 4), 'идеальный рывок возвращает ману');
+  advance(1300);
+  assert(game.player.dodgeCd === 0, 'кулдаун рывка восстанавливается');
+  game.player.invulnTimer = 0;
+  game.player.comboStep = 0;
+  game.player.comboTimer = 0;
+  game.player.mp = game.player.maxMp;
+
   // ---------- Умения ----------
   game.progress.level = 10;
   game.progress.recalc();
@@ -396,6 +465,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.boss.engaged, 'босс входит в бой при приближении');
   assert(game._bossDlgPlayed && sandbox.Dialogue.active, 'перед боем проигрывается сюжетный диалог босса');
   while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  game._pendingZoneStory = null;
   game.player.x = 90;
   game.player.y = game.world.floorY - game.player.h;
   sandbox.Engine.Camera.snap(game.player, game.level.worldW, game.level.worldH);

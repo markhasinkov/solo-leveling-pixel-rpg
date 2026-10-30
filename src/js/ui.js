@@ -97,6 +97,7 @@
       this.panelBackdrop.addEventListener('click', () => this.closeAllPanels());
 
       this.buildHud();
+      this.buildCombo();
       this.buildSidePanel();
       this.buildBossBar();
       this.buildSkillBar();
@@ -158,6 +159,18 @@
       const xpBar = el('div', 'bar xp-bar', vitals);
       this.xpFill = el('div', 'bar-fill xp-fill', xpBar);
       this.xpText = el('span', 'bar-text', xpBar);
+    },
+
+    buildCombo() {
+      this.comboBadge = el('div', 'combo-badge', this.root);
+      this.comboBadge.style.display = 'none';
+      const main = el('div', 'combo-main', this.comboBadge);
+      this.comboCount = el('span', 'combo-count', main);
+      this.comboWord = el('span', 'combo-word', main);
+      const pips = el('div', 'combo-pips', this.comboBadge);
+      this.comboPips = [0, 1, 2].map(() => el('i', 'combo-pip', pips));
+      const timer = el('div', 'combo-timer', this.comboBadge);
+      this.comboFill = el('i', 'combo-fill', timer);
     },
 
     buildSidePanel() {
@@ -405,7 +418,8 @@
       el('div', 'menu-help', body).innerHTML =
         '<b>Управление · клавиатура и мышь</b><br>' +
         'A/D — движение, W — прыжок, S — быстрое падение<br>' +
-        'Мышь — прицел, ЛКМ — удар, ПКМ — выбранное умение<br>' +
+        'Мышь — прицел, ЛКМ — удар (комбо из 3), ПКМ — умение<br>' +
+        'Shift/K — рывок с неуязвимостью<br>' +
         'Колесо мыши — выбрать умение, 1–5 — применить напрямую<br>' +
         'E — взаимодействие, H — зелье, I — инвентарь<br>' +
         'T — таланты, Q — квесты, Y — теневые воины<br>' +
@@ -657,6 +671,7 @@
         };
         mk('attack-btn', 'УДАР', 'attack');
         mk('jump-btn', 'ПРЫЖОК', 'jump');
+        this.touchDodge = mk('dodge-btn', 'РЫВОК', 'dodge');
         mk('interact-btn', 'E', 'interact');
         mk('potion-btn-touch', 'H', 'potion');
       } else if (!on && this.touch) {
@@ -668,6 +683,7 @@
         Engine.Input.moveX = 0;
         if (this.touch.parentNode) this.touch.parentNode.removeChild(this.touch);
         this.touch = null;
+        this.touchDodge = null;
         Engine.Input.clear();
       }
       this.applyHandedness();
@@ -727,6 +743,27 @@
       const potions = game.inventory.count('hp-potion-large') + game.inventory.count('hp-potion-medium') + game.inventory.count('hp-potion-small');
       this.potionCount.textContent = String(potions);
       this.potionBtn.classList.toggle('no-mp', potions === 0);
+
+      // Комбо и рывок
+      const comboStep = p.dead ? 0 : (p.comboStep || 0);
+      if (comboStep > 0 && p.comboTimer > 0) {
+        this.comboBadge.style.display = '';
+        this.comboBadge.className = 'combo-badge' + (comboStep >= 3 ? ' finisher' : '');
+        this.comboCount.textContent = '×' + comboStep;
+        this.comboWord.textContent = comboStep >= 3 ? 'ФИНИШЕР' : 'КОМБО';
+        this.comboPips.forEach((pip, i) => {
+          pip.className = 'combo-pip' + (i < comboStep ? ' on' : '');
+        });
+        const ratio = Math.max(0, Math.min(1, p.comboTimer / (p.comboWindow || 0.9)));
+        this.comboFill.style.width = (ratio * 100).toFixed(0) + '%';
+      } else {
+        this.comboBadge.style.display = 'none';
+      }
+      if (this.touchDodge) {
+        const dodgeCd = p.dodgeCd || 0;
+        this.touchDodge.textContent = dodgeCd > 0.05 ? dodgeCd.toFixed(1) : 'РЫВОК';
+        this.touchDodge.classList.toggle('cooling', dodgeCd > 0.05);
+      }
 
       // Босс
       const boss = game.boss;

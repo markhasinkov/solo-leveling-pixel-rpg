@@ -219,8 +219,14 @@
       this.jumpsUsed = 0;
       this.dashTimer = 0;
       this.dashVX = 0;
+      this.dashColor = '#9a6cff';
       this.afterimageTimer = 0;
       this.lowHpPulse = 0;
+      this.dodgeCd = 0;
+      this.dodgeInvuln = 0;
+      this.comboStep = 0;
+      this.comboTimer = 0;
+      this.comboWindow = 0.9;
     }
 
     syncStats(stats, heal) {
@@ -241,17 +247,55 @@
       }
     }
 
-    startDash(dir, distance, duration) {
+    startDash(dir, distance, duration, opts) {
+      opts = opts || {};
       this.face = dir;
       this.dashTimer = duration || 0.16;
       this.dashVX = (distance || 210) / this.dashTimer * dir;
-      this.invulnTimer = Math.max(this.invulnTimer, this.dashTimer + 0.08);
+      this.dashColor = opts.color || '#9a6cff';
+      this.invulnTimer = Math.max(this.invulnTimer, opts.invuln || (this.dashTimer + 0.08));
       this.afterimageTimer = 0;
+    }
+
+    tryDodge() {
+      if (this.dead || this.stunTimer > 0 || this.dodgeCd > 0 || this.dashTimer > 0) return false;
+      const axis = Engine.Input.axisX();
+      const dir = axis !== 0 ? (axis > 0 ? 1 : -1) : this.face;
+      this.face = dir;
+      this.startDash(dir, 230, 0.18, { invuln: 0.36, color: '#7ad7ff' });
+      this.dodgeCd = 1.15;
+      this.dodgeInvuln = 0.36;
+      this.attackAnimTimer = 0;
+      const cx = this.x + this.w / 2;
+      const cy = this.y + this.h * 0.45;
+      Effects.ring({ x: cx, y: cy, r0: 7, maxR: 58, life: 0.28, color: '#7ad7ff', width: 3 });
+      Effects.spawnParticles(cx, cy + 14, '#7ad7ff', 7, { speed: 110, life: 0.3, size: 2, glow: true });
+      AudioFX.play('dash');
+      if (window.TG) window.TG.haptic('light');
+      return true;
+    }
+
+    hurt(dmg, opts) {
+      const real = super.hurt(dmg, opts);
+      if (real > 0) {
+        this.comboStep = 0;
+        this.comboTimer = 0;
+      }
+      return real;
     }
 
     update(dt, level, game) {
       this.tickTimers(dt);
       this.lowHpPulse += dt;
+      if (this.dodgeCd > 0) this.dodgeCd = Math.max(0, this.dodgeCd - dt);
+      if (this.dodgeInvuln > 0) this.dodgeInvuln = Math.max(0, this.dodgeInvuln - dt);
+      if (this.comboTimer > 0) {
+        this.comboTimer -= dt;
+        if (this.comboTimer <= 0) {
+          this.comboTimer = 0;
+          this.comboStep = 0;
+        }
+      }
 
       if (this.dead) {
         this.physics(dt, level);
@@ -279,6 +323,8 @@
         this.face = mw.x >= this.x + this.w / 2 ? 1 : -1;
       }
 
+      if (Engine.Input.actionHit('dodge')) this.tryDodge();
+
       if (this.dashTimer > 0) {
         this.dashTimer -= dt;
         this.vx = this.dashVX;
@@ -287,7 +333,7 @@
           this.afterimageTimer = 0.035;
           Effects.afterimage({
             sheet: this.sheet, col: this.animFrame, row: ROW[this.animState] || 0,
-            x: this.getDrawX(), y: this.getDrawY(), w: this.drawW, h: this.drawH, face: this.face, life: 0.22, color: '#9a6cff'
+            x: this.getDrawX(), y: this.getDrawY(), w: this.drawW, h: this.drawH, face: this.face, life: 0.22, color: this.dashColor
           });
         }
       } else {
@@ -335,7 +381,7 @@
         }
       }
 
-      if (Engine.Input.action('attack') && this.attackTimer <= 0) {
+      if (Engine.Input.action('attack') && this.attackTimer <= 0 && this.dashTimer <= 0) {
         game.playerAttack(this);
       }
       if (this.attackTimer > 0) this.attackTimer -= dt;

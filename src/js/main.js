@@ -932,6 +932,9 @@
       UI.toast('Совет', 'Колесо мыши выбирает умение. Ищите тайники у стен, решайте загадки — награды выше.', {
         color: '#e8c76a', duration: 6500
       });
+      UI.toast('Бой', 'Shift или K — рывок с неуязвимостью. Три удара подряд — комбо с финишером.', {
+        color: '#7ad7ff', duration: 7000
+      });
       this.settings.seenTutorial = true;
       this.persist();
     },
@@ -1178,7 +1181,25 @@
     hurtPlayer(amount, opts) {
       opts = opts || {};
       if (!this.player || this.player.dead || this.state !== 'play') return 0;
+      const source = opts.source || '';
+      const dodgeable = source === 'melee' || source === 'projectile' || source.indexOf('boss') === 0;
+      const dodging = dodgeable && this.player.invulnTimer > 0 && this.player.dodgeInvuln > 0;
       const real = this.player.hurt(amount, opts);
+      if (real === 0 && dodging) {
+        const mpBefore = this.player.mp;
+        this.player.dodgeInvuln = 0;
+        this.player.mp = Math.min(this.player.maxMp, this.player.mp + 4);
+        const gained = Math.round(this.player.mp - mpBefore);
+        const cx = this.player.x + this.player.w / 2;
+        const cy = this.player.y + this.player.h * 0.45;
+        window.Effects.text(cx, cy - 26, 'УКЛОНЕНИЕ', { color: '#7ad7ff', size: 12, life: 0.7 });
+        if (gained > 0) {
+          window.Effects.text(cx, cy - 42, '+' + gained + ' MP', { color: '#8ae6ff', size: 10, life: 0.55 });
+        }
+        window.Effects.ring({ x: cx, y: cy, r0: 10, maxR: 64, life: 0.3, color: '#7ad7ff', width: 3 });
+        AudioFX.play('dash');
+        if (window.TG) window.TG.haptic('light');
+      }
       if (real > 0) {
         window.Effects.damageText(this.player.x + this.player.w / 2, this.player.y - 10, real, { color: '#ff6a6a', size: 15 });
         window.Effects.spawnParticles(this.player.x + this.player.w / 2, this.player.y + this.player.h / 2, '#ff5a5a', 8, { speed: 150, life: 0.4 });

@@ -97,6 +97,7 @@
     jump: ['w', 'arrowup', ' '],
     down: ['s', 'arrowdown'],
     attack: ['j', 'x'],
+    dodge: ['shift', 'k'],
     interact: ['e'],
     skill1: ['1'], skill2: ['2'], skill3: ['3'], skill4: ['4'], skill5: ['5'],
     potion: ['h'],

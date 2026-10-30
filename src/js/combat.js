@@ -86,24 +86,57 @@
         const target = game.nearestMonster(160);
         if (target) p.face = (target.x + target.w / 2) > (p.x + p.w / 2) ? 1 : -1;
       }
-      const range = 54;
-      const rect = {
-        x: p.face > 0 ? p.x + p.w - 6 : p.x - range + 6,
+      if (p.comboTimer <= 0) p.comboStep = 0;
+      p.comboStep = (p.comboStep % 3) + 1;
+      p.comboTimer = p.comboWindow || 0.9;
+      const step = p.comboStep;
+      const combo = [
+        { mult: 1.0, range: 54, knockback: 120, color: '#cfe8ff', r: 58, width: 4, trauma: 0.1, stop: 0.035 },
+        { mult: 1.16, range: 60, knockback: 170, color: '#b8a4ff', r: 64, width: 5, trauma: 0.13, stop: 0.04 },
+        { mult: 1.58, range: 80, knockback: 280, color: '#ffd24a', r: 84, width: 7, trauma: 0.22, stop: 0.06 }
+      ][step - 1];
+      const finisher = step === 3;
+      const rect = finisher ? {
+        x: p.x + p.w / 2 - combo.range / 2,
         y: p.y + 2,
-        w: range,
+        w: combo.range,
+        h: p.h - 2
+      } : {
+        x: p.face > 0 ? p.x + p.w - 6 : p.x - combo.range + 6,
+        y: p.y + 2,
+        w: combo.range,
         h: p.h - 2
       };
-      const hits = this.hitMonstersInRect(game, rect, 1, {
-        source: 'basic', color: '#ffe6a0', knockback: 130
+      const hits = this.hitMonstersInRect(game, rect, combo.mult, {
+        source: 'basic', color: combo.color, knockback: combo.knockback
       });
+      const cx = p.x + p.w / 2;
+      const cy = p.y + p.h * 0.45;
       Effects.slash({
-        x: p.x + p.w / 2, y: p.y + p.h * 0.45,
-        r: 58, face: p.face, life: 0.17, color: '#cfe8ff', width: 4
+        x: cx, y: cy,
+        r: combo.r, face: p.face, life: finisher ? 0.22 : 0.17, color: combo.color, width: combo.width
       });
+      if (step === 2) {
+        Effects.slash({
+          x: cx, y: cy - 4, r: combo.r - 10, face: -p.face,
+          life: 0.15, color: '#e2d6ff', width: 2
+        });
+      }
+      if (finisher) {
+        Effects.slash({
+          x: cx, y: cy - 6, r: combo.r - 16, face: -p.face,
+          life: 0.24, color: '#fff0b8', width: 3
+        });
+        Effects.ring({ x: cx, y: cy, r0: 12, maxR: 92, life: 0.3, color: '#ffd24a', width: 3 });
+        Effects.text(cx, p.y - 18, 'ФИНИШЕР', { color: '#ffd24a', size: 12, life: 0.6 });
+        p.attackTimer *= 0.88;
+      } else if (step === 2) {
+        p.attackTimer *= 0.94;
+      }
       AudioFX.play('slash');
       if (hits > 0) {
-        Camera.addTrauma(0.1);
-        Engine.hitStop(0.035);
+        Camera.addTrauma(combo.trauma);
+        Engine.hitStop(combo.stop);
       }
     },
 

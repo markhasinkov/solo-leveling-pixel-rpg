@@ -134,7 +134,8 @@ for (const ch of chapters) {
 
   // DPS игрока: базовая атака + средний вклад умений (с учётом MP и КД ~70%)
   const crit = 1 + stats.critChance * (stats.critMult - 1);
-  const basicDmg = F.damage(stats.atk, bossStats.def, 1) * crit;
+  const comboAvg = (1 + 1.16 + 1.58) / 3;
+  const basicDmg = F.damage(stats.atk, bossStats.def, comboAvg) * crit;
   const basicDps = basicDmg / Math.max(0.18, 0.4 * (1 - stats.attackSpeedPct));
   const skills = [
     { mult: 1.7, cd: 4 }, { mult: 1.35, cd: 3 }, { mult: 1.2, cd: 7 },
