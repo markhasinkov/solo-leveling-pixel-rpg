@@ -230,6 +230,11 @@
       this.bossCastName.textContent = name || 'Атака';
       this._bossCastDuration = Math.max(0.3, windup || 0.8);
       this._bossCastEnd = (window.Effects ? window.Effects.time : 0) + this._bossCastDuration;
+      this._bossCastCues = this._bossCastDuration >= 0.8 ? [0.5, 0.82]
+        : this._bossCastDuration >= 0.55 ? [0.78] : [];
+      this._bossCastCueSounds = this._bossCastCues.map((_, i, all) =>
+        i === all.length - 1 ? 'bossTickFinal' : 'bossTick');
+      this._bossCastCueStep = 0;
       this.bossCastFill.style.width = '100%';
     },
 
@@ -237,6 +242,7 @@
       if (!this.bossCast) return;
       this.bossCast.style.display = 'none';
       this._bossCastEnd = 0;
+      this._bossCastCues = null;
     },
 
     buildSkillBar() {
@@ -822,6 +828,16 @@
         const duration = this._bossCastDuration || 1;
         const ratio = Math.max(0, Math.min(1, (this._bossCastEnd - time) / duration));
         this.bossCastFill.style.width = (ratio * 100).toFixed(0) + '%';
+        // Отсчёт идёт по Effects.time, поэтому тики замирают вместе с телеграфом.
+        if (this._bossCastCues) {
+          const elapsed = 1 - ratio;
+          while (this._bossCastCueStep < this._bossCastCues.length &&
+                 elapsed >= this._bossCastCues[this._bossCastCueStep]) {
+            const cue = this._bossCastCueSounds[this._bossCastCueStep];
+            if (window.AudioFX && cue) AudioFX.play(cue);
+            this._bossCastCueStep++;
+          }
+        }
         if (ratio <= 0) this.hideBossCast();
       }
 

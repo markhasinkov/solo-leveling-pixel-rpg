@@ -137,6 +137,27 @@
           this.tone({ freq: 70, end: 45, dur: 1.0, type: 'sawtooth', vol: 0.2 });
           this.noise({ dur: 0.8, vol: 0.12, freq: 180, filterType: 'lowpass' });
           break;
+        case 'bossWarnHeavy':
+          this.tone({ freq: 92, end: 60, dur: 0.3, type: 'sawtooth', vol: 0.14 });
+          this.tone({ freq: 184, end: 122, dur: 0.24, type: 'square', vol: 0.05, delay: 0.03 });
+          this.noise({ dur: 0.22, vol: 0.07, freq: 240, filterType: 'lowpass' });
+          break;
+        case 'bossWarnQuick':
+          this.tone({ freq: 700, end: 520, dur: 0.08, type: 'square', vol: 0.06 });
+          this.tone({ freq: 560, end: 400, dur: 0.11, type: 'triangle', vol: 0.09, delay: 0.07 });
+          break;
+        case 'bossWarnMagic':
+          this.tone({ freq: 500, end: 720, dur: 0.15, type: 'sine', vol: 0.09 });
+          this.tone({ freq: 780, end: 1040, dur: 0.13, type: 'triangle', vol: 0.06, delay: 0.08 });
+          this.noise({ dur: 0.16, vol: 0.03, freq: 2600, filterType: 'highpass' });
+          break;
+        case 'bossTick':
+          this.tone({ freq: 880, dur: 0.045, type: 'square', vol: 0.035 });
+          break;
+        case 'bossTickFinal':
+          this.tone({ freq: 1180, dur: 0.055, type: 'square', vol: 0.06 });
+          this.tone({ freq: 1560, dur: 0.05, type: 'triangle', vol: 0.04, delay: 0.045 });
+          break;
         case 'heal':
           this.tone({ freq: 440, end: 880, dur: 0.25, type: 'sine', vol: 0.1 });
           break;

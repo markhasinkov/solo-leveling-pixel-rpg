@@ -471,6 +471,58 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(sandbox.UI.bossCastType.textContent === 'ТЕЛЕПОРТ', 'плашка замаха показывает телепорт');
   sandbox.UI.hideBossCast();
   sandbox.Effects.reset();
+
+  // ---------- Звуковые сигналы замахов ----------
+  const toneCalls = [];
+  const noiseCalls = [];
+  const originalTone = sandbox.AudioFX.tone;
+  const originalNoise = sandbox.AudioFX.noise;
+  sandbox.AudioFX.tone = function (opts) { toneCalls.push(opts); };
+  sandbox.AudioFX.noise = function (opts) { noiseCalls.push(opts); };
+  for (const cue of ['bossWarnHeavy', 'bossWarnQuick', 'bossWarnMagic', 'bossTick', 'bossTickFinal']) {
+    const before = toneCalls.length + noiseCalls.length;
+    sandbox.AudioFX.play(cue);
+    assert(toneCalls.length + noiseCalls.length > before, 'звук «' + cue + '» синтезируется');
+  }
+  sandbox.AudioFX.tone = originalTone;
+  sandbox.AudioFX.noise = originalNoise;
+
+  sandbox.UI.showBossCast('Короткий замах', 0.4, '#ffffff', 'ЩИТ');
+  assert(sandbox.UI._bossCastCues.length === 0, 'короткий замах обходится без тиков');
+  sandbox.UI.showBossCast('Средний замах', 0.7, '#ffffff', 'ВЕЕР');
+  assert(sandbox.UI._bossCastCues.length === 1 &&
+    sandbox.UI._bossCastCueSounds[0] === 'bossTickFinal', 'средний замах получает только финальный тик');
+  sandbox.UI.hideBossCast();
+
+  const audioLog = [];
+  const originalPlay = sandbox.AudioFX.play;
+  sandbox.AudioFX.play = function (name) {
+    audioLog.push(name);
+    return originalPlay.call(this, name);
+  };
+  const slamAttack = game.bossesData['statue-of-god'].attacks.find((a) => a.type === 'slam');
+  readabilityBoss.executeAttack(slamAttack, game);
+  assert(audioLog.indexOf('bossWarnHeavy') >= 0, 'тяжёлый замах озвучен низким сигналом');
+  sandbox.UI.hideBossCast();
+  audioLog.length = 0;
+  const shieldAttack = game.bossesData.igris.attacks.find((a) => a.type === 'shield');
+  readabilityBoss.executeAttack(shieldAttack, game);
+  assert(audioLog.indexOf('bossWarnMagic') >= 0, 'магический замах озвучен переливом');
+  sandbox.UI.hideBossCast();
+  sandbox.Effects.reset();
+
+  game.boss.engaged = false;
+  sandbox.Dialogue.close();
+  game._pendingZoneStory = null;
+  sandbox.UI.showBossCast('Проверка отсчёта', 1.0, '#ff6a5a', 'УДАР');
+  advance(650);
+  assert(audioLog.indexOf('bossTick') >= 0, 'замах даёт тик обратного отсчёта');
+  assert(audioLog.indexOf('bossTickFinal') < 0, 'до удара остаётся больше одного тика');
+  advance(300);
+  assert(audioLog.indexOf('bossTickFinal') >= 0, 'перед ударом звучит финальный тик');
+  sandbox.UI.hideBossCast();
+  sandbox.AudioFX.play = originalPlay;
+  sandbox.Effects.reset();
   for (const m of game.monsters) {
     if (m.summoned) { m.dead = true; m.deathTimer = 0; }
   }

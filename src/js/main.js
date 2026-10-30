@@ -2067,9 +2067,16 @@
         zone: 'ЗОНА', summon: 'ПРИЗЫВ', dash: 'РЫВОК', shield: 'ЩИТ',
         heal: 'ЛЕЧЕНИЕ', teleport: 'ТЕЛЕПОРТ'
       };
+      const cues = {
+        slam: 'bossWarnHeavy', beam: 'bossWarnHeavy', nova: 'bossWarnHeavy', rain: 'bossWarnHeavy',
+        fan: 'bossWarnQuick', dash: 'bossWarnQuick',
+        zone: 'bossWarnMagic', summon: 'bossWarnMagic', shield: 'bossWarnMagic',
+        heal: 'bossWarnMagic', teleport: 'bossWarnMagic'
+      };
       if (window.UI && UI.showBossCast) {
         UI.showBossCast(atk.name, windup, atk.color, labels[atk.type] || 'АТАКА');
       }
+      if (window.AudioFX) AudioFX.play(cues[atk.type] || 'bossWarnQuick');
     },
 
     onBossIntro(boss) {
