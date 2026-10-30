@@ -16,11 +16,11 @@ CHARACTERS = [
     'lee-joo-hee', 'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul',
     'choi-jong-in', 'min-byung-gu', 'park-hee-jin', 'han-song-yi',
     'sung-jin-ah', 'sung-il-hwan', 'esil-radiru',
-    'ashborn', 'architect', 'antares', 'beru', 'hokhan',
+    'ashborn', 'architect', 'antares', 'beru', 'sillad',
     'baran', 'igris', 'baruka', 'statue-of-god', 'kargalgan', 'goblin', 'orc',
     'knight-ant', 'ice-bear', 'demon-knight', 'hellhound',
     'goblin-shaman', 'cave-spider', 'orc-berserker', 'ice-elf-ranger', 'frost-wolf',
-    'giant-centipede', 'kasaka', 'measurement-device',
+    'giant-centipede', 'kasaka', 'measurement-device', 'rakan', 'kerehsha', 'ruler',
 ]
 TILES = ['tile_floor', 'tile_wall', 'tile_door', 'tile_stairs', 'tile_portal']
 BGS = ['bg_double-dungeon', 'bg_e-rank-dungeon', 'bg_hospital', 'bg_red-gate',
@@ -33,7 +33,7 @@ ARENAS = ['arena_cartenon', 'arena_baruka', 'arena_igris', 'arena_beru', 'arena_
 CUTINS = ['cutin_jinwoo', 'cutin_statue', 'cutin_baruka', 'cutin_igris', 'cutin_beru', 'cutin_antares',
           'cutin_giant_centipede', 'cutin_kasaka', 'cutin_kargalgan',
           'cutin_measurement_device', 'cutin_shadow_duelist', 'cutin_ashborn',
-          'cutin_war_herald', 'cutin_hokhan', 'cutin_baran', 'cutin_cha_hae_in', 'cutin_architect']
+          'cutin_war_herald', 'cutin_sillad', 'cutin_rakan', 'cutin_kerehsha', 'cutin_baran', 'cutin_cha_hae_in', 'cutin_architect']
 
 EXPECTED = {c + '.png': (64, 64) for c in CHARACTERS}
 EXPECTED.update({t + '.png': (16, 16) for t in TILES})

@@ -835,7 +835,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     8: ['Магический измеритель', 'measurement-device', 'measurement-device'],
     10: ['Ча Хэ-Ин', 'cha-hae-in', 'cha-hae-in'],
     11: ['Архитектор', 'architect', 'architect'],
-    12: ['Хокхан, Монарх Холода', 'baruka', 'hokhan']
+    12: ['Силлад, Монарх Холода', 'sillad', 'sillad']
   };
   for (const cid of Object.keys(bossIdentities)) {
     const row = chapterReport.find((r) => r.id === Number(cid));
@@ -1149,6 +1149,27 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.world.scenes[0].triggered === true, 'сцена не повторяется после перезагрузки главы');
 
+  // ---------- Война Монархов: последовательность трёх боссов ----------
+  game.startChapter(11, { replay: true });
+  advance(100);
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  const warStages = [];
+  for (let stage = 0; stage < 3; stage++) {
+    assert(game.boss && !game.boss.dead, 'стадия Войны Монархов ' + (stage + 1) + ' существует');
+    warStages.push({ name: game.boss.name, cutin: game.boss.cutinPath });
+    game.player.invulnTimer = 999;
+    game.player.hp = game.player.maxHp = 999999;
+    game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+    game.damageMonster(game.boss, 99999999, { source: 'basic' });
+    advance(180);
+    while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  }
+  assert(warStages.map((s) => s.name).join('|') === 'Силлад, Монарх Холода|Ракан, Монарх Звериных Клыков|Керехша, Монарх Чумы',
+    'Война Монархов идёт через Силлада, Ракана и Керехшу');
+  assert(warStages[1].cutin.indexOf('cutin_rakan') >= 0 && warStages[2].cutin.indexOf('cutin_kerehsha') >= 0,
+    'у стадий Войны Монархов свои cut-in');
+  assert(sandbox.SaveSystem && game.chapter.id === 12, 'после последовательности боссов глава остаётся двенадцатой');
+
   // ---------- Полный прогон кампании 1–13 ----------
   game.resetProgress();
   advance(100);
@@ -1161,8 +1182,10 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     game.player.invulnTimer = 999;
     game.monsters.filter((m) => !m.isBoss && !m.dead)
       .forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
-    if (game.boss && !game.boss.dead) {
+    let bossGuard = 0;
+    while (game.boss && !game.boss.dead && bossGuard++ < 6) {
       game.damageMonster(game.boss, 999999, { source: 'basic' });
+      advance(120);
     }
     advance(1800);
     let guard = 0;

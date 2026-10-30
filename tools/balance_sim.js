@@ -25,7 +25,7 @@ function isEnemy(id, c, chapter) {
   if (id === 'igris') return chapter === 4;
   if (id === 'baran') return chapter === 6;
   if (id === 'beru') return chapter === 9;
-  if (id === 'hokhan') return chapter === 12;
+  if (id === 'sillad') return chapter === 12;
   if (id === 'ashborn') return false;
   if (['antares', 'baruka', 'statue-of-god', 'kargalgan'].includes(id)) return true;
   const role = (c.role || '').toLowerCase();
@@ -128,9 +128,28 @@ for (const ch of chapters) {
     if (c && isEnemy(ref, c, cid)) enemies.push(ref);
   });
   (lv.extra || []).forEach((ex) => { for (let i = 0; i < (ex.count || 1); i++) enemies.push(ex.id); });
+  const seq = Array.isArray(lv.bossSequence) && lv.bossSequence.length ? lv.bossSequence : null;
   const customBoss = lv.boss && lv.boss.bossData ? lv.boss : null;
-  const boss = customBoss ? null : bossId(enemies.map((id) => ({ id, c: byId[id] })), cid);
-  const bossStats = scaledBoss(boss, cid, lv);
+  const boss = customBoss || seq ? null : bossId(enemies.map((id) => ({ id, c: byId[id] })), cid);
+  let bossStats;
+  if (seq) {
+    const parts = seq.map((cfg) => {
+      const bd = bosses[cfg.bossData] || {};
+      return {
+        hp: cfg.hp || bd.hpBase || 0,
+        atk: cfg.atk || bd.atkBase || 0,
+        def: cfg.def || bd.defBase || 0
+      };
+    });
+    bossStats = {
+      hp: parts.reduce((sum, p) => sum + p.hp, 0),
+      atk: Math.max.apply(null, parts.map((p) => p.atk)),
+      def: Math.max.apply(null, parts.map((p) => p.def)),
+      name: 'Три Монарха'
+    };
+  } else {
+    bossStats = scaledBoss(boss, cid, lv);
+  }
 
   // Игрок к началу главы
   const ranks = allocateTalents(talentPoints);

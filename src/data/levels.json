@@ -4861,8 +4861,8 @@
     "zones": [
       {
         "id": "camp",
-        "name": "Лагерь Ассоциации",
-        "subtitle": "Последний рубеж",
+        "name": "Сеул: штаб Ассоциации",
+        "subtitle": "Гражданские эвакуированы, врата нестабильны",
         "kind": "camp",
         "x": 0,
         "w": 1700,
@@ -4877,14 +4877,14 @@
         "story": [
           {
             "speaker": "go-gun-hee",
-            "text": "Я сдержу их здесь. Защити будущее охотников."
+            "text": "Силлад уже здесь. Я задержу его — защити Сеул."
           }
         ]
       },
       {
         "id": "battlefield",
-        "name": "Поле битвы",
-        "subtitle": "Небо расколото",
+        "name": "Площадь павших врат",
+        "subtitle": "Небо расколото над столицей",
         "kind": "battlefield",
         "x": 1700,
         "w": 2100,
@@ -4905,8 +4905,8 @@
       },
       {
         "id": "gate",
-        "name": "Врата между мирами",
-        "subtitle": "Печати держат реальность",
+        "name": "Небесный разлом",
+        "subtitle": "Правители держат печати",
         "kind": "gate",
         "x": 3800,
         "w": 2000,
@@ -4920,15 +4920,15 @@
         ],
         "story": [
           {
-            "speaker": "beru",
-            "text": "Господин! Беру и армия теней готовы! Разорвём Монархов на части!"
+            "speaker": "ruler",
+            "text": "Правители откроют путь. Дальше — только ты и Монархи."
           }
         ]
       },
       {
         "id": "throne",
         "name": "Трон Монархов",
-        "subtitle": "Хокхан, Монарх Холода",
+        "subtitle": "Силлад, Ракан, Керехша",
         "kind": "arena",
         "x": 5800,
         "w": 2400,
@@ -5057,6 +5057,23 @@
     ],
     "npcs": [
       {
+        "id": "go-gun-hee",
+        "x": 1180,
+        "lines": [
+          {
+            "speaker": "go-gun-hee",
+            "text": "Сон Джин-Ву... Силлад, Монарх Холода, уже прорвался к Ассоциации."
+          },
+          {
+            "speaker": "go-gun-hee",
+            "text": "Я сдержу его здесь. Защити Сеул и будущее охотников."
+          }
+        ],
+        "repeat": [
+          "Я ещё держусь. Иди."
+        ]
+      },
+      {
         "id": "ashborn",
         "x": 1880,
         "lines": [
@@ -5088,6 +5105,23 @@
         ],
         "repeat": [
           "Ни шагу назад, солдаты!"
+        ]
+      },
+      {
+        "id": "ruler",
+        "x": 4200,
+        "lines": [
+          {
+            "speaker": "ruler",
+            "text": "Правители не забудут, что ты сделал для этого мира."
+          },
+          {
+            "speaker": "ruler",
+            "text": "Мы держим разлом. Твоё дело — Монархи."
+          }
+        ],
+        "repeat": [
+          "Путь открыт. Не теряй время."
         ]
       },
       {
@@ -5168,9 +5202,9 @@
       },
       {
         "x": 5050,
-        "title": "Сломанный клинок",
-        "text": "На клинке выбито имя охотника. Тень рядом с ним повторяет его движения.",
-        "kind": "corpse",
+        "title": "Слово Правителя",
+        "text": "«Мы не можем забрать вашу войну. Но можем дать вам шанс».",
+        "kind": "tablet",
         "xp": 34
       },
       {
@@ -5271,23 +5305,55 @@
       }
     ],
     "boss": {
-      "name": "Хокхан, Монарх Холода",
-      "animId": "baruka",
+      "name": "Силлад, Монарх Холода",
+      "animId": "sillad",
       "size": 118,
-      "bossData": "hokhan"
+      "bossData": "sillad"
     },
+    "bossSequence": [
+      {
+        "name": "Силлад, Монарх Холода",
+        "animId": "sillad",
+        "size": 118,
+        "bossData": "sillad",
+        "hp": 7000,
+        "atk": 430,
+        "def": 170,
+        "cutin": "assets/sprites/cutins/cutin_sillad.jpg"
+      },
+      {
+        "name": "Ракан, Монарх Звериных Клыков",
+        "animId": "rakan",
+        "size": 126,
+        "bossData": "rakan",
+        "hp": 8500,
+        "atk": 460,
+        "def": 180,
+        "cutin": "assets/sprites/cutins/cutin_rakan.jpg"
+      },
+      {
+        "name": "Керехша, Монарх Чумы",
+        "animId": "kerehsha",
+        "size": 120,
+        "bossData": "kerehsha",
+        "hp": 9000,
+        "atk": 480,
+        "def": 190,
+        "cutin": "assets/sprites/cutins/cutin_kerehsha.jpg"
+      }
+    ],
     "arena": {
       "bg": "assets/sprites/arenas/arena_war_monarchs.jpg",
       "name": "Трон Монархов",
       "x": 6450
     },
-    "cutin": "assets/sprites/cutins/cutin_hokhan.jpg",
+    "cutin": "assets/sprites/cutins/cutin_sillad.jpg",
     "scenes": [
       {
         "id": "ch12-sky",
         "x": 2520,
         "title": "Небо расколото",
-        "subtitle": "Поле битвы",
+        "subtitle": "Площадь павших врат",
         "lines": [
           {
             "speaker": "ashborn",
@@ -5305,13 +5371,34 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
+        "id": "ch12-rulers",
+        "x": 4300,
+        "title": "Правители вступают",
+        "subtitle": "Небесный разлом",
+        "lines": [
+          {
+            "speaker": "ruler",
+            "text": "Мы не можем сражаться вместо тебя. Но разлом будет открыт."
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Этого достаточно. Остальное сделают тени."
+          },
+          {
+            "speaker": "ruler",
+            "text": "Тогда иди. Силлад уже ждёт."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
+      },
+      {
         "id": "ch12-herald",
         "x": 6300,
-        "title": "Монарх Холода",
+        "title": "Три Монарха",
         "subtitle": "Трон Монархов",
         "lines": [
           {
-            "speaker": "hokhan",
+            "speaker": "sillad",
             "text": "Ты пришёл на войну, мальчик. Но холод не спрашивает разрешения."
           },
           {
@@ -5319,11 +5406,15 @@
             "text": "Тогда я отвечу тебе тем, что не замерзает. Тенями."
           },
           {
-            "speaker": "hokhan",
-            "text": "Снежный народ видел, как падали Монархи. Мы не отступим."
+            "speaker": "rakan",
+            "text": "Силлад, не трать время. Я сам разорву его."
+          },
+          {
+            "speaker": "kerehsha",
+            "text": "Оставь его мне. Его плоть станет моим ульем."
           }
         ],
-        "cutin": "assets/sprites/cutins/cutin_hokhan.jpg"
+        "cutin": "assets/sprites/cutins/cutin_sillad.jpg"
       }
     ]
   },

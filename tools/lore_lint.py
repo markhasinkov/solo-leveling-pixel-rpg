@@ -120,8 +120,12 @@ if 'Тень Ахджин' in json.dumps(ch10, ensure_ascii=False):
     failures.append('глава 10: осталась Тень Ахджин')
 if any((npc or {}).get('id') == 'architect' for npc in (levels.get('1', {}).get('npcs') or [])):
     failures.append('глава 1: Архитектор не должен быть NPC')
-if 'Хокхан' not in json.dumps(ch12, ensure_ascii=False):
-    failures.append('глава 12: потерян Хокхан, Монарх Холода')
+if 'Силлад' not in json.dumps(ch12, ensure_ascii=False) or 'Ракан' not in json.dumps(ch12, ensure_ascii=False) or 'Керехша' not in json.dumps(ch12, ensure_ascii=False):
+    failures.append('глава 12: потеряны Силлад, Ракан или Керехша')
+if 'hokhan' in bosses:
+    failures.append('bosses.json: остался неканонический Хокхан')
+if not isinstance((levels.get('12', {}) or {}).get('bossSequence'), list) or len(levels['12']['bossSequence']) != 3:
+    failures.append('глава 12: нужна последовательность трёх Монархов')
 if 'куб времени' in json.dumps(ch13, ensure_ascii=False).lower():
     failures.append('глава 13: неканонический «куб времени»')
 

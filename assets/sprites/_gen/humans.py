@@ -801,6 +801,11 @@ HUMANS = {
         hair='#f0c8d8', skin='#f0c8b0', eye='#c84a6a', top='#5a1a2a', dark='#2a0a12',
         legs='#3a0e18', boots='#1a060c', accent='#ff5a8a', metal='#d8b45a',
         weapon=None, outfit='robe', hairStyle='long'),
+    'ruler': dict(
+        hair='#f4f0d8', skin='#f0d8b8', eye='#fff0a0', top='#e8e0c8', dark='#8a7a52',
+        legs='#d8d0b8', boots='#b8a878', accent='#ffd24a', metal='#f4e6b0',
+        weapon=None, outfit='robe', hairStyle='long', cape='#f0ead8',
+        glowEye='#fff0a0', aura='#ffe8a0', special='ruler'),
 }
 
 

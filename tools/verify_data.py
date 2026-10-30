@@ -352,6 +352,16 @@ for cid in chapter_ids:
         check(60 <= int(custom_boss.get("size", 0)) <= 180, "levels.%s: размер босса" % cid)
         check(custom_boss.get("bossData") in bosses,
               "levels.%s: неизвестный bossData %r" % (cid, custom_boss.get("bossData")))
+    sequence = lv.get("bossSequence")
+    if sequence is not None:
+        check(isinstance(sequence, list) and len(sequence) >= 2,
+              "levels.%s: bossSequence должна содержать минимум двух боссов" % cid)
+        for stage, cfg in enumerate(sequence if isinstance(sequence, list) else []):
+            check(bool(cfg.get("name")), "levels.%s: у стадии босса %d нет имени" % (cid, stage))
+            check(cfg.get("bossData") in bosses,
+                  "levels.%s: неизвестный bossData стадии %r" % (cid, cfg.get("bossData")))
+            check(exists(cfg.get("cutin", "")),
+                  "levels.%s: нет cut-in стадии %r" % (cid, cfg.get("cutin")))
     scene_ids = set()
     for sc in lv.get("scenes", []):
         sid = sc.get("id")

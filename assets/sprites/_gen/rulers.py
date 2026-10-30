@@ -405,11 +405,179 @@ def baran():
     return r
 
 
+
+def rakan():
+    """Ракан, Король Зверей и Монарх Звериных Клыков."""
+    skin, skin_d, skin_l = hx('#b87a4a'), hx('#6a3e24'), hx('#e0a66a')
+    fur, fur_d = hx('#3a241c'), hx('#1a0e0a')
+    gold, gold_l = hx('#d8b45a'), hx('#fff0b0')
+    bone, bone_d = hx('#e8e0c0'), hx('#9a8a68')
+    eye, eye_l = hx('#ffd23c'), hx('#fff2a0')
+    r = png.blank(64, 64)
+
+    # хвост и задняя лапа
+    poly(r, [(18, 48), (8, 55), (11, 60), (20, 54)], fur_d)
+    line(r, 18, 50, 8, 58, fur)
+    rect(r, 22, 48, 31, 61, fur_d)
+    rect(r, 23, 48, 30, 59, skin_d)
+    rect(r, 34, 48, 43, 61, fur_d)
+    rect(r, 35, 48, 42, 59, skin_d)
+    rect(r, 20, 60, 32, 63, fur)
+    rect(r, 33, 60, 45, 63, fur)
+    for x in (23, 28, 36, 41):
+        line(r, x, 61, x + (-2 if x < 32 else 2), 63, bone)
+
+    # меховая накидка и торс
+    poly(r, [(17, 25), (47, 25), (49, 39), (44, 50), (20, 50), (15, 39)], fur)
+    poly(r, [(19, 26), (31, 26), (29, 49), (18, 39)], fur_d)
+    poly(r, [(33, 26), (46, 26), (47, 40), (33, 49)], skin_d)
+    poly(r, [(22, 29), (32, 28), (31, 40), (22, 42)], skin)
+    poly(r, [(34, 28), (44, 29), (43, 41), (34, 40)], skin_l)
+    for x in (25, 31, 37, 43):
+        line(r, x, 31, x + 1, 43, skin_d)
+    # пояс и набедренная кость
+    rect(r, 20, 42, 44, 47, fur_d)
+    rect(r, 26, 43, 38, 46, gold)
+    poly(r, [(30, 44), (34, 44), (33, 50), (31, 50)], bone)
+
+    # руки с когтями
+    poly(r, [(16, 27), (9, 31), (7, 43), (14, 48), (18, 36)], skin_d)
+    poly(r, [(48, 27), (55, 31), (57, 43), (50, 48), (46, 36)], skin_d)
+    rect(r, 8, 42, 16, 48, skin)
+    rect(r, 48, 42, 56, 48, skin)
+    for i in range(3):
+        line(r, 9 + i * 3, 47, 6 + i * 3, 52, bone)
+        line(r, 55 - i * 3, 47, 58 - i * 3, 52, bone)
+    # наплечник-череп
+    ellipse(r, 18, 28, 10, 7, bone_d)
+    ellipse(r, 18, 28, 8, 5, bone)
+    rect(r, 14, 26, 16, 28, hx('#1a0e08'))
+    rect(r, 20, 26, 22, 28, hx('#1a0e08'))
+    line(r, 18, 32, 18, 35, bone_d)
+
+    # голова зверя
+    ellipse(r, 32, 16, 13, 11, fur)
+    poly(r, [(21, 15), (26, 6), (38, 6), (44, 14), (42, 23), (32, 28), (22, 23)], skin)
+    poly(r, [(24, 15), (27, 9), (37, 9), (41, 15), (39, 21), (32, 24), (25, 21)], skin_l)
+    # уши/рога
+    poly(r, [(22, 10), (13, 2), (18, 14), (23, 16)], fur_d)
+    poly(r, [(42, 10), (51, 2), (46, 14), (41, 16)], fur_d)
+    line(r, 18, 8, 14, 1, gold)
+    line(r, 46, 8, 50, 1, gold)
+    # глаза и морда
+    rect(r, 25, 13, 30, 17, eye)
+    rect(r, 35, 13, 40, 17, eye)
+    put(r, 27, 13, eye_l); put(r, 37, 13, eye_l)
+    line(r, 24, 11, 30, 10, fur_d); line(r, 35, 10, 41, 11, fur_d)
+    poly(r, [(26, 18), (38, 18), (36, 24), (32, 27), (28, 24)], skin_d)
+    rect(r, 31, 19, 34, 22, hx('#2a140c'))
+    # клыки
+    line(r, 26, 22, 24, 29, bone)
+    line(r, 38, 22, 40, 29, bone)
+    put(r, 24, 29, bone)
+    put(r, 40, 29, bone)
+    # грива и золотые кольца
+    for x in (18, 22, 42, 46):
+        line(r, x, 15, x - 2, 28, fur_d)
+    for x in (21, 43):
+        put(r, x, 19, gold_l)
+    # кровавые искры
+    for (x, y) in ((12, 35), (53, 34), (20, 52), (46, 53)):
+        put(r, x, y, hx('#ff7a3a'))
+    return r
+
+
+def kerehsha():
+    """Керехша, Королева Насекомых и Монарх Чумы."""
+    skin, skin_d, skin_l = hx('#d8c8b8'), hx('#8a7468'), hx('#f0e0d0')
+    chitin, chitin_l = hx('#1a241c'), hx('#3a5a3a')
+    green, green_l = hx('#5a8a3a'), hx('#b6ff6a')
+    gold, gold_l = hx('#d8b45a'), hx('#fff0b0')
+    eye, eye_l = hx('#ff3a4a'), hx('#ffd0d0')
+    wing = (90, 160, 90, 120)
+    wing_d = (40, 90, 50, 100)
+    r = png.blank(64, 64)
+
+    # четыре крыла
+    for side in (-1, 1):
+        base = 32 + side * 4
+        tip = 5 if side < 0 else 59
+        poly(r, [(base, 25), (tip, 5), (base + side * 9, 20), (base + side * 8, 34), (base, 33)], wing)
+        poly(r, [(base, 31), (tip + side * 2, 22), (base + side * 6, 38), (base + side * 2, 40)], wing_d)
+        for (x, y) in ((tip, 6), (base + side * 8, 22), (base + side * 5, 37)):
+            line(r, base, 28, x, y, green_l)
+    # рой
+    for (x, y) in ((8, 20), (56, 28), (14, 44), (52, 46), (26, 8), (40, 9)):
+        put(r, x, y, green)
+        put(r, x + 1, y + 1, green_l)
+
+    # нижняя часть — хитиновое платье
+    poly(r, [(20, 34), (44, 34), (48, 55), (43, 62), (32, 58), (21, 62), (16, 55)], chitin)
+    poly(r, [(21, 35), (31, 35), (28, 56), (18, 54)], chitin_l)
+    poly(r, [(33, 35), (43, 35), (46, 55), (33, 58)], hx('#243424'))
+    for x in (23, 28, 36, 41):
+        line(r, x, 38, x + (1 if x < 32 else -1), 57, green)
+    for x in (20, 25, 35, 40, 45):
+        put(r, x, 58, green_l)
+    # сегментированные ноги-лапы
+    for side in (-1, 1):
+        for i in range(2):
+            x0 = 32 + side * (10 + i * 4)
+            line(r, x0, 52, x0 + side * (8 + i * 2), 62, chitin)
+            put(r, x0 + side * (8 + i * 2), 62, green)
+
+    # торс и руки
+    poly(r, [(22, 26), (42, 26), (45, 35), (40, 39), (24, 39), (19, 35)], chitin)
+    poly(r, [(24, 27), (32, 27), (30, 37), (22, 35)], skin_d)
+    poly(r, [(33, 27), (41, 27), (43, 35), (33, 38)], skin)
+    poly(r, [(18, 27), (11, 31), (9, 42), (16, 46), (21, 35)], skin_d)
+    poly(r, [(46, 27), (53, 31), (55, 42), (48, 46), (43, 35)], skin_d)
+    rect(r, 10, 41, 17, 46, skin)
+    rect(r, 47, 41, 54, 46, skin)
+    for i in range(3):
+        line(r, 10 + i * 3, 45, 7 + i * 3, 51, chitin)
+        line(r, 54 - i * 3, 45, 57 - i * 3, 51, chitin)
+    # зелёная сфера чумы
+    ellipse(r, 12, 36, 6, 6, green)
+    ellipse(r, 12, 36, 4, 4, green_l)
+    put(r, 10, 34, hx('#ffffff'))
+
+    # голова
+    ellipse(r, 32, 15, 11, 10, skin_d)
+    ellipse(r, 32, 15, 9, 8, skin)
+    poly(r, [(22, 12), (26, 5), (38, 5), (43, 12), (41, 21), (32, 25), (23, 21)], skin)
+    # длинные белые волосы
+    for x in (20, 22, 42, 44):
+        line(r, x, 12, x + (-5 if x < 32 else 5), 32, hx('#e8e0d8'))
+    # корона из усиков
+    for (x, y, x2, y2) in ((26, 6, 20, 0), (32, 4, 32, 0), (38, 6, 44, 0)):
+        line(r, x, y, x2, y2, gold)
+        put(r, x2, y2, gold_l)
+    rect(r, 22, 8, 42, 10, gold)
+    for x in (25, 30, 35, 40):
+        put(r, x, 8, gold_l)
+    # глаза, улыбка, хитиновые скулы
+    rect(r, 25, 13, 30, 17, eye)
+    rect(r, 35, 13, 40, 17, eye)
+    put(r, 27, 13, eye_l); put(r, 37, 13, eye_l)
+    line(r, 29, 21, 35, 21, hx('#2a1414'))
+    put(r, 28, 20, chitin); put(r, 36, 20, chitin)
+    line(r, 24, 18, 22, 25, chitin_l)
+    line(r, 41, 18, 43, 25, chitin_l)
+    # чумные искры
+    for (x, y) in ((18, 20), (46, 22), (24, 52), (43, 54), (58, 36)):
+        put(r, x, y, green)
+        put(r, x, y + 1, green_l)
+    return r
+
+
 BOSSES2 = {
     'baran': baran,
     'ashborn': ashborn,
     'architect': architect,
     'statue-of-god': statue_of_god,
+    'rakan': rakan,
+    'kerehsha': kerehsha,
 }
 
 

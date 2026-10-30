@@ -385,10 +385,10 @@
     }
   },
   {
-    "id": "hokhan",
-    "name": "Хокхан, Монарх Холода",
+    "id": "sillad",
+    "name": "Силлад, Монарх Холода",
     "role": "Монарх Холода, Король Снежного народа",
-    "sprite": "assets/sprites/hokhan.png",
+    "sprite": "assets/sprites/sillad.png",
     "stats": {
       "hp": 1500,
       "atk": 210,
@@ -415,6 +415,39 @@
       "hp": 750,
       "atk": 100,
       "def": 50
+    }
+  },
+  {
+    "id": "rakan",
+    "name": "Ракан, Монарх Звериных Клыков",
+    "role": "Король Зверей, Монарх Звериных Клыков",
+    "sprite": "assets/sprites/rakan.png",
+    "stats": {
+      "hp": 1600,
+      "atk": 240,
+      "def": 120
+    }
+  },
+  {
+    "id": "kerehsha",
+    "name": "Керехша, Монарх Чумы",
+    "role": "Королева Насекомых, Монарх Чумы",
+    "sprite": "assets/sprites/kerehsha.png",
+    "stats": {
+      "hp": 1700,
+      "atk": 250,
+      "def": 115
+    }
+  },
+  {
+    "id": "ruler",
+    "name": "Правитель",
+    "role": "Посланник Правителей, древний враг Монархов",
+    "sprite": "assets/sprites/ruler.png",
+    "stats": {
+      "hp": 900,
+      "atk": 120,
+      "def": 80
     }
   }
 ]

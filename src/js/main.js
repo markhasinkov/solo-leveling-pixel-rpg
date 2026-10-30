@@ -112,6 +112,7 @@
   const BOSS_SIZE = {
     'statue-of-god': 108, 'kargalgan': 118, 'giant-centipede': 118, 'kasaka': 118, 'measurement-device': 112, 'baruka': 100, 'igris': 104,
     'baran': 124, 'beru': 112, 'ashborn': 108, 'antares': 140, 'architect': 110,
+    'sillad': 118, 'rakan': 126, 'kerehsha': 120,
     'guardian': 100
   };
   const THEME_ANIM = {
@@ -218,6 +219,9 @@
     hintPuzzle: null,
     _finishing: false,
     _chapterDlgShown: false,
+    _bossSequence: null,
+    _bossStage: 0,
+    _bossTransition: false,
     _newGame: false,
     _saveAccum: 0,
     _lastHint: '',
@@ -446,6 +450,9 @@
       this._shadowAvailable = false;
       this._shadowExtractionId = null;
       this._extractionStarted = false;
+      this._bossSequence = null;
+      this._bossStage = 0;
+      this._bossTransition = false;
       this._lastHint = '';
       this.selectedSkill = 0;
       if (window.Dialogue && window.Dialogue.active) window.Dialogue.close();
@@ -685,30 +692,45 @@
         this.monsters.push(boss);
         this.boss = boss;
       } else {
-        // Фолбэк-страж: главы без явного босса
-        const theme = levelData.theme || 'cave';
-        const custom = levelData.boss || {};
-        const bossData = (custom.bossData && (this.bossesData[custom.bossData] ||
-          FALLBACK_BOSSES[custom.bossData])) ||
-          this.bossesData.guardian || FALLBACK_BOSSES.guardian;
-        const size = Math.max(60, custom.size || BOSS_SIZE.guardian);
-        const hp = bossData.hpBase || 3500 + chapter * 1200;
-        const atk = bossData.atkBase || 58 + chapter * 20;
-        const def = bossData.defBase || 18 + chapter * 7;
-        const boss = new window.Boss(this.world.bossX, floor - size, {
-          w: size, h: size, hp, atk, def,
-          drawW: size, drawH: size,
-          name: custom.name || levelData.guardianName || bossData.title || 'Страж главы',
-          animId: custom.animId || THEME_ANIM[theme] || 'igris',
-          color: '#c34',
-          lootId: 'guardian',
-          statsBase: { hp, atk, def },
-          bossData
-        });
-        boss.maxHp = boss.hp;
-        this.monsters.push(boss);
-        this.boss = boss;
+        // Фолбэк-страж или последовательность боссов (Война Монархов).
+        const sequence = Array.isArray(levelData.bossSequence) ? levelData.bossSequence : null;
+        const custom = (sequence && sequence[0]) || levelData.boss || {};
+        this.spawnBossConfig(custom);
+        if (sequence && sequence.length) {
+          this._bossSequence = sequence.slice();
+          this._bossStage = 0;
+          this.boss.cutinPath = sequence[0].cutin || this.world.cutinPath;
+        }
       }
+    },
+
+    spawnBossConfig(cfg) {
+      cfg = cfg || {};
+      const floor = this.world.floorY;
+      const theme = (this.world.data && this.world.data.theme) || 'cave';
+      const bossData = (cfg.bossData && (this.bossesData[cfg.bossData] ||
+        FALLBACK_BOSSES[cfg.bossData])) ||
+        this.bossesData.guardian || FALLBACK_BOSSES.guardian;
+      const size = Math.max(60, cfg.size || BOSS_SIZE[cfg.animId] || BOSS_SIZE.guardian);
+      const hp = Math.round(cfg.hp || bossData.hpBase || 3500 + this.chapter.id * 1200);
+      const atk = Math.round(cfg.atk || bossData.atkBase || 58 + this.chapter.id * 20);
+      const def = Math.round(cfg.def || bossData.defBase || 18 + this.chapter.id * 7);
+      const boss = new window.Boss(this.world.bossX, floor - size, {
+        w: size, h: size, hp, atk, def,
+        drawW: size, drawH: size,
+        name: cfg.name || bossData.title || 'Страж главы',
+        animId: cfg.animId || THEME_ANIM[theme] || 'igris',
+        color: '#c34',
+        lootId: cfg.lootId || 'guardian',
+        statsBase: { hp, atk, def },
+        bossData
+      });
+      boss.maxHp = boss.hp;
+      boss.cutinPath = cfg.cutin || this.world.cutinPath;
+      boss.stageIndex = this._bossStage;
+      this.monsters.push(boss);
+      this.boss = boss;
+      return boss;
     },
 
     isEnemy(id, c, chapterId) {
@@ -1570,7 +1592,12 @@
       if (this.chapter && this.chapter.id === 9) {
         this.npcs = this.npcs.filter((n) => n.charId !== 'min-byung-gu');
       }
+      if (this.chapter && this.chapter.id === 12 && this._bossStage === 0) {
+        this.npcs = this.npcs.filter((n) => n.charId !== 'go-gun-hee');
+      }
       if (this.activeContract) this.resolveContractBossKill();
+      // Война Монархов: следующая стадия босса вместо завершения главы.
+      if (this.advanceBossSequence()) return;
       this.checkChapterClear();
     },
 
@@ -2089,11 +2116,27 @@
       if (window.AudioFX) AudioFX.play(cues[atk.type] || 'bossWarnQuick');
     },
 
+    advanceBossSequence() {
+      if (this.contractRun) return false;
+      if (!this._bossSequence || this._bossStage >= this._bossSequence.length - 1) return false;
+      this._bossStage++;
+      this._bossTransition = false;
+      const cfg = this._bossSequence[this._bossStage];
+      this.spawnBossConfig(cfg);
+      this.bossIntroShown = false;
+      this._bossDlgPlayed = true;
+      this.onBossIntro(this.boss);
+      UI.toast('Монарх пал', cfg.name + ' вступает в бой. Сеул ещё держится.', {
+        color: '#ffd24a', duration: 3600
+      });
+      return true;
+    },
+
     onBossIntro(boss) {
       if (this.bossIntroShown) return;
       this.bossIntroShown = true;
-      this.bossRun = { noHit: true, noPotion: true };
-      const cutin = this.world && this.world.cutinPath;
+      if (!this._bossSequence) this.bossRun = { noHit: true, noPotion: true };
+      const cutin = (boss && boss.cutinPath) || (this.world && this.world.cutinPath);
       if (cutin) {
         UI.showCutin({
           image: cutin,
