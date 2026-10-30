@@ -47,12 +47,26 @@ python serve.py
 
 ## Telegram Mini App
 
-1. Разместите проект на HTTPS (Telegram не принимает http/localhost):
-   `ngrok http 8000`, Cloudflare Tunnel или любой статический хостинг.
-2. В **@BotFather** создайте Mini App (`/newapp`) или укажите URL в настройках
-   бота/Mini App.
-3. Откройте приложение из Telegram. `telegram-web-app.js` уже подключён в
-   `index.html`.
+**Опубликовано:**
+
+- Игра: <https://markhasinkov.github.io/solo-leveling-pixel-rpg/> (GitHub Pages, HTTPS).
+- Бот: <https://t.me/sololevelingdemo_bot> — кнопка меню **«Играть»** открывает
+  Mini App.
+- Исходники: <https://github.com/markhasinkov/solo-leveling-pixel-rpg>.
+
+Настройка бота без хранения токена в репозитории:
+
+1. Скопируйте `.env.example` в `.env` и заполните `TELEGRAM_BOT_TOKEN`,
+   `GAME_URL` и `GAME_BUTTON_TEXT`.
+2. Запустите `python tools/telegram_setup.py`: скрипт вызывает `getMe`,
+   задаёт описание бота и настраивает `setChatMenuButton` с типом `web_app`,
+   затем проверяет результат через `getChatMenuButton`.
+3. `.env` уже в `.gitignore`; токен не попадает в git, GitHub Actions и клиент.
+   Для локальной проверки: `python serve.py` → <http://localhost:8000>.
+
+GitHub Pages включён из ветки `main`, корень репозитория. Файл `.nojekyll`
+отключает обработку Jekyll, поэтому статические пути и папки с `_` отдаются
+как есть.
 
 Что интегрировано:
 
@@ -473,6 +487,12 @@ DPS игрока, время убийства босса (TTK) и время в�
 | ![Штаб Ахджин](docs/qa/screens/90-hub-ahjin.png) | ![Лавка из хаба](docs/qa/screens/91-hub-shop.png) | ![Мобильный хаб](docs/qa/screens/92-mobile-hub-ahjin.png) |
 | ![Низ мобильного хаба](docs/qa/screens/93-mobile-hub-bottom.png) | ![Кнопки на мобильном](docs/qa/screens/94-mobile-side-buttons.png) | |
 
+Опубликованная сборка на GitHub Pages:
+
+| |
+|---|
+| ![GitHub Pages live](docs/qa/screens/95-github-pages-live.png) |
+
 Глава 6: новые враги, проклятые доспехи и тень Игриса:
 
 | | | |
@@ -512,4 +532,5 @@ DPS игрока, время убийства босса (TTK) и время в�
 - Сохранение v3 хранит прогресс, мир, квесты и теневую армию; старые сохранения
   v1/v2 мигрируют без потери уровня и предметов. Локальное сохранение привязано
   к origin браузера; в Telegram дополнительно работает облачное хранилище.
-- Для игры в Telegram требуется HTTPS-хостинг и Mini App, настроенный в BotFather.
+- Игра опубликована на GitHub Pages; Mini App открывается из бота
+  **@sololevelingdemo_bot** по кнопке «Играть».

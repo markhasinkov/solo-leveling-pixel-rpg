@@ -391,6 +391,11 @@ http://localhost:8000. Телефоны/Telegram — только по HTTPS.
 
 ## 12. Telegram Mini App (реальное устройство)
 
+- [ ] GitHub Pages отдаёт игру по HTTPS, `index.html`, JSON и ассеты — 200,
+      консоль без ошибок, мир и босс создаются.
+- [ ] `python tools/telegram_setup.py` подтверждает `getMe` и
+      `getChatMenuButton` с типом `web_app` и URL GitHub Pages.
+- [ ] `.env` и токен отсутствуют в `git ls-files` и в GitHub Actions.
 - [ ] Mini App открывается по HTTPS, кнопка «Меню» бота доступна.
 - [ ] Видны шапка/фон, нет обрезания HUD safe-area на iPhone с вырезом.
 - [ ] `ready/expand` вызваны; закрытие/свайпы ведут себя предсказуемо.
@@ -513,4 +518,5 @@ http://localhost:8000. Телефоны/Telegram — только по HTTPS.
 - `docs/qa/screens/92-mobile-hub-ahjin.png` — мобильный хаб в landscape.
 - `docs/qa/screens/93-mobile-hub-bottom.png` — прокрутка мобильного хаба до статистики.
 - `docs/qa/screens/94-mobile-side-buttons.png` — шесть боковых кнопок на мобильном.
+- `docs/qa/screens/95-github-pages-live.png` — опубликованная сборка GitHub Pages.
 - `docs/qa/sprite-sheet.png` — контактный лист всех 31 спрайта.

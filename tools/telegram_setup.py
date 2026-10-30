@@ -60,6 +60,8 @@ def describe_error(result):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     env = load_env(ROOT / ".env")
     token = env.get("TELEGRAM_BOT_TOKEN") or os.environ.get("TELEGRAM_BOT_TOKEN", "")
     game_url = env.get("GAME_URL") or os.environ.get("GAME_URL", "")
@@ -107,7 +109,7 @@ def main():
     if check.get("ok"):
         menu = check.get("result") or {}
         web = menu.get("web_app") or {}
-        print("Меню-кнопка: " + str(menu.get("type")) + " / " + str(menu.get("text")) + " → " + str(web.get("url")))
+        print("Меню-кнопка: " + str(menu.get("type")) + " / " + str(menu.get("text")) + " -> " + str(web.get("url")))
     else:
         print("Предупреждение getChatMenuButton: " + describe_error(check))
 
