@@ -729,6 +729,38 @@
         }
       ]
     },
+    "baran": {
+      "gold": [
+        340,
+        460
+      ],
+      "drops": [
+        {
+          "id": "demon-horn",
+          "chance": 1,
+          "qty": [
+            3,
+            5
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.9,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "demon-knight-blade",
+          "chance": 0.35,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
     "ashborn": {
       "gold": [
         450,

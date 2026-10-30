@@ -111,7 +111,8 @@
 
   const BOSS_SIZE = {
     'statue-of-god': 108, 'reed-boss': 104, 'baruka': 100, 'igris': 104,
-    'beru': 112, 'ashborn': 108, 'antares': 140, 'architect': 110, 'guardian': 100
+    'baran': 124, 'beru': 112, 'ashborn': 108, 'antares': 140, 'architect': 110,
+    'guardian': 100
   };
   const THEME_ANIM = {
     temple: 'statue-of-god', cave: 'orc', hospital: 'architect', ice: 'ice-bear',
@@ -617,7 +618,7 @@
       const roleLc = (e) => ((e.c.role || '') + '').toLowerCase();
       const isBossRole = (e) => /босс|монарх|король|вождь/.test(roleLc(e));
       let bossIdx = enemyEntries.findIndex(isBossRole);
-      if (bossIdx < 0) bossIdx = enemyEntries.findIndex((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
+      if (bossIdx < 0) bossIdx = enemyEntries.findIndex((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
 
       const encounters = Array.isArray(levelData.encounters) && levelData.encounters.length
         ? levelData.encounters : null;
@@ -714,12 +715,13 @@
         'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in',
         'min-byung-gu', 'architect'];
       if (HUMANS.includes(id)) return false;
-      if (id === 'igris') return chapterId === 6;
-      if (id === 'beru') return chapterId === 8;
-      if (id === 'ashborn') return chapterId === 10;
+      if (id === 'igris') return chapterId === 5;
+      if (id === 'baran') return chapterId === 7;
+      if (id === 'beru') return chapterId === 9;
+      if (id === 'ashborn') return chapterId === 11;
       if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
       const role = ((c && c.role) || '').toLowerCase();
-      return /монстр|босс|зверь|вождь|рыцарь кров/.test(role);
+      return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
     },
 
     spawnMinion(id, x, y, name, summoned) {
@@ -851,12 +853,6 @@
         });
         return;
       }
-      if (this.chapter && this.chapter.id === 6) {
-        UI.toast('Теневая армия', 'В демоническом замке тень не может сражаться против своего короля.', {
-          color: '#a06cff', duration: 3000
-        });
-        return;
-      }
       const idx = this.shadows.equipped.indexOf(id);
       if (idx >= 0) {
         this.shadows.equipped.splice(idx, 1);
@@ -880,15 +876,14 @@
     },
 
     shadowUnlockHint(id) {
-      if (id === 'igris') return 'Игрис ждёт в главе 6.';
-      if (!this.hasShadow('igris')) return 'Сначала извлеките Игриса в главе 6.';
+      if (id === 'igris') return 'Игрис ждёт в главе 5.';
+      if (!this.hasShadow('igris')) return 'Сначала извлеките Игриса в главе 5.';
       const def = window.ShadowArmy.def(id);
       return 'Повторно пройдите главу ' + def.chapter + ' и извлеките его тень.';
     },
 
     syncShadowAllies() {
       if (!this.player || !this.world) return;
-      if (this.chapter && this.chapter.id === 6) return;
       const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
       const active = this.shadows.equipped.slice(0, max);
       this.allies = this.allies.filter((a) => !a.shadowId || active.indexOf(a.shadowId) >= 0);
@@ -1718,6 +1713,7 @@
         'reed-boss': 'frost-blade',
         'baruka': 'frost-mail',
         'igris': 'demon-knight-blade',
+        'baran': 'demon-knight-blade',
         'beru': 'shadow-amulet',
         'ashborn': 'monarch-cloak',
         'antares': 'monarch-seal',

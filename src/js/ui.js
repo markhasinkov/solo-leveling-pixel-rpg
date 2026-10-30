@@ -1242,7 +1242,7 @@
 
       if (!Object.keys(g.shadows.owned).length) {
         const hint = el('div', 'shadow-empty-hint', body);
-        hint.textContent = 'Теневая армия ещё не пробуждена. Победите Игриса в главе 6 и извлеките его тень.';
+        hint.textContent = 'Теневая армия ещё не пробуждена. Победите Игриса в главе 5 и извлеките его тень.';
       }
 
       const grid = el('div', 'shadow-grid', body);
@@ -1306,7 +1306,7 @@
 
     hubUnlocked() {
       const g = this.game;
-      return !!g && (g.finished || g.unlocked >= 8 || g.chapterIndex >= 8);
+      return !!g && (g.finished || g.unlocked >= 9 || g.chapterIndex >= 9);
     },
 
     toggleHub() {
@@ -1339,9 +1339,10 @@
       const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
       const done = (type) => (window.Quests.data[type] || [])
         .filter((q) => ((window.Quests.stateOf(q.id) || {}).status === 'completed')).length;
-      const rank = g.finished || g.unlocked >= 10 ? 'S'
-        : g.unlocked >= 8 ? 'A' : g.unlocked >= 6 ? 'B'
-          : g.unlocked >= 4 ? 'C' : g.unlocked >= 2 ? 'D' : 'E';
+      const total = (type) => (window.Quests.data[type] || []).length;
+      const rank = g.finished || g.unlocked >= 11 ? 'S'
+        : g.unlocked >= 9 ? 'A' : g.unlocked >= 7 ? 'B'
+          : g.unlocked >= 5 ? 'C' : g.unlocked >= 3 ? 'D' : 'E';
 
       const hero = el('div', 'hub-hero', body);
       const heroBg = el('div', 'hub-hero-bg', hero);
@@ -1420,7 +1421,8 @@
       const ctitle = el('div', 'hub-sec-title', chead);
       ctitle.textContent = 'АРХИВ ГЛАВ';
       el('div', 'hub-sec-sub', chead).textContent =
-        'Основные ' + done('main') + '/12 · побочные ' + done('side') + '/28 · скрытые ' + done('hidden') + '/8';
+        'Основные ' + done('main') + '/' + total('main') + ' · побочные ' + done('side') + '/' +
+        total('side') + ' · скрытые ' + done('hidden') + '/' + total('hidden');
       const chapters = el('div', 'hub-chapters', contracts);
       g.chapters.forEach((ch, i) => {
         const unlocked = i <= g.unlocked;
@@ -1543,7 +1545,7 @@
         const unlocked = this.hubUnlocked();
         this.menuHub.textContent = unlocked
           ? 'Гильдия Ахджин · штаб и контракты'
-          : 'Гильдия Ахджин · откроется после главы 8';
+          : 'Гильдия Ахджин · откроется после главы 9';
         this.menuHub.classList.toggle('locked', !unlocked);
       }
     },

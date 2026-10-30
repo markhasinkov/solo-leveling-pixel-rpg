@@ -6,7 +6,7 @@
     igris: {
       id: 'igris', name: 'Игрис', title: 'Рыцарь крови',
       portrait: 'assets/sprites/portraits/igris.png', cutin: 'assets/sprites/cutins/cutin_igris.jpg',
-      animId: 'igris', drawW: 78, drawH: 78, color: '#a06cff', chapter: 6,
+      animId: 'igris', drawW: 78, drawH: 78, color: '#a06cff', chapter: 5,
       atkPct: 0.5, attackCd: 0.8, range: 54, moveSpeed: 235, style: 'slash',
       passive: 'Удары иногда оглушают противника.',
       upgrade: '+12% урона и +4% скорости атаки за уровень.',
@@ -20,7 +20,7 @@
     baruka: {
       id: 'baruka', name: 'Барука', title: 'Вождь ледяных эльфов',
       portrait: 'assets/sprites/portraits/baruka.png', cutin: 'assets/sprites/cutins/cutin_baruka.jpg',
-      animId: 'baruka', drawW: 76, drawH: 76, color: '#bfe6f7', chapter: 5,
+      animId: 'baruka', drawW: 76, drawH: 76, color: '#bfe6f7', chapter: 6,
       atkPct: 0.38, attackCd: 0.9, range: 340, moveSpeed: 195, style: 'projectile',
       slow: 1.5,
       passive: 'Ледяные клинки замедляют врагов.',
@@ -35,7 +35,7 @@
     beru: {
       id: 'beru', name: 'Беру', title: 'Король муравьёв',
       portrait: 'assets/sprites/portraits/beru.png', cutin: 'assets/sprites/cutins/cutin_beru.jpg',
-      animId: 'beru', drawW: 86, drawH: 86, color: '#c08cff', chapter: 8,
+      animId: 'beru', drawW: 86, drawH: 86, color: '#c08cff', chapter: 9,
       atkPct: 0.46, attackCd: 0.55, range: 52, moveSpeed: 265, style: 'multi',
       lifesteal: 0.08,
       passive: 'Лечит игрока на 8% нанесённого урона.',

@@ -392,7 +392,108 @@ def reed_boss():
     return r
 
 
+def baran():
+    """Король демонов: рога, корона, багровый плащ, чёрная броня и молниевый клинок."""
+    skin, skin_d = hx('#bcaeb0'), hx('#6e5558')
+    armor, armor_d, armor_l = hx('#2a1724'), hx('#0d070d'), hx('#51344a')
+    cape, cape_d = hx('#6a101c'), hx('#320810')
+    gold, gold_l = hx('#d8b45a'), hx('#fff0b0')
+    glow, glow_l = hx('#ff3a2a'), hx('#ffd0a0')
+    steel, steel_l = hx('#9aa6ba'), hx('#edf4ff')
+    r = png.blank(64, 64)
+
+    # рваный багровый плащ
+    poly(r, [(16, 22), (48, 22), (59, 46), (56, 62), (45, 57), (38, 63),
+             (32, 58), (25, 63), (18, 57), (7, 62), (5, 45)], cape_d)
+    poly(r, [(18, 24), (32, 24), (29, 60), (13, 56), (9, 44)], cape)
+    poly(r, [(32, 24), (46, 24), (55, 44), (52, 58), (36, 57)], shade(cape, -0.18))
+    for (x, y) in ((12, 55), (21, 59), (28, 55), (40, 60), (49, 55)):
+        line(r, x, y, x + 2, 62, cape_d)
+        put(r, x + 2, 62, shade(cape, -0.35))
+
+    # ноги в чёрных латах
+    rect(r, 24, 45, 30, 58, armor_d)
+    rect(r, 34, 45, 40, 58, armor_d)
+    rect(r, 22, 56, 31, 63, armor)
+    rect(r, 33, 56, 42, 63, armor)
+    line(r, 24, 62, 30, 62, gold)
+    line(r, 34, 62, 40, 62, gold)
+    put(r, 25, 60, glow); put(r, 39, 60, glow)
+
+    # торс и нагрудник
+    poly(r, [(20, 25), (44, 25), (46, 35), (42, 46), (22, 46), (18, 35)], armor)
+    poly(r, [(21, 26), (32, 26), (30, 45), (20, 34)], armor_l)
+    poly(r, [(32, 26), (43, 26), (44, 35), (31, 45)], shade(armor, -0.2))
+    line(r, 22, 30, 42, 30, gold)
+    line(r, 23, 39, 41, 39, shade(gold, -0.3))
+    poly(r, [(32, 28), (37, 34), (32, 43), (27, 34)], armor_d)
+    poly(r, [(32, 30), (35, 34), (32, 40), (29, 34)], glow)
+    line(r, 32, 30, 32, 40, glow_l)
+
+    # наплечники с шипами
+    poly(r, [(9, 26), (21, 21), (25, 28), (22, 36), (11, 35)], armor_l)
+    poly(r, [(43, 21), (55, 26), (53, 35), (42, 36), (39, 28)], armor_l)
+    poly(r, [(12, 26), (20, 23), (22, 28), (20, 31), (12, 31)], armor)
+    poly(r, [(44, 23), (52, 27), (50, 31), (44, 31), (42, 28)], armor_d)
+    for side in (-1, 1):
+        bx = 16 if side < 0 else 48
+        line(r, bx, 24, bx + side * 6, 16, gold)
+        put(r, bx + side * 6, 16, gold_l)
+        line(r, bx, 30, bx + side * 7, 25, shade(gold, -0.25))
+
+    # руки и когтистые латы
+    poly(r, [(20, 27), (13, 31), (11, 42), (18, 46), (22, 36)], armor_d)
+    poly(r, [(44, 27), (51, 31), (53, 42), (46, 46), (42, 36)], armor_d)
+    rect(r, 12, 41, 19, 46, armor)
+    rect(r, 45, 41, 52, 46, armor)
+    for i in range(3):
+        line(r, 12 + i * 3, 45, 9 + i * 3, 51, glow)
+        line(r, 52 - i * 3, 45, 55 - i * 3, 51, glow)
+        put(r, 9 + i * 3, 51, glow_l)
+        put(r, 55 - i * 3, 51, glow_l)
+
+    # голова, рога и корона
+    ellipse(r, 32, 16, 10, 10, skin_d)
+    ellipse(r, 32, 16, 8, 8, skin)
+    poly(r, [(24, 13), (27, 9), (37, 9), (40, 13), (39, 21), (32, 25), (25, 21)], skin)
+    poly(r, [(26, 14), (28, 11), (36, 11), (38, 14), (37, 18), (27, 18)], skin_d)
+    rect(r, 26, 15, 30, 17, glow)
+    rect(r, 34, 15, 38, 17, glow)
+    put(r, 28, 15, glow_l); put(r, 36, 15, glow_l)
+    line(r, 29, 21, 35, 21, skin_d)
+    # рога
+    for side in (-1, 1):
+        bx = 24 if side < 0 else 40
+        line(r, bx, 10, bx + side * 7, 4, hx('#d8c8b0'))
+        line(r, bx + side * 2, 9, bx + side * 8, 3, hx('#8a7a62'))
+        line(r, bx + side * 7, 4, bx + side * 10, 8, hx('#d8c8b0'))
+    # корона
+    for i, x in enumerate((23, 27, 32, 37, 41)):
+        line(r, x, 8, x, 2 - (i % 2), gold)
+        put(r, x, 1 - (i % 2), glow_l)
+    poly(r, [(22, 8), (42, 8), (41, 10), (23, 10)], gold)
+    put(r, 27, 9, glow); put(r, 37, 9, glow)
+    # белые пряди
+    line(r, 21, 13, 17, 23, hx('#e8e0d8'))
+    line(r, 43, 13, 47, 23, hx('#e8e0d8'))
+
+    # молниевый клинок справа
+    line(r, 48, 49, 62, 11, steel)
+    line(r, 49, 49, 63, 12, steel_l)
+    line(r, 47, 48, 61, 10, shade(steel, -0.35))
+    poly(r, [(45, 47), (53, 48), (51, 53), (43, 52)], gold)
+    line(r, 46, 49, 52, 50, gold_l)
+    rect(r, 48, 52, 53, 58, armor_d)
+    line(r, 50, 53, 51, 57, glow)
+    for (x, y, x2, y2) in ((54, 22, 61, 18), (57, 34, 63, 29), (52, 40, 59, 43),
+                            (44, 20, 49, 15), (46, 34, 52, 30)):
+        line(r, x, y, x2, y2, glow_l)
+        put(r, x2, y2, glow)
+    return r
+
+
 BOSSES2 = {
+    'baran': baran,
     'ashborn': ashborn,
     'architect': architect,
     'statue-of-god': statue_of_god,

@@ -1,9 +1,9 @@
-// save.js — сохранение v3: миграция v1/v2, теневой легион, настройки, квесты, мир.
+// save.js — сохранение v4: миграция v1–v3, теневой легион, настройки, квесты, мир.
 (function () {
   'use strict';
 
   const SAVE_KEY = 'solo-leveling-save';
-  const VERSION = 3;
+  const VERSION = 4;
 
   const LEGACY_ITEM_MAP = {
     'Гоблин': 'goblin-fang',
@@ -20,6 +20,40 @@
     'Архитектор': 'obsidian-shard'
   };
 
+  // v3 → v4: главы 5/6 переставлены, добавлен Демонический замок (глава 7).
+  const OLD_CHAPTER_TO_NEW = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 5, 7: 8, 8: 9, 9: 10, 10: 11, 11: 12, 12: 13 };
+  const OLD_UNLOCKED_TO_NEW = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12];
+
+  function remapKeys(source) {
+    const out = {};
+    if (!source || typeof source !== 'object') return out;
+    Object.keys(source).forEach((key) => {
+      const mapped = OLD_CHAPTER_TO_NEW[key | 0];
+      if (mapped) out[mapped] = source[key];
+    });
+    return out;
+  }
+
+  function migrateChapterOrder(data) {
+    const last = 12;
+    const oldIndex = Math.max(0, Math.min(11, data.chapterIndex | 0));
+    const oldUnlocked = Math.max(0, Math.min(11, data.unlocked | 0));
+    const finished = !!data.finished;
+    let chapterIndex = finished ? last : (oldIndex <= 3 ? oldIndex : oldIndex <= 5 ? 4 : 6);
+    let unlocked = finished ? last : Math.max(chapterIndex, OLD_UNLOCKED_TO_NEW[oldUnlocked] || 0);
+    unlocked = Math.max(0, Math.min(last, unlocked));
+    return Object.assign({}, data, {
+      version: VERSION,
+      chapterIndex,
+      unlocked,
+      world: remapKeys(data.world),
+      storySeen: remapKeys(data.storySeen),
+      contracts: { day: null, list: [] },
+      migrated: true,
+      migratedLore: true
+    });
+  }
+
   function migrateV1(old) {
     const level = Math.max(1, old.level | 0 || 1);
     const items = [];
@@ -27,7 +61,7 @@
       const id = LEGACY_ITEM_MAP[entry && entry.name];
       if (id) items.push({ id, qty: Math.max(1, entry.qty | 0 || 1) });
     });
-    return {
+    return migrateChapterOrder({
       version: VERSION,
       savedAt: Date.now(),
       chapterIndex: Math.max(0, old.chapterIndex | 0 || 0),
@@ -49,18 +83,26 @@
       shadows: { owned: {}, equipped: [] },
       finished: false,
       migrated: true
-    };
+    });
   }
 
   function migrateV2(old) {
-    return Object.assign({}, old, {
+    return migrateChapterOrder(Object.assign({}, old, {
       version: VERSION,
       savedAt: Date.now(),
       shadows: old.shadows && typeof old.shadows === 'object'
         ? old.shadows
         : { owned: {}, equipped: [] },
       migrated: true
-    });
+    }));
+  }
+
+  function migrateV3(old) {
+    return migrateChapterOrder(Object.assign({}, old, {
+      version: VERSION,
+      savedAt: Date.now(),
+      migrated: true
+    }));
   }
 
   const Save = {
@@ -73,7 +115,7 @@
         if (typeof data.chapterIndex !== 'number' || typeof data.unlocked !== 'number') return null;
         const version = data.version || 1;
         if (version < VERSION) {
-          const migrated = version >= 2 ? migrateV2(data) : migrateV1(data);
+          const migrated = version >= 3 ? migrateV3(data) : version >= 2 ? migrateV2(data) : migrateV1(data);
           this.write(migrated);
           return migrated;
         }
@@ -122,7 +164,7 @@
         if (cloud && (!local || (cloud.savedAt || 0) > (local.savedAt || 0))) {
           const version = cloud.version || 1;
           if (version < VERSION) {
-            const migrated = version >= 2 ? migrateV2(cloud) : migrateV1(cloud);
+            const migrated = version >= 3 ? migrateV3(cloud) : version >= 2 ? migrateV2(cloud) : migrateV1(cloud);
             this.write(migrated);
             return migrated;
           }

@@ -41,7 +41,7 @@ REQUIRED = [
     'Сон Джин-Ву', 'Барука', 'Беру', 'Осборн', 'Антарес', 'Ко Кын-Хи',
     'Ча Хэ-Ин', 'Сон Чи-Ёль', 'Ли Джу-Хи', 'Ю Джин-Хо', 'У Джин-Чоль',
     'Бэк Юн-Хо', 'Чхве Чон-Ин', 'Мин Бён-Гю', 'гильдии «Охотники»',
-    'Святой источник жизни',
+    'Святой источник жизни', 'Баран',
 ]
 REQUIRED_FILES = [
     (ROOT / 'src' / 'data' / 'chapters.json', 'Сон Джин-Ву'),
@@ -77,43 +77,57 @@ levels = json.loads((ROOT / 'src' / 'data' / 'levels.json').read_text(encoding='
 characters = json.loads((ROOT / 'src' / 'data' / 'characters.json').read_text(encoding='utf-8'))
 bosses = json.loads((ROOT / 'src' / 'data' / 'bosses.json').read_text(encoding='utf-8'))
 
-if len(chapters) != 12:
-    failures.append(f'глав должно быть 12, найдено {len(chapters)}')
+if len(chapters) != 13:
+    failures.append(f'глав должно быть 13, найдено {len(chapters)}')
 
 by_id = {c['id']: c for c in chapters}
 ch1, ch5, ch6, ch7 = by_id.get(1, {}), by_id.get(5, {}), by_id.get(6, {}), by_id.get(7, {})
-ch9, ch11, ch12 = by_id.get(9, {}), by_id.get(11, {}), by_id.get(12, {})
+ch8, ch11, ch12, ch13 = by_id.get(8, {}), by_id.get(11, {}), by_id.get(12, {}), by_id.get(13, {})
 
 if 'architect' in (ch1.get('characters') or []):
     failures.append('глава 1: Архитектор не должен присутствовать в двойном подземелье')
-if 'lee-joo-hee' in (ch5.get('characters') or []):
-    failures.append('глава 5: Ли Джу-Хи не участвовала в Красных вратах')
-if 'igris' not in (ch6.get('characters') or []):
-    failures.append('глава 6: Игрис должен быть боссом смены класса')
-if 'Демоническ' in (ch6.get('title') or ''):
-    failures.append('глава 6: квест на смену класса не должен называться Демоническим замком')
+if 'lee-joo-hee' in (ch6.get('characters') or []):
+    failures.append('глава 6: Ли Джу-Хи не участвовала в Красных вратах')
+if 'igris' not in (ch5.get('characters') or []):
+    failures.append('глава 5: Игрис должен быть боссом смены класса')
+if 'Демоническ' in (ch5.get('title') or ''):
+    failures.append('глава 5: квест на смену класса не должен называться Демоническим замком')
+if 'Красные ворота' not in (ch6.get('title') or '') or 'baruka' not in (ch6.get('characters') or []):
+    failures.append('глава 6: должны быть Красные врата с Барукой')
+if 'Демонический замок' not in (ch7.get('title') or '') or 'baran' not in (ch7.get('characters') or []):
+    failures.append('глава 7: нужен Демонический замок с Бараном')
+if 'Святой источник' not in json.dumps(ch7, ensure_ascii=False):
+    failures.append('глава 7: Святой источник жизни должен быть целью замка')
 if 'армия теней' in json.dumps(ch5, ensure_ascii=False):
     failures.append('глава 5: тени ещё не пробуждены до смены класса')
-if 'Святой источник' not in json.dumps(ch7, ensure_ascii=False):
-    failures.append('глава 7: пробуждение мамы должно быть связано со Святым источником жизни')
-if any(word in json.dumps(ch7, ensure_ascii=False) for word in ('операци', 'пересадк')):
-    failures.append('глава 7: мама не должна лечиться обычной операцией')
-if (levels.get('10', {}).get('boss') or {}).get('name') != 'Эхо Осборна':
-    failures.append('глава 10: босс должен быть эхом Осборна, а не самим Осборном')
+if 'Святой источник' not in json.dumps(ch8, ensure_ascii=False):
+    failures.append('глава 8: пробуждение мамы должно быть связано со Святым источником жизни')
+if any(word in json.dumps(ch8, ensure_ascii=False) for word in ('операци', 'пересадк')):
+    failures.append('глава 8: мама не должна лечиться обычной операцией')
+if (levels.get('11', {}).get('boss') or {}).get('name') != 'Эхо Осборна':
+    failures.append('глава 11: босс должен быть эхом Осборна, а не самим Осборном')
 if any((npc or {}).get('id') == 'architect' for npc in (levels.get('1', {}).get('npcs') or [])):
     failures.append('глава 1: Архитектор не должен быть NPC')
-if 'architect' in (ch9.get('characters') or []):
-    failures.append('глава 9: Архитектор не участвует в гильдии Ахджин')
-if 'Герольд' not in json.dumps(ch11, ensure_ascii=False):
-    failures.append('глава 11: потерян Герольд Монархов')
-if 'куб времени' in json.dumps(ch12, ensure_ascii=False).lower():
-    failures.append('глава 12: неканонический «куб времени»')
+if 'Герольд' not in json.dumps(ch12, ensure_ascii=False):
+    failures.append('глава 12: потерян Герольд Монархов')
+if 'куб времени' in json.dumps(ch13, ensure_ascii=False).lower():
+    failures.append('глава 13: неканонический «куб времени»')
 
 architect = next((c for c in characters if c['id'] == 'architect'), {})
 if 'Статуя Бога' in (architect.get('role') or ''):
     failures.append('Архитектор ошибочно назван Статуей Бога')
 if 'Эхо' not in (bosses.get('ashborn', {}).get('subtitle') or ''):
     failures.append('bosses.json: Осборн должен быть эхом, а не обычным боссом')
+if 'baran' not in bosses or bosses['baran'].get('hpBase', 0) <= 0:
+    failures.append('bosses.json: нет профиля Барана')
+if 'baran' not in [c.get('id') for c in characters]:
+    failures.append('characters.json: нет Барана')
+if (levels.get('7', {}).get('arena') or {}).get('name') != 'Трон короля демонов':
+    failures.append('глава 7: нет арены «Трон короля демонов»')
+if 'arena_demon_castle' not in json.dumps(levels.get('7', {}), ensure_ascii=False):
+    failures.append('глава 7: не подключена арена Демонического замка')
+if 'cutin_baran' not in json.dumps(levels.get('7', {}), ensure_ascii=False):
+    failures.append('глава 7: не подключён cut-in Барана')
 
 if failures:
     print('LORE LINT: найдены расхождения:')

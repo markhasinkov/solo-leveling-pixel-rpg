@@ -1810,6 +1810,427 @@
     ]
   },
   "5": {
+    "theme": "castle",
+    "worldW": 7800,
+    "worldH": 900,
+    "floorY": 820,
+    "startX": 90,
+    "bossX": 7180,
+    "zones": [
+      {
+        "id": "gate",
+        "name": "Врата испытания",
+        "subtitle": "Квест на смену класса",
+        "kind": "entrance",
+        "x": 0,
+        "w": 1700,
+        "props": [
+          "portal",
+          "gargoyle",
+          "banner",
+          "brazier",
+          "bones",
+          "armor"
+        ],
+        "story": [
+          {
+            "speaker": "Система",
+            "text": "Игрок достиг условий смены класса. Отказ невозможен."
+          }
+        ]
+      },
+      {
+        "id": "armory",
+        "name": "Зал рыцарских доспехов",
+        "subtitle": "Каждый доспех — чья-то смерть",
+        "kind": "hall",
+        "x": 1700,
+        "w": 1900,
+        "props": [
+          "armor",
+          "armor",
+          "candelabra",
+          "banner",
+          "carpet",
+          "gargoyle"
+        ],
+        "story": [
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Подземелье смены класса... Рыцари и стражи повсюду. Но отступать некуда."
+          }
+        ]
+      },
+      {
+        "id": "chapel",
+        "name": "Кровавая часовня",
+        "subtitle": "Здесь Игрис ждёт достойного",
+        "kind": "chapel",
+        "x": 3600,
+        "w": 1800,
+        "props": [
+          "altar",
+          "candelabra",
+          "banner",
+          "armor",
+          "carpet",
+          "brazier"
+        ],
+        "story": [
+          {
+            "speaker": "igris",
+            "text": "Я — Игрис, Рыцарь Крови. Докажи свою силу клинком."
+          }
+        ]
+      },
+      {
+        "id": "throne",
+        "name": "Тронный зал рыцаря крови",
+        "subtitle": "Клятва или смерть",
+        "kind": "arena",
+        "x": 5400,
+        "w": 2400,
+        "props": [
+          "armor",
+          "banner",
+          "candelabra",
+          "brazier",
+          "rubble",
+          "gargoyle"
+        ],
+        "story": [
+          {
+            "speaker": "igris",
+            "text": "Только клинок решит, кто покинет этот зал. Подними оружие, смертный."
+          }
+        ]
+      }
+    ],
+    "platforms": [
+      {
+        "x": 944,
+        "y": 692,
+        "w": 170,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 1377,
+        "y": 608,
+        "w": 130,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 2048,
+        "y": 636,
+        "w": 150,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 2504,
+        "y": 552,
+        "w": 120,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 2940,
+        "y": 610,
+        "w": 180,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 3333,
+        "y": 520,
+        "w": 120,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 3911,
+        "y": 636,
+        "w": 150,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 4371,
+        "y": 552,
+        "w": 120,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 4794,
+        "y": 610,
+        "w": 180,
+        "h": 18,
+        "kind": "stone"
+      },
+      {
+        "x": 5129,
+        "y": 520,
+        "w": 120,
+        "h": 18,
+        "kind": "wood"
+      },
+      {
+        "x": 6820,
+        "y": 646,
+        "w": 150,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 7100,
+        "y": 558,
+        "w": 140,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 7370,
+        "y": 620,
+        "w": 150,
+        "h": 20,
+        "kind": "arena"
+      },
+      {
+        "x": 2878,
+        "y": 714,
+        "w": 170,
+        "h": 18,
+        "kind": "treasure"
+      }
+    ],
+    "npcs": [],
+    "encounters": [
+      {
+        "id": "hellhound",
+        "x": 2100,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "demon-knight",
+        "x": 3000,
+        "count": 1,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "demon-knight",
+        "x": 3950,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "hellhound",
+        "x": 5500,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "demon-knight",
+        "x": 6150,
+        "count": 1,
+        "elite": true,
+        "name": "Демонический капитан",
+        "spread": 76
+      }
+    ],
+    "lore": [
+      {
+        "x": 760,
+        "title": "Запись Системы",
+        "text": "«Подземелье создано как испытание. Рыцарь крови не спит уже тысячу лет».",
+        "kind": "terminal",
+        "xp": 24
+      },
+      {
+        "x": 3050,
+        "title": "Дневник рыцаря",
+        "text": "«Я служил господину, которого больше нет. Клинок помнит клятву, даже когда мир забыл».",
+        "kind": "corpse",
+        "xp": 26
+      },
+      {
+        "x": 4350,
+        "title": "Кровавая молитва",
+        "text": "«Кровь на камне — не жертва. Это приглашение».",
+        "kind": "banner",
+        "xp": 28
+      },
+      {
+        "x": 6300,
+        "title": "Клеймо Игриса",
+        "text": "На клинке выбито: «Верность — это не выбор. Это последнее, что остаётся».",
+        "kind": "tablet",
+        "xp": 30
+      }
+    ],
+    "shrines": [
+      {
+        "x": 2350,
+        "name": "Алтарь крови"
+      },
+      {
+        "x": 5800,
+        "name": "Алтарь перед троном"
+      }
+    ],
+    "hazards": [
+      {
+        "x": 3400,
+        "w": 120,
+        "type": "lava",
+        "damage": 18
+      },
+      {
+        "x": 5000,
+        "w": 120,
+        "type": "spikes",
+        "damage": 20
+      }
+    ],
+    "decor": [
+      {
+        "type": "portal",
+        "x": 380
+      },
+      {
+        "type": "armor",
+        "x": 1250
+      },
+      {
+        "type": "armor",
+        "x": 3850
+      },
+      {
+        "type": "throne",
+        "x": 6880
+      },
+      {
+        "type": "candelabra",
+        "x": 5450
+      }
+    ],
+    "secret": {
+      "type": "illusory",
+      "name": "Заложенная дверь",
+      "chest": "epic",
+      "lore": "Дверь в стене замка заложена кирпичом. За ней — личные покои рыцаря крови.",
+      "x": 2620
+    },
+    "puzzle": {
+      "type": "orbs",
+      "name": "Рунные сферы",
+      "sequence": [
+        1,
+        2,
+        0
+      ],
+      "hint": "II · III · I",
+      "chest": "epic",
+      "lore": "Демонические сферы отзываются на кровь и сталь. Порядок имеет значение.",
+      "x": 4700
+    },
+    "chests": [
+      {
+        "x": 1350,
+        "chest": "epic"
+      },
+      {
+        "x": 3300,
+        "chest": "epic"
+      },
+      {
+        "x": 6100,
+        "chest": "epic"
+      },
+      {
+        "x": 2963,
+        "y": 688,
+        "chest": "rare",
+        "high": true
+      }
+    ],
+    "arena": {
+      "bg": "assets/sprites/arenas/arena_igris.jpg",
+      "name": "Тронный зал рыцаря крови",
+      "x": 5900
+    },
+    "cutin": "assets/sprites/cutins/cutin_igris.jpg",
+    "scenes": [
+      {
+        "id": "ch5-knight",
+        "x": 4120,
+        "title": "Рыцарь крови",
+        "subtitle": "Кровавая часовня",
+        "lines": [
+          {
+            "speaker": "igris",
+            "text": "Я — Игрис, рыцарь крови. Ты, что осмелился войти в мой чертог, подними клинок."
+          },
+          {
+            "speaker": "Система",
+            "text": "Испытание на смену класса начато. Отказ невозможен."
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Я не отказываюсь. Я пришёл за силой."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_igris.jpg"
+      },
+      {
+        "id": "ch5-oath",
+        "x": 6100,
+        "title": "Клятва на клинке",
+        "subtitle": "Тронный зал",
+        "lines": [
+          {
+            "speaker": "igris",
+            "text": "Докажи, что твоя воля сильнее моей клятвы."
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Клятва без силы — просто слова. Я покажу тебе разницу."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
+      }
+    ],
+    "racks": [
+      {
+        "x": 1820,
+        "elite": false
+      },
+      {
+        "x": 3780,
+        "elite": false
+      },
+      {
+        "x": 4470,
+        "elite": false
+      },
+      {
+        "x": 5350,
+        "elite": true
+      }
+    ]
+  },
+  "6": {
     "theme": "ice",
     "worldW": 7800,
     "worldH": 900,
@@ -2230,7 +2651,7 @@
     "cutin": "assets/sprites/cutins/cutin_baruka.jpg",
     "scenes": [
       {
-        "id": "ch5-gates",
+        "id": "ch6-gates",
         "x": 2050,
         "title": "Красные ворота",
         "subtitle": "Обратной дороги нет",
@@ -2251,7 +2672,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch5-voice",
+        "id": "ch6-voice",
         "x": 6350,
         "title": "Голос во льду",
         "subtitle": "Клан Баруки вышел на охоту",
@@ -2299,9 +2720,9 @@
       }
     ]
   },
-  "6": {
+  "7": {
     "theme": "castle",
-    "worldW": 7800,
+    "worldW": 8200,
     "worldH": 900,
     "floorY": 820,
     "startX": 90,
@@ -2309,8 +2730,8 @@
     "zones": [
       {
         "id": "gate",
-        "name": "Врата испытания",
-        "subtitle": "Квест на смену класса",
+        "name": "Врата Демонического замка",
+        "subtitle": "Сто этажей вниз",
         "kind": "entrance",
         "x": 0,
         "w": 1700,
@@ -2325,143 +2746,143 @@
         "story": [
           {
             "speaker": "Система",
-            "text": "Игрок достиг условий смены класса. Отказ невозможен."
+            "text": "Демонический замок открыт. Цель — Святой источник жизни на сотом этаже."
           }
         ]
       },
       {
-        "id": "armory",
-        "name": "Зал рыцарских доспехов",
-        "subtitle": "Каждый доспех — чья-то смерть",
+        "id": "floors",
+        "name": "Залы ста этажей",
+        "subtitle": "Каждый этаж — новая печать",
         "kind": "hall",
         "x": 1700,
-        "w": 1900,
+        "w": 2100,
         "props": [
-          "armor",
           "armor",
           "candelabra",
           "banner",
           "carpet",
-          "gargoyle"
-        ],
-        "story": [
-          {
-            "speaker": "sung-jin-woo",
-            "text": "Подземелье смены класса... Рыцари и стражи повсюду. Но отступать некуда."
-          }
-        ]
-      },
-      {
-        "id": "chapel",
-        "name": "Кровавая часовня",
-        "subtitle": "Здесь Игрис ждёт достойного",
-        "kind": "chapel",
-        "x": 3600,
-        "w": 1800,
-        "props": [
-          "altar",
-          "candelabra",
-          "banner",
-          "armor",
-          "carpet",
+          "rubble",
           "brazier"
         ],
         "story": [
           {
             "speaker": "igris",
-            "text": "Я — Игрис, Рыцарь Крови. Докажи свою силу клинком."
+            "text": "Мой господин, источник близко. Я чувствую его свет сквозь тьму."
+          }
+        ]
+      },
+      {
+        "id": "seal",
+        "name": "Печать источника",
+        "subtitle": "Святой свет под демонической тьмой",
+        "kind": "sanctum",
+        "x": 3800,
+        "w": 1900,
+        "props": [
+          "altar",
+          "candelabra",
+          "chain",
+          "brazier",
+          "rubble",
+          "banner"
+        ],
+        "story": [
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Источник за этой печатью. Осталось снять её."
           }
         ]
       },
       {
         "id": "throne",
-        "name": "Тронный зал рыцаря крови",
-        "subtitle": "Клятва или смерть",
+        "name": "Трон короля демонов",
+        "subtitle": "Баран ждёт",
         "kind": "arena",
-        "x": 5400,
-        "w": 2400,
+        "x": 5700,
+        "w": 2500,
         "props": [
-          "armor",
+          "throne",
           "banner",
-          "candelabra",
           "brazier",
           "rubble",
-          "gargoyle"
+          "armor",
+          "candelabra"
         ],
         "story": [
           {
-            "speaker": "igris",
-            "text": "Только клинок решит, кто покинет этот зал. Подними оружие, смертный."
+            "speaker": "baran",
+            "text": "Ты добрался до моего трона, тень. Дальше — только пепел."
           }
         ]
       }
     ],
     "platforms": [
       {
-        "x": 944,
+        "x": 916,
         "y": 692,
         "w": 170,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 1377,
+        "x": 1399,
         "y": 608,
         "w": 130,
         "h": 18,
         "kind": "wood"
       },
       {
-        "x": 2048,
+        "x": 2072,
         "y": 636,
         "w": 150,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 2504,
+        "x": 2591,
         "y": 552,
         "w": 120,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 2940,
+        "x": 3085,
         "y": 610,
         "w": 180,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 3333,
+        "x": 3487,
         "y": 520,
         "w": 120,
         "h": 18,
         "kind": "wood"
       },
       {
-        "x": 3911,
+        "x": 4157,
         "y": 636,
         "w": 150,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 4371,
+        "x": 4599,
         "y": 552,
         "w": 120,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 4794,
+        "x": 5067,
         "y": 610,
         "w": 180,
         "h": 18,
         "kind": "stone"
       },
       {
-        "x": 5129,
+        "x": 5450,
         "y": 520,
         "w": 120,
         "h": 18,
@@ -2489,34 +2910,36 @@
         "kind": "arena"
       },
       {
-        "x": 2878,
+        "x": 3002,
         "y": 714,
         "w": 170,
         "h": 18,
         "kind": "treasure"
       }
     ],
-    "npcs": [],
+    "npcs": [
+      {
+        "id": "igris",
+        "x": 1520,
+        "lines": [
+          {
+            "speaker": "igris",
+            "text": "Мой господин, свет источника всё ближе. Я не позволю тьме замка остановить вас."
+          },
+          {
+            "speaker": "igris",
+            "text": "Баран силён. Но армия теней готова исполнить ваш приказ."
+          }
+        ],
+        "repeat": [
+          "Клинок готов, мой господин."
+        ]
+      }
+    ],
     "encounters": [
       {
-        "id": "hellhound",
-        "x": 2100,
-        "count": 2,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
         "id": "demon-knight",
-        "x": 3000,
-        "count": 1,
-        "elite": false,
-        "name": null,
-        "spread": 76
-      },
-      {
-        "id": "demon-knight",
-        "x": 3950,
+        "x": 2250,
         "count": 2,
         "elite": false,
         "name": null,
@@ -2524,7 +2947,7 @@
       },
       {
         "id": "hellhound",
-        "x": 5500,
+        "x": 3350,
         "count": 2,
         "elite": false,
         "name": null,
@@ -2532,7 +2955,23 @@
       },
       {
         "id": "demon-knight",
-        "x": 6150,
+        "x": 4550,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "hellhound",
+        "x": 5650,
+        "count": 2,
+        "elite": false,
+        "name": null,
+        "spread": 76
+      },
+      {
+        "id": "demon-knight",
+        "x": 6550,
         "count": 1,
         "elite": true,
         "name": "Демонический капитан",
@@ -2541,56 +2980,56 @@
     ],
     "lore": [
       {
-        "x": 760,
+        "x": 780,
         "title": "Запись Системы",
-        "text": "«Подземелье создано как испытание. Рыцарь крови не спит уже тысячу лет».",
+        "text": "«Демонический замок — сто этажей испытаний. На вершине — Святой источник жизни».",
         "kind": "terminal",
-        "xp": 24
-      },
-      {
-        "x": 3050,
-        "title": "Дневник рыцаря",
-        "text": "«Я служил господину, которого больше нет. Клинок помнит клятву, даже когда мир забыл».",
-        "kind": "corpse",
-        "xp": 26
-      },
-      {
-        "x": 4350,
-        "title": "Кровавая молитва",
-        "text": "«Кровь на камне — не жертва. Это приглашение».",
-        "kind": "banner",
         "xp": 28
       },
       {
-        "x": 6300,
-        "title": "Клеймо Игриса",
-        "text": "На клинке выбито: «Верность — это не выбор. Это последнее, что остаётся».",
+        "x": 3050,
+        "title": "Печать источника",
+        "text": "«Источник не терпит жадных. Он отдаётся тому, кто готов за него умереть».",
         "kind": "tablet",
         "xp": 30
+      },
+      {
+        "x": 4850,
+        "title": "Тронная запись",
+        "text": "«Баран, король демонов, хранит источник ценой собственной жизни».",
+        "kind": "banner",
+        "xp": 32
+      },
+      {
+        "x": 6450,
+        "title": "Молитва матери",
+        "text": "«Я верю, что ты вернёшься. Даже если весь мир против».",
+        "kind": "corpse",
+        "xp": 34
       }
     ],
     "shrines": [
       {
-        "x": 2350,
-        "name": "Алтарь крови"
+        "x": 2450,
+        "name": "Алтарь у врат"
       },
       {
-        "x": 5800,
-        "name": "Алтарь перед троном"
+        "x": 6050,
+        "name": "Алтарь источника"
       }
     ],
     "hazards": [
       {
-        "x": 3400,
+        "x": 3550,
         "w": 120,
         "type": "lava",
-        "damage": 18
+        "damage": 22
       },
       {
-        "x": 5000,
+        "x": 5250,
         "w": 120,
         "type": "spikes",
-        "damage": 20
+        "damage": 24
       }
     ],
     "decor": [
@@ -2600,127 +3039,113 @@
       },
       {
         "type": "armor",
-        "x": 1250
+        "x": 1500
       },
       {
-        "type": "armor",
-        "x": 3850
+        "type": "altar",
+        "x": 3600
       },
       {
         "type": "throne",
-        "x": 6880
+        "x": 7200
       },
       {
         "type": "candelabra",
-        "x": 5450
+        "x": 5200
       }
     ],
     "secret": {
       "type": "illusory",
-      "name": "Заложенная дверь",
+      "name": "Тайник стража",
       "chest": "epic",
-      "lore": "Дверь в стене замка заложена кирпичом. За ней — личные покои рыцаря крови.",
-      "x": 2620
+      "lore": "За тронной колонной спрятан тайник демонического стража. Здесь хранили подношения королю.",
+      "x": 2720
     },
     "puzzle": {
-      "type": "orbs",
-      "name": "Рунные сферы",
+      "type": "runes",
+      "name": "Печати источника",
       "sequence": [
-        1,
         2,
-        0
+        0,
+        1
       ],
-      "hint": "II · III · I",
+      "hint": "III · I · II",
       "chest": "epic",
-      "lore": "Демонические сферы отзываются на кровь и сталь. Порядок имеет значение.",
-      "x": 4700
+      "lore": "Три печати удерживают свет источника. Неверный порядок разбудит тьму замка.",
+      "x": 4750
     },
     "chests": [
       {
-        "x": 1350,
+        "x": 1450,
         "chest": "epic"
       },
       {
-        "x": 3300,
+        "x": 3450,
         "chest": "epic"
       },
       {
-        "x": 6100,
-        "chest": "epic"
+        "x": 6350,
+        "chest": "legendary"
       },
       {
-        "x": 2963,
+        "x": 3087,
         "y": 688,
-        "chest": "rare",
+        "chest": "epic",
         "high": true
       }
     ],
     "arena": {
-      "bg": "assets/sprites/arenas/arena_igris.jpg",
-      "name": "Тронный зал рыцаря крови",
+      "bg": "assets/sprites/arenas/arena_demon_castle.jpg",
+      "name": "Трон короля демонов",
       "x": 5900
     },
-    "cutin": "assets/sprites/cutins/cutin_igris.jpg",
+    "cutin": "assets/sprites/cutins/cutin_baran.jpg",
     "scenes": [
       {
-        "id": "ch6-knight",
+        "id": "ch7-floors",
         "x": 4120,
-        "title": "Рыцарь крови",
-        "subtitle": "Кровавая часовня",
+        "title": "Сто этажей",
+        "subtitle": "Печать источника",
         "lines": [
           {
             "speaker": "igris",
-            "text": "Я — Игрис, рыцарь крови. Ты, что осмелился войти в мой чертог, подними клинок."
+            "text": "Мой господин, свет источника за этой печатью."
           },
           {
             "speaker": "Система",
-            "text": "Испытание на смену класса начато. Отказ невозможен."
+            "text": "До Святого источника жизни остался один этаж. Защитник — король демонов Баран."
           },
           {
             "speaker": "sung-jin-woo",
-            "text": "Я не отказываюсь. Я пришёл за силой."
-          }
-        ],
-        "cutin": "assets/sprites/cutins/cutin_igris.jpg"
-      },
-      {
-        "id": "ch6-oath",
-        "x": 6100,
-        "title": "Клятва на клинке",
-        "subtitle": "Тронный зал",
-        "lines": [
-          {
-            "speaker": "igris",
-            "text": "Докажи, что твоя воля сильнее моей клятвы."
-          },
-          {
-            "speaker": "sung-jin-woo",
-            "text": "Клятва без силы — просто слова. Я покажу тебе разницу."
+            "text": "Мама ждала достаточно. Снимаем печать."
           }
         ],
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
-      }
-    ],
-    "racks": [
-      {
-        "x": 1820,
-        "elite": false
       },
       {
-        "x": 3780,
-        "elite": false
-      },
-      {
-        "x": 4470,
-        "elite": false
-      },
-      {
-        "x": 5350,
-        "elite": true
+        "id": "ch7-baran",
+        "x": 6100,
+        "title": "Король демонов",
+        "subtitle": "Трон короля демонов",
+        "lines": [
+          {
+            "speaker": "baran",
+            "text": "Кто осмелился войти в тронный зал короля демонов? Тень, ещё не ставшая Монархом..."
+          },
+          {
+            "speaker": "sung-jin-woo",
+            "text": "Я пришёл за Святым источником. Отдай его — или я заберу сам."
+          },
+          {
+            "speaker": "baran",
+            "text": "Источник — сердце замка. Чтобы получить его, тебе придётся вырвать моё."
+          }
+        ],
+        "cutin": "assets/sprites/cutins/cutin_baran.jpg"
       }
     ]
   },
-  "7": {
+  "8": {
     "theme": "hospital",
     "worldW": 7000,
     "worldH": 900,
@@ -3114,7 +3539,7 @@
     "cutin": "assets/sprites/cutins/cutin_measurement_golem.jpg",
     "scenes": [
       {
-        "id": "ch7-rank",
+        "id": "ch8-rank",
         "x": 4620,
         "title": "Предел шкалы",
         "subtitle": "Измерительный зал",
@@ -3135,7 +3560,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch7-golem",
+        "id": "ch8-golem",
         "x": 5320,
         "title": "Голем измерения",
         "subtitle": "Измерительный полигон",
@@ -3157,7 +3582,7 @@
       }
     ]
   },
-  "8": {
+  "9": {
     "theme": "jungle",
     "worldW": 8200,
     "worldH": 900,
@@ -3567,7 +3992,7 @@
     "cutin": "assets/sprites/cutins/cutin_beru.jpg",
     "scenes": [
       {
-        "id": "ch8-scent",
+        "id": "ch9-scent",
         "x": 4260,
         "title": "Охотник без запаха",
         "subtitle": "Улей Чеджу",
@@ -3588,7 +4013,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch8-king",
+        "id": "ch9-king",
         "x": 6700,
         "title": "Король улья",
         "subtitle": "Королевская камера",
@@ -3610,7 +4035,7 @@
       }
     ]
   },
-  "9": {
+  "10": {
     "theme": "guild",
     "worldW": 7200,
     "worldH": 900,
@@ -3961,7 +4386,7 @@
     "cutin": "assets/sprites/cutins/cutin_shadow_duelist.jpg",
     "scenes": [
       {
-        "id": "ch9-guild",
+        "id": "ch10-guild",
         "x": 3150,
         "title": "Гильдия из двух",
         "subtitle": "Штаб-квартира Ахджин",
@@ -3982,7 +4407,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch9-duel",
+        "id": "ch10-duel",
         "x": 5620,
         "title": "Тень Ахджин",
         "subtitle": "Арена спарринга",
@@ -4004,7 +4429,7 @@
       }
     ]
   },
-  "10": {
+  "11": {
     "theme": "temple",
     "worldW": 8000,
     "worldH": 900,
@@ -4368,7 +4793,7 @@
     },
     "scenes": [
       {
-        "id": "ch10-memory",
+        "id": "ch11-memory",
         "x": 4080,
         "title": "Память Монархов",
         "subtitle": "Зал памяти",
@@ -4389,7 +4814,7 @@
         "cutin": "assets/sprites/cutins/cutin_ashborn.jpg"
       },
       {
-        "id": "ch10-crown",
+        "id": "ch11-crown",
         "x": 6420,
         "title": "Корона теней",
         "subtitle": "Трон Монарха Теней",
@@ -4411,7 +4836,7 @@
       }
     ]
   },
-  "11": {
+  "12": {
     "theme": "temple",
     "worldW": 8200,
     "worldH": 900,
@@ -4844,7 +5269,7 @@
     "cutin": "assets/sprites/cutins/cutin_war_herald.jpg",
     "scenes": [
       {
-        "id": "ch11-sky",
+        "id": "ch12-sky",
         "x": 2520,
         "title": "Небо расколото",
         "subtitle": "Поле битвы",
@@ -4865,7 +5290,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch11-herald",
+        "id": "ch12-herald",
         "x": 6300,
         "title": "Герольд Монархов",
         "subtitle": "Трон Монархов",
@@ -4887,7 +5312,7 @@
       }
     ]
   },
-  "12": {
+  "13": {
     "theme": "throne",
     "worldW": 8600,
     "worldH": 900,
@@ -5293,7 +5718,7 @@
     "cutin": "assets/sprites/cutins/cutin_antares.jpg",
     "scenes": [
       {
-        "id": "ch12-army",
+        "id": "ch13-army",
         "x": 4160,
         "title": "Монарх против Монарха",
         "subtitle": "Сердце пламени",
@@ -5314,7 +5739,7 @@
         "cutin": "assets/sprites/cutins/cutin_jinwoo.jpg"
       },
       {
-        "id": "ch12-flame",
+        "id": "ch13-flame",
         "x": 6950,
         "title": "Пламя Монарха",
         "subtitle": "Арена Антареса",

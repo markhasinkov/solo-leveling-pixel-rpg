@@ -22,18 +22,19 @@ const HUMANS = new Set(['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul',
 
 function isEnemy(id, c, chapter) {
   if (HUMANS.has(id)) return false;
-  if (id === 'igris') return chapter === 6;
-  if (id === 'beru') return chapter === 8;
-  if (id === 'ashborn') return chapter === 10;
+  if (id === 'igris') return chapter === 5;
+  if (id === 'baran') return chapter === 7;
+  if (id === 'beru') return chapter === 9;
+  if (id === 'ashborn') return chapter === 11;
   if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
   const role = (c.role || '').toLowerCase();
-  return /монстр|босс|зверь|вождь|рыцарь кров/.test(role);
+  return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
 }
 
 function bossId(list, chapter) {
   const roleBoss = list.find((e) => /босс|монарх|король|вождь/.test((e.c.role || '').toLowerCase()));
   if (roleBoss) return roleBoss.id;
-  const known = list.find((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
+  const known = list.find((e) => ['statue-of-god', 'reed-boss', 'baruka', 'igris', 'baran', 'beru', 'ashborn', 'antares', 'architect'].includes(e.id));
   if (known) return known.id;
   return null;
 }
@@ -51,7 +52,8 @@ const GEAR = {
   9: { weapon: 'kamish-dagger', armor: 'demon-plate', accessory: 'shadow-amulet' },
   10: { weapon: 'kamish-dagger', armor: 'monarch-cloak', accessory: 'shadow-amulet' },
   11: { weapon: 'kamish-dagger', armor: 'monarch-cloak', accessory: 'monarch-seal' },
-  12: { weapon: 'monarch-blade', armor: 'monarch-cloak', accessory: 'monarch-seal' }
+  12: { weapon: 'monarch-blade', armor: 'monarch-cloak', accessory: 'monarch-seal' },
+  13: { weapon: 'monarch-blade', armor: 'monarch-cloak', accessory: 'monarch-seal' }
 };
 
 // Разумное распределение талантов: сила/стойкость с переходом в крит и тень

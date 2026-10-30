@@ -10,26 +10,27 @@ import zlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.dirname(HERE)
 
-# 31 id персонажей из characters.json
+# 32 id персонажей из characters.json
 CHARACTERS = [
     'sung-jin-woo', 'yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul',
     'lee-joo-hee', 'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul',
     'choi-jong-in', 'min-byung-gu', 'ashborn', 'architect', 'antares', 'beru',
-    'igris', 'baruka', 'statue-of-god', 'reed-boss', 'goblin', 'orc',
+    'baran', 'igris', 'baruka', 'statue-of-god', 'reed-boss', 'goblin', 'orc',
     'knight-ant', 'ice-bear', 'demon-knight', 'hellhound',
     'goblin-shaman', 'cave-spider', 'orc-berserker', 'ice-elf-ranger', 'frost-wolf',
 ]
 TILES = ['tile_floor', 'tile_wall', 'tile_door', 'tile_stairs', 'tile_portal']
 BGS = ['bg_double-dungeon', 'bg_e-rank-dungeon', 'bg_hospital', 'bg_red-gate',
-       'bg_jeju-island', 'bg_ahjin-guild', 'bg_theme_castle', 'bg_theme_throne']
+       'bg_jeju-island', 'bg_ahjin-guild', 'bg_theme_castle', 'bg_theme_throne',
+       'bg_demon-castle']
 ARENAS = ['arena_cartenon', 'arena_baruka', 'arena_igris', 'arena_beru', 'arena_antares',
           'arena_trial_hospital', 'arena_mine_guardian', 'arena_reed_throne',
           'arena_measure_hall', 'arena_ahjin_sparring', 'arena_ashborn_relicary',
-          'arena_war_monarchs']
+          'arena_war_monarchs', 'arena_demon_castle']
 CUTINS = ['cutin_jinwoo', 'cutin_statue', 'cutin_baruka', 'cutin_igris', 'cutin_beru', 'cutin_antares',
           'cutin_trial_examiner', 'cutin_mine_guardian', 'cutin_reed_shaman',
           'cutin_measurement_golem', 'cutin_shadow_duelist', 'cutin_ashborn',
-          'cutin_war_herald']
+          'cutin_war_herald', 'cutin_baran']
 
 EXPECTED = {c + '.png': (64, 64) for c in CHARACTERS}
 EXPECTED.update({t + '.png': (16, 16) for t in TILES})
