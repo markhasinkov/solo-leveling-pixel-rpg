@@ -202,6 +202,13 @@
       this.telegraphs.push({ shape: 'rect', x, y, w, h, time, maxTime: time, onDone, color: color || '#ff5a5a' });
     },
 
+    telegraphCone(x, y, r, angle, spread, time, onDone, color) {
+      this.telegraphs.push({
+        shape: 'cone', x, y, r, angle, spread: spread || 0.9,
+        time, maxTime: time, onDone, color: color || '#ff5a5a'
+      });
+    },
+
     projectile(opts) {
       this.projectiles.push({
         x: opts.x, y: opts.y,
@@ -509,23 +516,67 @@
         ctx.restore();
       }
 
-      // Телеграфы
+      // Телеграфы: тёмная заливка + яркий контур + штриховка + сжимающийся маркер.
       for (const t of this.telegraphs) {
         const prog = 1 - Math.max(0, t.time) / t.maxTime;
-        const pulse = 0.18 + 0.15 * Math.abs(Math.sin(this.time * 12));
+        const pulse = 0.2 + 0.12 * Math.abs(Math.sin(this.time * 14));
+        const remain = Math.max(0.03, 1 - prog);
         ctx.save();
-        ctx.globalAlpha = pulse;
-        ctx.fillStyle = t.color;
+        ctx.lineJoin = 'round';
         if (t.shape === 'circle') {
-          ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2); ctx.fill();
-          ctx.globalAlpha = 0.85;
-          ctx.strokeStyle = t.color; ctx.lineWidth = 3;
-          ctx.beginPath(); ctx.arc(t.x, t.y, t.r * (0.25 + prog * 0.75), 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+          ctx.globalAlpha = 0.58; ctx.fillStyle = 'rgba(8,4,12,0.72)'; ctx.fill();
+          ctx.globalAlpha = pulse; ctx.fillStyle = t.color; ctx.fill();
+          ctx.save(); ctx.clip();
+          ctx.globalAlpha = 0.22; ctx.strokeStyle = t.color; ctx.lineWidth = 1;
+          for (let x = t.x - t.r; x < t.x + t.r; x += 14) {
+            ctx.beginPath(); ctx.moveTo(x, t.y - t.r); ctx.lineTo(x + t.r * 2, t.y + t.r); ctx.stroke();
+          }
+          ctx.restore();
+          ctx.globalAlpha = 0.85; ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 6;
+          ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = 1; ctx.strokeStyle = t.color; ctx.lineWidth = 3.5;
+          ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = 0.9; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(t.x, t.y, Math.max(3, t.r * remain), 0, Math.PI * 2); ctx.stroke();
+        } else if (t.shape === 'cone') {
+          const a0 = t.angle - t.spread / 2;
+          const a1 = t.angle + t.spread / 2;
+          ctx.beginPath(); ctx.moveTo(t.x, t.y); ctx.arc(t.x, t.y, t.r, a0, a1); ctx.closePath();
+          ctx.globalAlpha = 0.58; ctx.fillStyle = 'rgba(8,4,12,0.72)'; ctx.fill();
+          ctx.globalAlpha = pulse; ctx.fillStyle = t.color; ctx.fill();
+          ctx.save(); ctx.clip();
+          ctx.globalAlpha = 0.22; ctx.strokeStyle = t.color; ctx.lineWidth = 1;
+          for (let x = t.x - t.r; x < t.x + t.r; x += 15) {
+            ctx.beginPath(); ctx.moveTo(x, t.y - t.r); ctx.lineTo(x + t.r * 2, t.y + t.r); ctx.stroke();
+          }
+          ctx.restore();
+          ctx.globalAlpha = 0.9; ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 6;
+          ctx.beginPath(); ctx.moveTo(t.x, t.y); ctx.arc(t.x, t.y, t.r, a0, a1); ctx.closePath(); ctx.stroke();
+          ctx.globalAlpha = 1; ctx.strokeStyle = t.color; ctx.lineWidth = 3.5;
+          ctx.beginPath(); ctx.moveTo(t.x, t.y); ctx.arc(t.x, t.y, t.r, a0, a1); ctx.closePath(); ctx.stroke();
+          ctx.globalAlpha = 0.9; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(t.x, t.y, Math.max(8, t.r * remain), a0, a1); ctx.stroke();
         } else {
-          ctx.fillRect(t.x, t.y, t.w, t.h);
-          ctx.globalAlpha = 0.9;
-          ctx.strokeStyle = t.color; ctx.lineWidth = 3;
+          ctx.globalAlpha = 0.58; ctx.fillStyle = 'rgba(8,4,12,0.72)'; ctx.fillRect(t.x, t.y, t.w, t.h);
+          ctx.globalAlpha = pulse; ctx.fillStyle = t.color; ctx.fillRect(t.x, t.y, t.w, t.h);
+          ctx.save(); ctx.beginPath(); ctx.rect(t.x, t.y, t.w, t.h); ctx.clip();
+          ctx.globalAlpha = 0.22; ctx.strokeStyle = t.color; ctx.lineWidth = 1;
+          for (let x = t.x - t.h; x < t.x + t.w; x += 14) {
+            ctx.beginPath(); ctx.moveTo(x, t.y + t.h); ctx.lineTo(x + t.h, t.y); ctx.stroke();
+          }
+          ctx.restore();
+          ctx.globalAlpha = 0.9; ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 6;
           ctx.strokeRect(t.x, t.y, t.w, t.h);
+          ctx.globalAlpha = 1; ctx.strokeStyle = t.color; ctx.lineWidth = 3.5;
+          ctx.strokeRect(t.x, t.y, t.w, t.h);
+          ctx.globalAlpha = 0.6; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.setLineDash([8, 9]);
+          if (t.w >= t.h) {
+            ctx.beginPath(); ctx.moveTo(t.x, t.y + t.h / 2); ctx.lineTo(t.x + t.w, t.y + t.h / 2); ctx.stroke();
+          } else {
+            ctx.beginPath(); ctx.moveTo(t.x + t.w / 2, t.y); ctx.lineTo(t.x + t.w / 2, t.y + t.h); ctx.stroke();
+          }
+          ctx.setLineDash([]);
         }
         ctx.restore();
       }

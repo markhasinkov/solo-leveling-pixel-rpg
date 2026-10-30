@@ -449,6 +449,7 @@
       if (window.Dialogue && window.Dialogue.active) window.Dialogue.close();
       UI.hideCinema();
       UI.hideCutin();
+      UI.hideBossCast();
 
       const stats = this.progress.recalc();
       const main = this.charById['sung-jin-woo'];
@@ -1535,6 +1536,7 @@
 
     onBossKilled(boss) {
       const contractRun = !!this.contractRun;
+      UI.hideBossCast();
       window.Effects.flash('#fff', 0.5, 0.35);
       window.Effects.ring({ x: boss.x + boss.w / 2, y: boss.y + boss.h / 2, maxR: 320, life: 0.9, color: '#ffd24a', width: 8 });
       window.Effects.spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#ffd24a', 50, {
@@ -2056,6 +2058,18 @@
       this.progress.addGold(30 + this.chapter.id * 10);
       UI.toast('Загадка решена', puzzle.name + '. ' + puzzle.lore, { color: '#c08cff', duration: 6000 });
       this.persist();
+    },
+
+    onBossCast(atk, windup) {
+      if (!atk || !this.boss || this.boss.dead) return;
+      const labels = {
+        slam: 'УДАР', beam: 'ЛУЧ', fan: 'ВЕЕР', rain: 'ГРАД', nova: 'НОВА',
+        zone: 'ЗОНА', summon: 'ПРИЗЫВ', dash: 'РЫВОК', shield: 'ЩИТ',
+        heal: 'ЛЕЧЕНИЕ', teleport: 'ТЕЛЕПОРТ'
+      };
+      if (window.UI && UI.showBossCast) {
+        UI.showBossCast(atk.name, windup, atk.color, labels[atk.type] || 'АТАКА');
+      }
     },
 
     onBossIntro(boss) {

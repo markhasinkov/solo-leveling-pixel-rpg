@@ -448,6 +448,28 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   }
   advance(2600);
   assert(mechanicsErrors === 0, 'все типы атак боссов исполняются без ошибок');
+
+  // ---------- Читаемость паттернов ----------
+  const readabilityBoss = new sandbox.window.Boss(900, game.world.floorY - 80, {
+    w: 70, h: 80, hp: 5000, atk: 100, def: 20,
+    name: 'Тест', bossData: game.bossesData.baruka
+  });
+  const fanAttack = game.bossesData.baruka.attacks.find((a) => a.type === 'fan');
+  sandbox.Effects.reset();
+  readabilityBoss.executeAttack(fanAttack, game);
+  assert(sandbox.Effects.telegraphs.some((t) => t.shape === 'cone'),
+    'веер босса получает конусный телеграф');
+  assert(sandbox.UI.bossCast.style.display !== 'none' &&
+    sandbox.UI.bossCastName.textContent === fanAttack.name &&
+    sandbox.UI.bossCastType.textContent === 'ВЕЕР', 'плашка замаха показывает веер');
+  sandbox.UI.hideBossCast();
+  sandbox.Effects.reset();
+  const teleportAttack = game.bossesData.ashborn.attacks.find((a) => a.type === 'teleport');
+  readabilityBoss.executeAttack(teleportAttack, game);
+  assert(sandbox.Effects.telegraphs.some((t) => t.shape === 'circle'),
+    'телепорт заранее показывает точку выхода');
+  assert(sandbox.UI.bossCastType.textContent === 'ТЕЛЕПОРТ', 'плашка замаха показывает телепорт');
+  sandbox.UI.hideBossCast();
   sandbox.Effects.reset();
   for (const m of game.monsters) {
     if (m.summoned) { m.dead = true; m.deathTimer = 0; }

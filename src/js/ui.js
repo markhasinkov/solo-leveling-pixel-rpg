@@ -100,6 +100,7 @@
       this.buildCombo();
       this.buildSidePanel();
       this.buildBossBar();
+      this.buildBossCast();
       this.buildSkillBar();
       this.buildMinimap();
       this.buildHint();
@@ -208,6 +209,34 @@
       const hp = el('div', 'bar boss-hp', bar);
       this.bossFill = el('div', 'bar-fill boss-fill', hp);
       this.bossHpText = el('span', 'bar-text', hp);
+    },
+
+    buildBossCast() {
+      const cast = el('div', 'boss-cast', this.root);
+      cast.style.display = 'none';
+      this.bossCast = cast;
+      const row = el('div', 'boss-cast-row', cast);
+      this.bossCastType = el('span', 'boss-cast-type', row);
+      this.bossCastName = el('span', 'boss-cast-name', row);
+      const bar = el('div', 'boss-cast-bar', cast);
+      this.bossCastFill = el('i', 'boss-cast-fill', bar);
+    },
+
+    showBossCast(name, windup, color, typeLabel) {
+      if (!this.bossCast) return;
+      this.bossCast.style.display = '';
+      this.bossCast.style.setProperty('--boss-cast-color', color || '#ff6a5a');
+      this.bossCastType.textContent = typeLabel || 'ЗАМАХ';
+      this.bossCastName.textContent = name || 'Атака';
+      this._bossCastDuration = Math.max(0.3, windup || 0.8);
+      this._bossCastEnd = (window.Effects ? window.Effects.time : 0) + this._bossCastDuration;
+      this.bossCastFill.style.width = '100%';
+    },
+
+    hideBossCast() {
+      if (!this.bossCast) return;
+      this.bossCast.style.display = 'none';
+      this._bossCastEnd = 0;
     },
 
     buildSkillBar() {
@@ -786,6 +815,14 @@
       } else {
         this.bossBar.style.display = 'none';
         if (this._lastBossKey) this._lastBossKey = '';
+      }
+
+      if (this.bossCast && this.bossCast.style.display !== 'none') {
+        const time = window.Effects ? window.Effects.time : 0;
+        const duration = this._bossCastDuration || 1;
+        const ratio = Math.max(0, Math.min(1, (this._bossCastEnd - time) / duration));
+        this.bossCastFill.style.width = (ratio * 100).toFixed(0) + '%';
+        if (ratio <= 0) this.hideBossCast();
       }
 
       this.drawMinimap(game);

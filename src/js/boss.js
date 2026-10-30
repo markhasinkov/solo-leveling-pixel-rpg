@@ -204,6 +204,7 @@
       const bossDmg = F.damage(this.atk, p.def, dmgMult);
       const windup = atk.windup || 0.8;
       const floorY = (game.level && game.level.floorY) || 820;
+      if (game.onBossCast) game.onBossCast(atk, windup);
 
       switch (atk.type) {
         case 'slam': {
@@ -263,7 +264,7 @@
           const count = atk.count || 5;
           const spread = atk.spread || 0.9;
           const angle = Math.atan2(pc.y - bc.y, pc.x - bc.x);
-          Effects.timer(windup, () => {
+          Effects.telegraphCone(bc.x, bc.y, 520, angle, spread, windup, () => {
             if (this.dead) return;
             for (let i = 0; i < count; i++) {
               const a = angle + (i - (count - 1) / 2) * (spread / Math.max(1, count - 1));
@@ -276,7 +277,7 @@
             }
             Effects.spawnParticles(bc.x, bc.y, color, 12, { speed: 140, life: 0.4 });
             AudioFX.play('slash');
-          });
+          }, color);
           break;
         }
 
@@ -317,7 +318,7 @@
 
         case 'zone': {
           const zx = pc.x;
-          Effects.timer(windup, () => {
+          Effects.telegraphCircle(zx, floorY - 24, atk.radius || 110, windup, () => {
             if (this.dead) return;
             Effects.zone({
               x: zx, y: floorY - 24, r: atk.radius || 110,
@@ -326,12 +327,12 @@
             });
             Effects.spawnParticles(zx, floorY - 24, color, 16, { speed: 100, life: 0.6, size: 3, gravity: 200 });
             AudioFX.play('hurt');
-          });
+          }, color);
           break;
         }
 
         case 'summon': {
-          Effects.timer(windup, () => {
+          Effects.telegraphCircle(bc.x, floorY - 34, 86, windup, () => {
             if (this.dead || !game.spawnMinion) return;
             const ids = atk.ids || ['goblin'];
             const names = atk.names || [];
@@ -342,7 +343,7 @@
             }
             Effects.ring({ x: bc.x, y: bc.y, maxR: 160, life: 0.5, color, width: 4 });
             AudioFX.play('skill');
-          });
+          }, color);
           break;
         }
 
@@ -372,7 +373,7 @@
         }
 
         case 'shield': {
-          Effects.timer(windup, () => {
+          Effects.telegraphCircle(bc.x, floorY - 34, 92, windup, () => {
             if (this.dead) return;
             this.damageReduction = atk.reduction || 0.6;
             this.shieldTimer = atk.duration || 3;
@@ -380,24 +381,26 @@
             Effects.text(bc.x, this.y - 20, 'БЛОК', { color: '#ffd24a', size: 14, life: 1 });
             AudioFX.play('ui');
             if (game.onBossShield) game.onBossShield(this, this.shieldTimer);
-          });
+          }, '#ffd24a');
           break;
         }
 
         case 'heal': {
-          Effects.timer(windup, () => {
+          Effects.telegraphCircle(bc.x, floorY - 34, 100, windup, () => {
             if (this.dead) return;
             const amount = Math.round(this.maxHp * (atk.percent || 0.05));
             this.hp = Math.min(this.maxHp, this.hp + amount);
             Effects.text(bc.x, this.y - 24, '+' + amount, { color: '#6aff9a', size: 18, life: 1.1 });
             Effects.spawnParticles(bc.x, bc.y, '#6aff9a', 18, { speed: 120, up: 80, life: 0.7, glow: true });
             AudioFX.play('heal');
-          });
+          }, '#6aff9a');
           break;
         }
 
         case 'teleport': {
-          Effects.timer(windup, () => {
+          const worldW = game.level ? game.level.worldW : 2400;
+          const destX = Math.max(70, Math.min(pc.x + (pc.x >= bc.x ? 130 : -130 - this.w), worldW - this.w - 70));
+          Effects.telegraphCircle(destX + this.w / 2, floorY - 30, 58, windup, () => {
             if (this.dead) return;
             const oldX = this.x;
             for (let i = 0; i < 4; i++) {
@@ -407,13 +410,13 @@
                 face: this.face, life: 0.4, color
               });
             }
-            this.x = Math.max(70, Math.min(p.x + (p.face > 0 ? 110 : -110 - this.w), (game.level ? game.level.worldW : 2400) - this.w - 70));
+            this.x = destX;
             const dx = (p.x + p.w / 2) - (this.x + this.w / 2);
             this.face = dx > 0 ? 1 : -1;
             Effects.ring({ x: this.x + this.w / 2, y: this.y + this.h / 2, maxR: 130, life: 0.4, color, width: 4 });
             Effects.spawnParticles(this.x + this.w / 2, this.y + this.h / 2, color, 16, { speed: 180, life: 0.5, glow: true });
             AudioFX.play('dash');
-          });
+          }, color);
           break;
         }
 
