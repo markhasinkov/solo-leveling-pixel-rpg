@@ -237,6 +237,8 @@ fan-дополнения, но их нужно либо явно подать к
 - [Red Gate — английская вики](https://solo-leveling.fandom.com/wiki/Red_Gate)
 - [Instant Dungeon Arc — английская вики](https://solo-leveling.fandom.com/wiki/Instant_Dungeon_Arc)
 - [Kargalgan — английская вики](https://solo-leveling.fandom.com/wiki/Kargalgan)
+- [Demon Castle — английская вики](https://solo-leveling.fandom.com/wiki/Demon_Castle)
+- [Baran — английская вики](https://solo-leveling.fandom.com/wiki/Baran)
 - [Penalty Zone / Survival — английская вики](https://solo-leveling.fandom.com/wiki/Survival)
 - [Chapter 113 — испытание Ча Хэ-Ин](https://solo-leveling.fandom.com/wiki/Chapter_113)
 - [Cup of Reincarnation — английская вики](https://solo-leveling.fandom.com/wiki/Cup_of_Reincarnation)
