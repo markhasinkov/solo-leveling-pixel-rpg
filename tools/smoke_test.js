@@ -997,6 +997,32 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   if (sandbox.Dialogue.active) sandbox.Dialogue.close();
   assert(game.world.scenes[0].triggered === true, 'сцена не повторяется после перезагрузки главы');
 
+  // ---------- Полный прогон кампании 1–12 ----------
+  game.resetProgress();
+  advance(100);
+  game.grantShadow('igris');
+  game.grantShadow('baruka');
+  game.grantShadow('beru');
+  for (let cid = 1; cid <= 12; cid++) {
+    assert(game.chapterIndex === cid - 1, 'полный прогон: открыта глава ' + cid);
+    if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+    game.player.invulnTimer = 999;
+    game.monsters.filter((m) => !m.isBoss && !m.dead)
+      .forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+    if (game.boss && !game.boss.dead) {
+      game.damageMonster(game.boss, 999999, { source: 'basic' });
+    }
+    advance(1800);
+    let guard = 0;
+    while (game.chapterIndex === cid - 1 && !game.finished && guard++ < 50) {
+      if (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+      advance(150);
+    }
+    assert(game.chapterIndex === cid || (cid === 12 && game.finished),
+      'полный прогон: глава ' + cid + ' закрыта');
+  }
+  assert(game.finished, 'полный прогон: кампания завершена');
+
   console.log(failures === 0 ? '\nSMOKE TEST: ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ' : '\nSMOKE TEST: ОШИБОК ' + failures);
   process.exit(failures === 0 ? 0 : 1);
 })().catch((e) => {

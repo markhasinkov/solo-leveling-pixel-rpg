@@ -94,16 +94,19 @@ function scaledBoss(cid, chapter, lv) {
   const c = cid ? byId[cid] : null;
   if (!c) {
     const custom = (lv && lv.boss) || {};
+    const bd = (custom.bossData && bosses[custom.bossData]) || {};
     return {
-      hp: 3500 + chapter * 1200, atk: 58 + chapter * 20, def: 18 + chapter * 7,
+      hp: bd.hpBase || 3500 + chapter * 1200,
+      atk: bd.atkBase || 58 + chapter * 20,
+      def: bd.defBase || 18 + chapter * 7,
       name: custom.name || 'Страж главы'
     };
   }
   const bd = bosses[cid] || {};
   return {
     hp: bd.hpBase || Math.round(c.stats.hp * (1 + 0.07 * (chapter - 1))),
-    atk: Math.round(c.stats.atk * (1 + 0.045 * (chapter - 1))),
-    def: Math.round(c.stats.def * (1 + 0.03 * (chapter - 1))),
+    atk: bd.atkBase || Math.round(c.stats.atk * (1 + 0.045 * (chapter - 1))),
+    def: bd.defBase || Math.round(c.stats.def * (1 + 0.03 * (chapter - 1))),
     name: c.name
   };
 }
@@ -166,6 +169,7 @@ for (const ch of chapters) {
 
   rows.push({
     chapter: cid, level, hp: stats.maxHp, atk: stats.atk, def: stats.def,
+    stats: Object.assign({}, stats), gear: Object.assign({}, gear),
     boss: bossStats.name, bossHp: bossStats.hp, bossAtk: bossStats.atk,
     ttk: bossTtk, survive, dps, bossHit, chapterXp, talentPoints
   });
@@ -179,34 +183,40 @@ for (const ch of chapters) {
   }
 }
 
-console.log('Глава | Ур. | HP   | ATK | DEF | Босс              | HP босса | TTK,с | Живёт,с | XP главы');
-console.log('------+-----+------+-----+-----+-------------------+----------+-------+---------+--------');
-for (const r of rows) {
-  console.log(
-    String(r.chapter).padStart(5) + ' | ' +
-    String(r.level).padStart(3) + ' | ' +
-    String(r.hp).padStart(4) + ' | ' +
-    String(r.atk).padStart(3) + ' | ' +
-    String(r.def).padStart(3) + ' | ' +
-    r.boss.padEnd(17).slice(0, 17) + ' | ' +
-    String(r.bossHp).padStart(8) + ' | ' +
-    r.ttk.toFixed(1).padStart(5) + ' | ' +
-    r.survive.toFixed(1).padStart(7) + ' | ' +
-    String(r.chapterXp).padStart(5)
-  );
+function report() {
+  console.log('Глава | Ур. | HP   | ATK | DEF | Босс              | HP босса | Удар | TTK,с | Живёт,с | XP главы');
+  console.log('------+-----+------+-----+-----+-------------------+----------+------+-------+---------+--------');
+  for (const r of rows) {
+    console.log(
+      String(r.chapter).padStart(5) + ' | ' +
+      String(r.level).padStart(3) + ' | ' +
+      String(r.hp).padStart(4) + ' | ' +
+      String(r.atk).padStart(3) + ' | ' +
+      String(r.def).padStart(3) + ' | ' +
+      r.boss.padEnd(17).slice(0, 17) + ' | ' +
+      String(r.bossHp).padStart(8) + ' | ' +
+      String(Math.round(r.bossHit)).padStart(4) + ' | ' +
+      r.ttk.toFixed(1).padStart(5) + ' | ' +
+      r.survive.toFixed(1).padStart(7) + ' | ' +
+      String(r.chapterXp).padStart(5)
+    );
+  }
+
+  const problems = [];
+  rows.forEach((r) => {
+    if (r.ttk > 35) problems.push('Глава ' + r.chapter + ': босс умирает слишком долго (' + r.ttk.toFixed(1) + ' с)');
+    if (r.ttk < 12) problems.push('Глава ' + r.chapter + ': босс умирает слишком быстро (' + r.ttk.toFixed(1) + ' с)');
+    if (r.survive < 15) problems.push('Глава ' + r.chapter + ': игрок живёт слишком мало (' + r.survive.toFixed(1) + ' с)');
+    if (r.survive > 60) problems.push('Глава ' + r.chapter + ': игрок почти неуязвим (' + r.survive.toFixed(1) + ' с)');
+  });
+  console.log('\nИтоговый уровень к финалу:', level, '| очков талантов:', talentPoints);
+  if (problems.length) {
+    console.log('\nЗамечания баланса:');
+    problems.forEach((p) => console.log(' - ' + p));
+  } else {
+    console.log('\nБаланс в целевых диапазонах (TTK 12–35 c, выживание 15–60 c).');
+  }
 }
 
-const problems = [];
-rows.forEach((r) => {
-  if (r.ttk > 70) problems.push('Глава ' + r.chapter + ': босс умирает слишком долго (' + r.ttk.toFixed(1) + ' с)');
-  if (r.ttk < 7) problems.push('Глава ' + r.chapter + ': босс умирает слишком быстро (' + r.ttk.toFixed(1) + ' с)');
-  if (r.survive < 10) problems.push('Глава ' + r.chapter + ': игрок живёт слишком мало (' + r.survive.toFixed(1) + ' с)');
-  if (r.survive > 120) problems.push('Глава ' + r.chapter + ': игрок почти неуязвим (' + r.survive.toFixed(1) + ' с)');
-});
-console.log('\nИтоговый уровень к финалу:', level, '| очков талантов:', talentPoints);
-if (problems.length) {
-  console.log('\nЗамечания баланса:');
-  problems.forEach((p) => console.log(' - ' + p));
-} else {
-  console.log('\nБаланс в целевых диапазонах (TTK 7–70 c, выживание 10–120 c).');
-}
+if (require.main === module) report();
+module.exports = rows;

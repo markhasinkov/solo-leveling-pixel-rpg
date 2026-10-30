@@ -668,8 +668,8 @@
           w: size, h: size,
           drawW: size, drawH: size,
           hp: bossData.hpBase || Math.round(stats.hp * (1 + 0.07 * (chapter - 1))),
-          atk: Math.round(stats.atk * (1 + 0.045 * (chapter - 1))),
-          def: Math.round(stats.def * (1 + 0.03 * (chapter - 1))),
+          atk: bossData.atkBase || Math.round(stats.atk * (1 + 0.045 * (chapter - 1))),
+          def: bossData.defBase || Math.round(stats.def * (1 + 0.03 * (chapter - 1))),
           name: e.c.name || e.id,
           animId: e.id,
           sprite: e.c.sprite ? Engine.getSprite(e.c.sprite, '#f46', 32, 32) : null,
@@ -689,9 +689,9 @@
           FALLBACK_BOSSES[custom.bossData])) ||
           this.bossesData.guardian || FALLBACK_BOSSES.guardian;
         const size = Math.max(60, custom.size || BOSS_SIZE.guardian);
-        const hp = 3500 + chapter * 1200;
-        const atk = 58 + chapter * 20;
-        const def = 18 + chapter * 7;
+        const hp = bossData.hpBase || 3500 + chapter * 1200;
+        const atk = bossData.atkBase || 58 + chapter * 20;
+        const def = bossData.defBase || 18 + chapter * 7;
         const boss = new window.Boss(this.world.bossX, floor - size, {
           w: size, h: size, hp, atk, def,
           drawW: size, drawH: size,
