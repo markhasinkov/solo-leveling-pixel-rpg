@@ -145,6 +145,37 @@
     return { owned: {}, equipped: [], levels: {} };
   }
 
+  function emptyContracts() {
+    return { day: null, list: [] };
+  }
+
+  function dayKey(date) {
+    const d = date || new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+      '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function hashSeed(text) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function seededShuffle(list, seed) {
+    let x = seed >>> 0;
+    for (let i = list.length - 1; i > 0; i--) {
+      x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
+      const j = x % (i + 1);
+      const tmp = list[i];
+      list[i] = list[j];
+      list[j] = tmp;
+    }
+    return list;
+  }
+
   const Game = {
     data: null,
     chapters: [],
@@ -177,6 +208,10 @@
     savedWorld: {},
     storySeen: {},
     shadows: emptyShadows(),
+    contracts: emptyContracts(),
+    activeContract: null,
+    contractRun: false,
+    contractOutcome: null,
     finished: false,
     loading: true,
     hintPuzzle: null,
@@ -284,6 +319,10 @@
       this.savedWorld = {};
       this.storySeen = {};
       this.shadows = emptyShadows();
+      this.contracts = emptyContracts();
+      this.activeContract = null;
+      this.contractRun = false;
+      this.contractOutcome = null;
       this.finished = false;
       this._newGame = true;
     },
@@ -310,6 +349,10 @@
       this.savedWorld = save.world || {};
       this.storySeen = save.storySeen || {};
       this.shadows = this.normalizeShadows(save.shadows);
+      this.contracts = this.normalizeContracts(save.contracts);
+      this.activeContract = null;
+      this.contractRun = false;
+      this.contractOutcome = null;
       this.finished = !!save.finished;
       this._newGame = false;
     },
@@ -332,6 +375,20 @@
       return out;
     },
 
+    normalizeContracts(raw) {
+      const today = dayKey();
+      if (!raw || raw.day !== today || !Array.isArray(raw.list)) return emptyContracts();
+      const allowed = ['available', 'active', 'completed', 'failed'];
+      const types = ['boss', 'no-potion', 'elite'];
+      const list = raw.list.filter((c) => c && c.id && c.chapter &&
+        types.indexOf(c.type) >= 0 && allowed.indexOf(c.status) >= 0).slice(0, 3).map((c) => {
+          const status = c.status === 'active' ? 'failed' : c.status;
+          return Object.assign({}, c, { status });
+        });
+      if (list.length !== 3) return emptyContracts();
+      return { day: raw.day, list };
+    },
+
     persist() {
       if (!window.SaveSystem || !this.progress) return;
       if (this.world && this.chapter) this.savedWorld[this.chapter.id] = this.world.serialize();
@@ -346,6 +403,7 @@
         stats: this.stats,
         settings: this.settings,
         shadows: this.shadows,
+        contracts: this.contracts,
         finished: this.finished
       });
     },
@@ -353,6 +411,10 @@
     // ---------- Главы ----------
     startChapter(index, opts) {
       opts = opts || {};
+      if (!opts.contract && this.activeContract) this.failContract('контракт прерван');
+      if (!opts.contract) this.activeContract = null;
+      this.contractRun = false;
+      this.contractOutcome = null;
       const last = this.chapters.length - 1;
       index = Math.max(0, Math.min(last, index));
       this.chapterIndex = index;
@@ -430,7 +492,7 @@
       if (!opts.respawn) {
         UI.showChapterBanner('Глава ' + this.chapter.id, this.chapter.title.replace(/^Глава \d+\.\s*/, ''));
       }
-      if (this.replaying && !opts.respawn) {
+      if (this.replaying && !opts.respawn && !opts.contract) {
         UI.toast('Повторное прохождение', 'Глава ' + this.chapter.id + ' · награды и тайники сохраняются', { color: '#6ad7ff' });
       }
       this.persist();
@@ -925,6 +987,220 @@
       this.persist();
     },
 
+    // ---------- Ежедневные контракты Ахджин ----------
+    ensureContracts(day) {
+      const key = day || dayKey();
+      if (this.contracts && this.contracts.day === key &&
+        Array.isArray(this.contracts.list) && this.contracts.list.length === 3) {
+        return this.contracts;
+      }
+      // Не подменяем доску посреди активного забега, даже если наступила полночь.
+      if (this.activeContract && this.contracts && this.contracts.day !== key) return this.contracts;
+      this.contracts = { day: key, list: this.generateDailyContracts(key) };
+      this.activeContract = null;
+      this.contractRun = false;
+      this.persist();
+      return this.contracts;
+    },
+
+    generateDailyContracts(day) {
+      const maxIdx = Math.max(0, Math.min(this.unlocked, this.chapters.length - 1));
+      const start = Math.max(0, maxIdx - 5);
+      const pool = [];
+      for (let i = start; i <= maxIdx; i++) pool.push(i);
+      while (pool.length < 3) pool.push(maxIdx);
+      seededShuffle(pool, hashSeed(day + ':ahjin:' + maxIdx));
+      return ['boss', 'no-potion', 'elite'].map((type, slot) =>
+        this.makeDailyContract(type, pool[slot], slot, day));
+    },
+
+    makeDailyContract(type, chapterIndex, slot, day) {
+      const chapter = this.chapters[chapterIndex];
+      const short = chapter.title.replace(/^Глава \d+\.\s*/, '').split(':')[0];
+      const templates = {
+        boss: {
+          tag: 'ОХОТА', title: 'Охота: ' + short,
+          desc: 'Победите босса главы ' + chapter.id + ' на его арене.',
+          adds: 0, eliteAdds: false, goldMult: 1, essence: 1, potion: null
+        },
+        'no-potion': {
+          tag: 'БЕЗ ЗЕЛИЙ', title: 'Без лечения: ' + short,
+          desc: 'Победите босса главы ' + chapter.id + ', не используя зелья. На арене два стража.',
+          adds: 2, eliteAdds: false, goldMult: 1.5, essence: 2, potion: 'hp-potion-large'
+        },
+        elite: {
+          tag: 'ЭЛИТА', title: 'Элитная арена: ' + short,
+          desc: 'Победите босса главы ' + chapter.id + ', пока арену охраняют три элитных стража.',
+          adds: 3, eliteAdds: true, goldMult: 2, essence: 3, potion: 'hp-potion-medium'
+        }
+      };
+      const cfg = templates[type];
+      const rewards = {
+        gold: Math.round((100 + chapter.id * 20) * cfg.goldMult),
+        items: [{ id: 'shadow-essence', qty: cfg.essence }]
+      };
+      if (cfg.potion) rewards.items.push({ id: cfg.potion, qty: 1 });
+      return {
+        id: 'daily-' + day.replace(/-/g, '') + '-' + (slot + 1),
+        type,
+        modifier: type === 'boss' ? 'none' : type,
+        tag: cfg.tag,
+        chapter: chapter.id,
+        chapterIndex,
+        title: cfg.title,
+        desc: cfg.desc,
+        adds: cfg.adds,
+        eliteAdds: cfg.eliteAdds,
+        rewards,
+        status: 'available',
+        attempts: 0
+      };
+    },
+
+    contractRewardText(contract) {
+      const reward = (contract && contract.rewards) || {};
+      const parts = ['◈ ' + (reward.gold || 0)];
+      (reward.items || []).forEach((it) => {
+        const def = window.Loot && window.Loot.item(it.id);
+        parts.push((def ? def.name : it.id) + (it.qty > 1 ? ' ×' + it.qty : ''));
+      });
+      return parts.join(' · ');
+    },
+
+    findContract(id) {
+      if (!this.contracts || !Array.isArray(this.contracts.list)) return null;
+      return this.contracts.list.find((c) => c.id === id) || null;
+    },
+
+    startContract(id) {
+      this.ensureContracts();
+      const contract = this.findContract(id);
+      if (!contract) return false;
+      if (contract.status === 'completed') {
+        UI.toast('Контракт', 'Этот контракт уже выполнен сегодня.', { color: '#9aa0c0', duration: 2600 });
+        return false;
+      }
+      if (this.activeContract) {
+        UI.toast('Контракт', 'Сначала завершите текущий контракт или прервите его.', {
+          color: '#ff9a6a', duration: 3200
+        });
+        return false;
+      }
+      const idx = Math.max(0, Math.min(this.chapters.length - 1, (contract.chapter | 0) - 1));
+      if (idx > this.unlocked) {
+        UI.toast('Контракт', 'Эта глава ещё не открыта.', { color: '#ff9a6a', duration: 2600 });
+        return false;
+      }
+      if (contract.status === 'active') contract.status = 'failed';
+      contract.status = 'active';
+      contract.attempts = (contract.attempts || 0) + 1;
+      contract.failedReason = '';
+      this.activeContract = {
+        id: contract.id,
+        type: contract.type,
+        modifier: contract.modifier,
+        chapter: contract.chapter,
+        addId: null,
+        potionsUsed: 0
+      };
+      UI.closeAllPanels();
+      this.startChapter(idx, { replay: true, contract: true });
+      this.contractRun = true;
+      this.contractOutcome = null;
+      this.setupContractArena(contract);
+      UI.showChapterBanner('Контракт Ахджин', contract.title);
+      UI.toast('Ежедневный контракт', contract.desc + ' Награда: ' + this.contractRewardText(contract), {
+        color: '#e8c76a', duration: 5600
+      });
+      AudioFX.play('ui');
+      this.persist();
+      return true;
+    },
+
+    setupContractArena(contract) {
+      const boss = this.boss;
+      if (!boss || !this.player || !this.world) {
+        this.failContract('арена недоступна');
+        return;
+      }
+      const regular = this.monsters.find((m) => !m.isBoss);
+      const addId = regular ? regular.lootId : 'goblin';
+      if (this.activeContract) this.activeContract.addId = addId;
+      this.monsters = this.monsters.filter((m) => m.isBoss);
+      this.player.x = Math.max(80, boss.x - 460);
+      this.player.y = this.world.floorY - this.player.h;
+      this.player.vx = 0;
+      this.player.vy = 0;
+      this.player.onGround = true;
+      this.player.hp = this.player.maxHp;
+      this.player.mp = this.player.maxMp;
+      this.player.invulnTimer = Math.max(this.player.invulnTimer || 0, 0.8);
+      const zone = this.world.zones[this.world.zones.length - 1];
+      if (zone) {
+        this.world.seenZones[zone.id] = true;
+        this.world.activeZoneId = zone.id;
+      }
+      this._pendingZoneStory = null;
+      window.Engine.Camera.snap(this.player, this.level.worldW, this.level.worldH);
+      const adds = contract.adds | 0;
+      for (let i = 0; i < adds; i++) {
+        const x = Math.max(100, Math.min(this.world.worldW - 80, boss.x - 260 + i * 180));
+        const add = this.spawnEnemy(addId, x, { elite: !!contract.eliteAdds });
+        if (add) {
+          add.x = x;
+          add.summoned = true;
+          add.name = contract.eliteAdds ? 'Элитный страж арены' : 'Страж арены';
+        }
+      }
+    },
+
+    resolveContractBossKill() {
+      if (!this.activeContract) return;
+      const contract = this.findContract(this.activeContract.id);
+      if (!contract || contract.status !== 'active' || contract.chapter !== this.chapter.id) return;
+      if (contract.modifier === 'no-potion' && (this.activeContract.potionsUsed || 0) > 0) {
+        this.failContract('условие «без зелий» нарушено');
+        return;
+      }
+      this.completeContract(contract);
+    },
+
+    completeContract(contract) {
+      if (!contract || contract.status !== 'active') return;
+      contract.status = 'completed';
+      contract.completedAt = Date.now();
+      this.contractOutcome = 'completed';
+      const reward = contract.rewards || {};
+      if (reward.gold) this.progress.addGold(reward.gold);
+      (reward.items || []).forEach((it) => this.grantItem(it.id, it.qty, { notable: false }));
+      this.activeContract = null;
+      UI.toast('Контракт выполнен', contract.title + ' · ' + this.contractRewardText(contract), {
+        color: '#ffd24a', duration: 5600
+      });
+      AudioFX.play('quest');
+      if (window.TG) window.TG.haptic('success');
+      this.persist();
+      if (window.UI && UI.hub && UI.hub.style.display !== 'none') UI.renderHub();
+    },
+
+    failContract(reason) {
+      const run = this.activeContract;
+      if (!run) return;
+      const contract = this.findContract(run.id);
+      if (contract && contract.status === 'active') {
+        contract.status = 'failed';
+        this.contractOutcome = 'failed';
+        contract.failedReason = reason || '';
+        contract.failedAt = Date.now();
+      }
+      this.activeContract = null;
+      UI.toast('Контракт провален', (contract ? contract.title : 'Контракт') +
+        (reason ? ' · ' + reason : ''), { color: '#ff8a8a', duration: 5000 });
+      AudioFX.play('error');
+      this.persist();
+      if (window.UI && UI.hub && UI.hub.style.display !== 'none') UI.renderHub();
+    },
+
     showIntro() {
       UI.toast('Система', 'Игрок пробуждён. A/D — движение, W — прыжок, S — быстрое падение. Мышь — прицел, ЛКМ — удар, ПКМ — умение. E — взаимодействие.', {
         color: '#a06cff', duration: 7000
@@ -1234,18 +1510,22 @@
         this.grantLoot(loot, m.name, m.isBoss);
       }
 
-      window.Quests.emit('kill', {
-        chapterId: this.chapter.id,
-        target: m.lootId || 'guardian',
-        isBoss: m.isBoss,
-        amount: 1
-      });
+      if (!this.contractRun) {
+        window.Quests.emit('kill', {
+          chapterId: this.chapter.id,
+          target: m.lootId || 'guardian',
+          isBoss: m.isBoss,
+          amount: 1
+        });
+      }
 
       if (m.isBoss) {
         this.stats.bosses++;
-        window.Quests.emit('boss', { chapterId: this.chapter.id, target: m.lootId, amount: 1 });
-        if (this.bossRun.noHit) window.Quests.emit('bossNoHit', { chapterId: this.chapter.id, amount: 1 });
-        if (this.bossRun.noPotion) window.Quests.emit('noPotionBoss', { chapterId: this.chapter.id, amount: 1 });
+        if (!this.contractRun) {
+          window.Quests.emit('boss', { chapterId: this.chapter.id, target: m.lootId, amount: 1 });
+          if (this.bossRun.noHit) window.Quests.emit('bossNoHit', { chapterId: this.chapter.id, amount: 1 });
+          if (this.bossRun.noPotion) window.Quests.emit('noPotionBoss', { chapterId: this.chapter.id, amount: 1 });
+        }
         this.onBossKilled(m);
       }
 
@@ -1254,6 +1534,7 @@
     },
 
     onBossKilled(boss) {
+      const contractRun = !!this.contractRun;
       window.Effects.flash('#fff', 0.5, 0.35);
       window.Effects.ring({ x: boss.x + boss.w / 2, y: boss.y + boss.h / 2, maxR: 320, life: 0.9, color: '#ffd24a', width: 8 });
       window.Effects.spawnParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#ffd24a', 50, {
@@ -1276,7 +1557,7 @@
       window.Effects.zones = window.Effects.zones.filter((z) => z.owner !== 'enemy');
       window.Effects.telegraphs.length = 0;
       const shadowDef = window.ShadowArmy && window.ShadowArmy.def(boss.lootId);
-      const canExtract = !!shadowDef && !this.hasShadow(shadowDef.id) &&
+      const canExtract = !contractRun && !!shadowDef && !this.hasShadow(shadowDef.id) &&
         (shadowDef.id === 'igris' || this.hasShadow('igris'));
       if (canExtract) {
         this._shadowAvailable = true;
@@ -1284,6 +1565,7 @@
         // История зоны не должна перебивать церемонию извлечения.
         this._pendingZoneStory = null;
       }
+      if (this.activeContract) this.resolveContractBossKill();
       this.checkChapterClear();
     },
 
@@ -1306,6 +1588,27 @@
 
     finishChapter() {
       if (this.state === 'chapterEnd') return;
+      if (this.contractRun) {
+        const failed = this.contractOutcome === 'failed';
+        this.contractRun = false;
+        this.contractOutcome = null;
+        this.state = 'chapterEnd';
+        this.persist();
+        const back = this.unlocked;
+        Dialogue.start([{
+          speaker: 'Система',
+          text: failed
+            ? 'Контракт провален. Возвращаемся в штаб Ахджин — попробуйте снова.'
+            : 'Контракт завершён. Возвращаемся в штаб Ахджин — награда уже в инвентаре.'
+        }], () => {
+          this.state = 'play';
+          this.startChapter(back, { replay: true });
+          UI.toast('Штаб Ахджин', 'Новые контракты дня доступны в хабе (G).', {
+            color: '#e8c76a', duration: 4200
+          });
+        });
+        return;
+      }
       this.state = 'chapterEnd';
       const ch = this.chapter;
       window.Quests.emit('chapter', { chapterId: ch.id, amount: 1 });
@@ -1357,6 +1660,7 @@
 
     onPlayerDeath() {
       if (this.state === 'dead') return;
+      if (this.activeContract) this.failContract('герой погиб');
       this.state = 'dead';
       this.stats.deaths++;
       AudioFX.play('death');
@@ -1482,6 +1786,10 @@
       if (!options.length) {
         UI.toast('Зелье', 'Нет зелий лечения. Откройте лавку (I).', { color: '#ff9a6a' });
         AudioFX.play('error');
+        return;
+      }
+      if (this.activeContract && this.activeContract.modifier === 'no-potion') {
+        this.failContract('условие «без зелий» нарушено');
         return;
       }
       const chosen = (options.find((o) => o.amount >= missing * 0.75) || options[options.length - 1]).id;
@@ -1633,6 +1941,10 @@
       this.savedWorld = {};
       this.storySeen = {};
       this.shadows = emptyShadows();
+      this.contracts = emptyContracts();
+      this.activeContract = null;
+      this.contractRun = false;
+      this.contractOutcome = null;
       this.finished = false;
       this._newGame = true;
       UI.closeAllPanels();
@@ -1773,7 +2085,7 @@
       UI.toast('Босс пробудился', boss.name + ' заметил вас. Готовьтесь!', { color: '#ff8a8a', duration: 2800 });
       AudioFX.play('boss');
       Camera.addTrauma(0.25);
-      if (!this._bossDlgPlayed && this.chapter && this.chapter.bossDialogue) {
+      if (!this._bossDlgPlayed && !this.contractRun && this.chapter && this.chapter.bossDialogue) {
         const lines = this.makeStoryLines(this.chapter.bossDialogue);
         if (lines.length) {
           this._bossDlgPlayed = true;

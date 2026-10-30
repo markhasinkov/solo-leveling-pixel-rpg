@@ -1279,6 +1279,10 @@
       const g = this.game;
       const body = this.hubBody;
       clear(body);
+      g.ensureContracts();
+      (g.contracts.list || []).forEach((c) => {
+        if (c.status === 'active' && (!g.activeContract || g.activeContract.id !== c.id)) c.status = 'failed';
+      });
       const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
       const done = (type) => (window.Quests.data[type] || [])
         .filter((q) => ((window.Quests.stateOf(q.id) || {}).status === 'completed')).length;
@@ -1306,11 +1310,62 @@
       chip('ЗОЛОТО', '◈ ' + g.progress.gold);
       chip('ТЕНИ', g.shadows.equipped.length + '/' + max);
 
+      const daily = el('section', 'hub-section hub-daily', body);
+      const dhead = el('div', 'hub-sec-head', daily);
+      el('div', 'hub-sec-title', dhead).textContent = 'ЕЖЕДНЕВНЫЕ КОНТРАКТЫ';
+      const now = new Date();
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const minutes = Math.max(0, Math.floor((midnight.getTime() - now.getTime()) / 60000));
+      const resetText = minutes >= 60
+        ? Math.floor(minutes / 60) + ' ч ' + (minutes % 60) + ' мин'
+        : minutes + ' мин';
+      const completedContracts = g.contracts.list.filter((c) => c.status === 'completed').length;
+      el('div', 'hub-sec-sub', dhead).textContent =
+        'Выполнено ' + completedContracts + '/3 · сброс через ' + resetText;
+      const dailyList = el('div', 'hub-daily-list', daily);
+      g.contracts.list.forEach((contract, index) => {
+        const card = el('article', 'hub-contract hub-contract-' + contract.status, dailyList);
+        const top = el('div', 'hub-contract-top', card);
+        el('span', 'hub-contract-num', top).textContent = String(index + 1).padStart(2, '0');
+        el('span', 'hub-contract-tag', top).textContent = contract.tag;
+        const contractTitle = el('div', 'hub-contract-title', card);
+        contractTitle.textContent = contract.title;
+        contractTitle.title = contract.title;
+        const contractDesc = el('div', 'hub-contract-desc', card);
+        contractDesc.textContent = contract.desc;
+        contractDesc.title = contract.desc;
+        const contractReward = el('div', 'hub-contract-reward', card);
+        contractReward.textContent = 'Награда: ' + g.contractRewardText(contract);
+        contractReward.title = contractReward.textContent;
+        const foot = el('div', 'hub-contract-foot', card);
+        const status = el('span', 'hub-contract-status', foot);
+        if (contract.status === 'completed') {
+          status.textContent = 'ВЫПОЛНЕНО';
+        } else if (contract.status === 'failed') {
+          status.textContent = 'ПРОВАЛЕН';
+        } else if (contract.status === 'active') {
+          status.textContent = 'В ИГРЕ';
+        } else {
+          status.textContent = 'ГОТОВ';
+        }
+        if (contract.status === 'completed') return;
+        const btn = el('button', 'hub-contract-btn', foot);
+        btn.textContent = contract.status === 'active' ? 'ПРОДОЛЖИТЬ'
+          : contract.status === 'failed' ? 'ПОВТОРИТЬ' : 'ПРИНЯТЬ';
+        btn.addEventListener('click', () => {
+          if (contract.status === 'active') {
+            this.closeAllPanels();
+            return;
+          }
+          g.startContract(contract.id);
+        });
+      });
+
       const grid = el('div', 'hub-grid', body);
       const contracts = el('section', 'hub-section hub-contracts', grid);
       const chead = el('div', 'hub-sec-head', contracts);
       const ctitle = el('div', 'hub-sec-title', chead);
-      ctitle.textContent = 'ДОСКА КОНТРАКТОВ';
+      ctitle.textContent = 'АРХИВ ГЛАВ';
       el('div', 'hub-sec-sub', chead).textContent =
         'Основные ' + done('main') + '/12 · побочные ' + done('side') + '/28 · скрытые ' + done('hidden') + '/8';
       const chapters = el('div', 'hub-chapters', contracts);
@@ -1399,21 +1454,11 @@
       action('ТАЛАНТЫ', () => { this.closeAllPanels(); this.toggleTalents(); });
       action('ЖУРНАЛ', () => { this.closeAllPanels(); this.toggleQuests(); });
 
-      const stats = el('div', 'hub-stats', body);
-      const stat = (label, value) => {
-        const s = el('div', 'hub-stat', stats);
-        el('div', 'hub-stat-label', s).textContent = label;
-        el('div', 'hub-stat-value', s).textContent = String(value);
-      };
-      stat('УБИТО', g.stats.kills || 0);
-      stat('БОССОВ', g.stats.bosses || 0);
-      stat('ТАЙНИКОВ', g.stats.chests || 0);
-      stat('СЕКРЕТОВ', g.stats.secrets || 0);
-
       const foot = el('div', 'hub-foot', body);
       el('div', 'hub-foot-left', foot).textContent =
-        'Штаб-квартира · Сеул · гильдия из двух человек. Пока что.';
-      el('div', 'hub-foot-right', foot).textContent = 'G — закрыть';
+        'Убито ' + (g.stats.kills || 0) + ' · Боссов ' + (g.stats.bosses || 0) +
+        ' · Тайников ' + (g.stats.chests || 0) + ' · Секретов ' + (g.stats.secrets || 0);
+      el('div', 'hub-foot-right', foot).textContent = 'Штаб · Сеул · G — закрыть';
     },
 
     // ---------- Меню ----------

@@ -104,6 +104,7 @@
         stats: state.stats || {},
         settings: state.settings || {},
         shadows: state.shadows || { owned: {}, equipped: [] },
+        contracts: state.contracts || { day: null, list: [] },
         finished: !!state.finished
       };
       this.write(obj);

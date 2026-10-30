@@ -575,6 +575,8 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     assert(openChapters.length === 9, 'в хабе доступны открытые главы');
     assert(sandbox.UI.hub.querySelectorAll('.hub-shadow-card').length === 2, 'в хабе два слота отряда');
     assert(sandbox.UI.hub.querySelectorAll('.hub-act').length === 4, 'снабжение хаба предлагает 4 раздела');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-contract').length === 3, 'в хабе три ежедневных контракта');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-contract-btn').length === 3, 'у контрактов есть кнопки действий');
     game.inventory.add('hp-potion-small', 1);
     game.player.hp = 1;
     sandbox.UI.renderHub();
@@ -593,6 +595,72 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     failures++;
     console.log('  FAIL UI panels: ' + e.stack);
   }
+
+  // ---------- Ежедневные контракты Ахджин ----------
+  game.unlocked = 8;
+  game.contracts = { day: null, list: [] };
+  game.ensureContracts('2026-10-30');
+  const daily = game.contracts.list;
+  assert(daily.length === 3, 'ежедневная доска выдаёт три контракта');
+  assert(new Set(daily.map((c) => c.chapter)).size === 3, 'контракты ведут в разные главы');
+  assert(daily.every((c) => c.status === 'available' && c.rewards && c.rewards.gold > 0),
+    'у контрактов есть статус и награда');
+
+  const bossContract = daily[0];
+  assert(game.startContract(bossContract.id), 'контракт запускается из хаба');
+  assert(game.activeContract && bossContract.status === 'active', 'контракт становится активным');
+  assert(game.chapter.id === bossContract.chapter, 'контракт открывает нужную главу');
+  assert(game.player.x < game.boss.x && game.player.x > game.boss.x - 620,
+    'контракт переносит героя к арене босса');
+  assert(game.monsters.filter((m) => !m.isBoss).length === bossContract.adds,
+    'на арене появляются только стражи контракта');
+  const goldBeforeContract = game.progress.gold;
+  game.damageMonster(game.boss, 999999, { source: 'basic' });
+  assert(bossContract.status === 'completed', 'обычный контракт завершается убийством босса');
+  assert(game.progress.gold > goldBeforeContract, 'за контракт начисляется золото');
+  assert(game.activeContract === null, 'после выполнения контракт снимается');
+  advance(1600);
+  assert(game.state === 'chapterEnd' && sandbox.Dialogue.active,
+    'после контракта показывается возврат в штаб');
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(200);
+  assert(game.contractRun === false && game.chapter.id === game.unlocked + 1,
+    'контракт возвращает в актуальную главу и не двигает кампанию');
+
+  const noPotionContract = daily.find((c) => c.type === 'no-potion');
+  game.inventory.add('hp-potion-small', 2);
+  assert(game.startContract(noPotionContract.id), 'контракт без зелий запускается');
+  game.player.hp = 1;
+  const potionsBeforeFail = game.inventory.count('hp-potion-small');
+  game.usePotion();
+  assert(noPotionContract.status === 'failed' && game.activeContract === null,
+    'зелье проваливает контракт без лечения');
+  assert(game.inventory.count('hp-potion-small') === potionsBeforeFail,
+    'провал контракта не тратит зелье');
+
+  const eliteContract = daily.find((c) => c.type === 'elite');
+  assert(game.startContract(eliteContract.id), 'элитный контракт запускается');
+  const eliteAdds = game.monsters.filter((m) => !m.isBoss);
+  assert(eliteAdds.length === 3 && eliteAdds.every((m) => m.elite && m.summoned),
+    'элитная арена выставляет трёх элитных стражей');
+  game.startChapter(0, { replay: true });
+  advance(60);
+  assert(game.activeContract === null, 'старт обычной главы прерывает контракт');
+
+  sandbox.UI.toggleHub();
+  assert(sandbox.UI.hub.querySelectorAll('.hub-contract-completed').length === 1,
+    'хаб показывает выполненный контракт');
+  assert(sandbox.UI.hub.querySelectorAll('.hub-contract-failed').length >= 1,
+    'хаб показывает проваленный контракт');
+  sandbox.UI.closeAllPanels();
+  game.persist();
+  const savedContracts = JSON.parse(storage.get('solo-leveling-save')).contracts;
+  assert(savedContracts && savedContracts.day === '2026-10-30' && savedContracts.list.length === 3,
+    'ежедневные контракты сохраняются в v3');
+  game.ensureContracts('2026-10-31');
+  assert(game.contracts.day === '2026-10-31' &&
+    game.contracts.list.every((c) => c.status === 'available'),
+    'на следующий день контракты обновляются');
 
   // ---------- Смерть и возрождение ----------
   game.startChapter(0, { replay: true });
