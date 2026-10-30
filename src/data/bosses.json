@@ -1,0 +1,777 @@
+{
+  "statue-of-god": {
+    "title": "Статуя Бога",
+    "subtitle": "Судья храма Картенона",
+    "hpBase": 3500,
+    "intro": "Статуя поворачивает голову. Приговор вынесен.",
+    "phases": [
+      0.66,
+      0.33
+    ],
+    "attacks": [
+      {
+        "type": "slam",
+        "name": "Каменный приговор",
+        "cd": 5.0,
+        "windup": 0.9,
+        "dmg": 1.3,
+        "radius": 135,
+        "color": "#ffd24a"
+      },
+      {
+        "type": "beam",
+        "name": "Взгляд судьи",
+        "cd": 7.0,
+        "windup": 1.1,
+        "dmg": 1.5,
+        "width": 84,
+        "mode": "vertical",
+        "color": "#ff4d4d",
+        "phase": 0
+      },
+      {
+        "type": "summon",
+        "name": "Каменные аколеты",
+        "cd": 16.0,
+        "windup": 0.6,
+        "count": 2,
+        "ids": [
+          "goblin"
+        ],
+        "names": [
+          "Аколет"
+        ],
+        "phase": 1
+      },
+      {
+        "type": "rain",
+        "name": "Небесная кара",
+        "cd": 11.0,
+        "windup": 0.9,
+        "count": 5,
+        "dmg": 1.2,
+        "radius": 58,
+        "color": "#ffe08a",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.3,
+      "atkMult": 1.35,
+      "speedMult": 1.25,
+      "label": "БОЖЕСТВЕННЫЙ СУД"
+    }
+  },
+  "reed-boss": {
+    "title": "Камышовый босс",
+    "subtitle": "Страж болотного логова",
+    "hpBase": 10000,
+    "intro": "Лозы поднимаются из трясины. Логово проснулось.",
+    "phases": [
+      0.6
+    ],
+    "attacks": [
+      {
+        "type": "slam",
+        "name": "Хлыст лозы",
+        "cd": 4.2,
+        "windup": 0.75,
+        "dmg": 1.25,
+        "radius": 120,
+        "color": "#7ec850"
+      },
+      {
+        "type": "fan",
+        "name": "Залп шипов",
+        "cd": 6.0,
+        "windup": 0.7,
+        "dmg": 1.0,
+        "count": 5,
+        "spread": 0.9,
+        "speed": 380,
+        "color": "#a8e06a"
+      },
+      {
+        "type": "zone",
+        "name": "Трясина",
+        "cd": 10.0,
+        "windup": 0.8,
+        "radius": 110,
+        "duration": 6.0,
+        "dps": 0.35,
+        "slow": 0.45,
+        "color": "#4f8a3a"
+      }
+    ],
+    "enrage": {
+      "hp": 0.35,
+      "atkMult": 1.3,
+      "speedMult": 1.2,
+      "label": "ЯРОСТЬ ЛОГОВА"
+    }
+  },
+  "baruka": {
+    "title": "Барики",
+    "subtitle": "Вождь ледяных эльфов",
+    "hpBase": 11500,
+    "intro": "Мороз сковывает воздух. Барики обнажает клинки.",
+    "phases": [
+      0.62
+    ],
+    "attacks": [
+      {
+        "type": "fan",
+        "name": "Веер льда",
+        "cd": 5.0,
+        "windup": 0.8,
+        "dmg": 1.15,
+        "count": 7,
+        "spread": 1.1,
+        "speed": 420,
+        "color": "#9fe6ff"
+      },
+      {
+        "type": "dash",
+        "name": "Скользящий клинок",
+        "cd": 7.0,
+        "windup": 0.7,
+        "dmg": 1.4,
+        "distance": 320,
+        "color": "#7ad7ff"
+      },
+      {
+        "type": "rain",
+        "name": "Ледяные иглы",
+        "cd": 9.0,
+        "windup": 0.8,
+        "count": 6,
+        "dmg": 1.0,
+        "radius": 52,
+        "color": "#bff0ff"
+      },
+      {
+        "type": "nova",
+        "name": "Стужа клана",
+        "cd": 13.0,
+        "windup": 1.0,
+        "dmg": 1.3,
+        "radius": 230,
+        "color": "#d8f6ff",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.3,
+      "atkMult": 1.35,
+      "speedMult": 1.3,
+      "label": "ЛЕДЯНАЯ ЯРОСТЬ"
+    }
+  },
+  "igris": {
+    "title": "Игрис",
+    "subtitle": "Рыцарь крови, командир армии теней",
+    "hpBase": 12000,
+    "intro": "Красный рыцарь поднимает меч. Испытание начинается.",
+    "phases": [
+      0.65,
+      0.3
+    ],
+    "attacks": [
+      {
+        "type": "dash",
+        "name": "Кровавый рывок",
+        "cd": 5.5,
+        "windup": 0.65,
+        "dmg": 1.35,
+        "distance": 300,
+        "color": "#ff5a5a"
+      },
+      {
+        "type": "fan",
+        "name": "Волна крови",
+        "cd": 7.0,
+        "windup": 0.8,
+        "dmg": 1.1,
+        "count": 5,
+        "spread": 0.8,
+        "speed": 400,
+        "color": "#ff7070",
+        "phase": 1
+      },
+      {
+        "type": "shield",
+        "name": "Стойка рыцаря",
+        "cd": 12.0,
+        "windup": 0.4,
+        "duration": 3.0,
+        "reduction": 0.65,
+        "color": "#ffd24a",
+        "phase": 1
+      },
+      {
+        "type": "slam",
+        "name": "Казнь",
+        "cd": 9.0,
+        "windup": 1.0,
+        "dmg": 1.7,
+        "radius": 150,
+        "color": "#ff4040",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.25,
+      "atkMult": 1.4,
+      "speedMult": 1.35,
+      "label": "КЛЯТВА КРОВИ"
+    },
+    "phaseBarks": [
+      "Ты держишь клинок, но не знаешь, за что им сражаются.",
+      "Достойно. Теперь прими всю силу моей клятвы."
+    ],
+    "enrageBark": "Кровь моего короля не позволит мне пасть!"
+  },
+  "beru": {
+    "title": "Бер",
+    "subtitle": "Король муравьёв острова Чеджу",
+    "hpBase": 14000,
+    "intro": "Улей дрожит. Король муравьёв пробует вашу силу на вкус.",
+    "phases": [
+      0.65,
+      0.32
+    ],
+    "attacks": [
+      {
+        "type": "slam",
+        "name": "Прыжок хищника",
+        "cd": 4.5,
+        "windup": 0.7,
+        "dmg": 1.35,
+        "radius": 150,
+        "color": "#a06cff"
+      },
+      {
+        "type": "rain",
+        "name": "Град шипов",
+        "cd": 7.5,
+        "windup": 0.8,
+        "count": 6,
+        "dmg": 1.0,
+        "radius": 50,
+        "color": "#c79bff",
+        "phase": 1
+      },
+      {
+        "type": "summon",
+        "name": "Рой",
+        "cd": 14.0,
+        "windup": 0.5,
+        "count": 2,
+        "ids": [
+          "knight-ant"
+        ],
+        "names": [
+          "Муравей-солдат"
+        ],
+        "phase": 1
+      },
+      {
+        "type": "heal",
+        "name": "Пожирание",
+        "cd": 20.0,
+        "windup": 0.6,
+        "percent": 0.06,
+        "color": "#ff6a6a",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.3,
+      "atkMult": 1.35,
+      "speedMult": 1.25,
+      "label": "ГОЛОД УЛЬЯ"
+    }
+  },
+  "ashborn": {
+    "title": "Эшборн",
+    "subtitle": "Монарх Теней",
+    "hpBase": 15000,
+    "intro": "Тени сгущаются в корону. Наследник встретил предшественника.",
+    "phases": [
+      0.6,
+      0.28
+    ],
+    "attacks": [
+      {
+        "type": "teleport",
+        "name": "Шаг сквозь тьму",
+        "cd": 5.0,
+        "windup": 0.3,
+        "color": "#9a6cff"
+      },
+      {
+        "type": "nova",
+        "name": "Тёмная нова",
+        "cd": 7.0,
+        "windup": 1.0,
+        "dmg": 1.4,
+        "radius": 230,
+        "color": "#c08cff"
+      },
+      {
+        "type": "rain",
+        "name": "Копья тени",
+        "cd": 8.5,
+        "windup": 0.85,
+        "count": 7,
+        "dmg": 1.15,
+        "radius": 46,
+        "color": "#a06cff",
+        "phase": 1
+      },
+      {
+        "type": "summon",
+        "name": "Тени павших",
+        "cd": 16.0,
+        "windup": 0.6,
+        "count": 2,
+        "ids": [
+          "orc"
+        ],
+        "names": [
+          "Тень павшего"
+        ],
+        "phase": 1
+      },
+      {
+        "type": "dash",
+        "name": "Жатва душ",
+        "cd": 9.0,
+        "windup": 0.6,
+        "dmg": 1.6,
+        "distance": 340,
+        "color": "#d66cff",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.28,
+      "atkMult": 1.4,
+      "speedMult": 1.3,
+      "label": "ВОЛЯ МОНАРХА"
+    }
+  },
+  "antares": {
+    "title": "Антарас",
+    "subtitle": "Монарх Разрушения, король драконов",
+    "hpBase": 20000,
+    "intro": "Небо трескается от рёва. Монарх Разрушения явился.",
+    "phases": [
+      0.66,
+      0.33
+    ],
+    "attacks": [
+      {
+        "type": "beam",
+        "name": "Драконье пламя",
+        "cd": 6.0,
+        "windup": 1.0,
+        "dmg": 1.5,
+        "width": 96,
+        "mode": "horizontal",
+        "color": "#ff8a3c"
+      },
+      {
+        "type": "rain",
+        "name": "Метеоритный дождь",
+        "cd": 8.0,
+        "windup": 0.9,
+        "count": 7,
+        "dmg": 1.2,
+        "radius": 56,
+        "color": "#ff5a3c",
+        "phase": 0
+      },
+      {
+        "type": "nova",
+        "name": "Взмах крыльев",
+        "cd": 9.0,
+        "windup": 0.9,
+        "dmg": 1.2,
+        "radius": 250,
+        "color": "#ffb36a",
+        "phase": 1
+      },
+      {
+        "type": "summon",
+        "name": "Драконьи выкормыши",
+        "cd": 16.0,
+        "windup": 0.6,
+        "count": 2,
+        "ids": [
+          "knight-ant"
+        ],
+        "names": [
+          "Выкормыш"
+        ],
+        "phase": 1
+      },
+      {
+        "type": "zone",
+        "name": "Пылающая земля",
+        "cd": 12.0,
+        "windup": 0.8,
+        "radius": 120,
+        "duration": 7.0,
+        "dps": 0.4,
+        "slow": 0.2,
+        "color": "#ff6a2a",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.33,
+      "atkMult": 1.45,
+      "speedMult": 1.25,
+      "label": "КОНЕЦ МИРОВ"
+    }
+  },
+  "architect": {
+    "title": "Архитектор",
+    "subtitle": "Создатель Системы",
+    "hpBase": 13500,
+    "intro": "Создатель Системы открывает глаза. Проверка начата.",
+    "phases": [
+      0.6,
+      0.3
+    ],
+    "attacks": [
+      {
+        "type": "beam",
+        "name": "Луч Системы",
+        "cd": 5.5,
+        "windup": 0.9,
+        "dmg": 1.35,
+        "width": 80,
+        "mode": "vertical",
+        "color": "#7ad7ff"
+      },
+      {
+        "type": "slam",
+        "name": "Печать приговора",
+        "cd": 7.0,
+        "windup": 0.9,
+        "dmg": 1.3,
+        "radius": 140,
+        "color": "#b8bcc8"
+      },
+      {
+        "type": "summon",
+        "name": "Стражи храма",
+        "cd": 15.0,
+        "windup": 0.6,
+        "count": 2,
+        "ids": [
+          "orc"
+        ],
+        "names": [
+          "Страж-автоматон"
+        ],
+        "phase": 1
+      },
+      {
+        "type": "rain",
+        "name": "Сетка наказаний",
+        "cd": 10.0,
+        "windup": 0.8,
+        "count": 6,
+        "dmg": 1.2,
+        "radius": 54,
+        "color": "#9fe6ff",
+        "phase": 2
+      }
+    ],
+    "enrage": {
+      "hp": 0.3,
+      "atkMult": 1.3,
+      "speedMult": 1.2,
+      "label": "ПРОТОКОЛ ОЧИЩЕНИЯ"
+    }
+  },
+  "shadow-trial": {
+    "title": "Тень испытания",
+    "subtitle": "Отголосок двойного подземелья",
+    "intro": "В палате гаснет свет. Тень экзаменатора поднимает руку.",
+    "phases": [
+      0.55
+    ],
+    "attacks": [
+      {
+        "type": "beam",
+        "name": "Протокол допуска",
+        "cd": 5.4,
+        "windup": 0.9,
+        "dmg": 1.25,
+        "width": 76,
+        "mode": "vertical",
+        "color": "#7ad7ff"
+      },
+      {
+        "type": "slam",
+        "name": "Печать экзамена",
+        "cd": 7.0,
+        "windup": 0.85,
+        "dmg": 1.3,
+        "radius": 126,
+        "color": "#b8bcc8"
+      },
+      {
+        "type": "summon",
+        "name": "Наблюдатели",
+        "cd": 15.0,
+        "windup": 0.6,
+        "count": 2,
+        "ids": [
+          "goblin"
+        ],
+        "names": [
+          "Тень-наблюдатель"
+        ],
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.38,
+      "atkMult": 1.3,
+      "speedMult": 1.2,
+      "label": "ПЕРЕЭКЗАМЕНАЦИЯ"
+    }
+  },
+  "mine-guardian": {
+    "title": "Древний страж шахты",
+    "subtitle": "Хранитель E-ранговой приманки",
+    "intro": "Каменные плиты срастаются в исполина. Штольня не отпустит.",
+    "phases": [
+      0.6
+    ],
+    "attacks": [
+      {
+        "type": "slam",
+        "name": "Обвал",
+        "cd": 4.8,
+        "windup": 0.9,
+        "dmg": 1.35,
+        "radius": 132,
+        "color": "#ffd24a"
+      },
+      {
+        "type": "fan",
+        "name": "Каменные обломки",
+        "cd": 7.2,
+        "windup": 0.8,
+        "dmg": 1.0,
+        "count": 5,
+        "spread": 0.9,
+        "speed": 380,
+        "color": "#c8b45a",
+        "phase": 1
+      },
+      {
+        "type": "rain",
+        "name": "Камнепад",
+        "cd": 11.0,
+        "windup": 0.9,
+        "count": 5,
+        "dmg": 1.2,
+        "radius": 56,
+        "color": "#ffe08a",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.35,
+      "atkMult": 1.35,
+      "speedMult": 1.15,
+      "label": "ОБВАЛ ЯРОСТИ"
+    }
+  },
+  "measure-golem": {
+    "title": "Измерительный голем",
+    "subtitle": "Предел шкалы Ассоциации",
+    "intro": "Шкала трескается. Голем шагает из разбитого шара.",
+    "phases": [
+      0.6
+    ],
+    "attacks": [
+      {
+        "type": "beam",
+        "name": "Измерительный луч",
+        "cd": 5.2,
+        "windup": 0.85,
+        "dmg": 1.3,
+        "width": 82,
+        "mode": "vertical",
+        "color": "#7ad7ff"
+      },
+      {
+        "type": "slam",
+        "name": "Гиря",
+        "cd": 6.8,
+        "windup": 0.95,
+        "dmg": 1.35,
+        "radius": 138,
+        "color": "#9fb8d8"
+      },
+      {
+        "type": "fan",
+        "name": "Осколки шкалы",
+        "cd": 7.5,
+        "windup": 0.75,
+        "dmg": 1.0,
+        "count": 5,
+        "spread": 0.85,
+        "speed": 400,
+        "color": "#bfe6f7",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.36,
+      "atkMult": 1.32,
+      "speedMult": 1.2,
+      "label": "ПЕРЕГРУЗКА ШКАЛЫ"
+    }
+  },
+  "ahjin-shadow": {
+    "title": "Тень Ахджин",
+    "subtitle": "Отражение мастера гильдии",
+    "intro": "Тень отделяется от стены и поднимает клинок.",
+    "phases": [
+      0.58
+    ],
+    "attacks": [
+      {
+        "type": "dash",
+        "name": "Теневой выпад",
+        "cd": 5.0,
+        "windup": 0.65,
+        "dmg": 1.35,
+        "distance": 300,
+        "color": "#a06cff"
+      },
+      {
+        "type": "fan",
+        "name": "Веер клинков",
+        "cd": 7.0,
+        "windup": 0.75,
+        "dmg": 1.05,
+        "count": 5,
+        "spread": 0.9,
+        "speed": 420,
+        "color": "#c08cff",
+        "phase": 1
+      },
+      {
+        "type": "slam",
+        "name": "Печать мастера",
+        "cd": 8.5,
+        "windup": 0.85,
+        "dmg": 1.4,
+        "radius": 130,
+        "color": "#8a5aff",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.34,
+      "atkMult": 1.35,
+      "speedMult": 1.25,
+      "label": "КЛЯТВА МАСТЕРА"
+    }
+  },
+  "war-herald": {
+    "title": "Герольд Монархов",
+    "subtitle": "Глашатай последней войны",
+    "intro": "Небо трещит. Герольд Монархов опускает копьё.",
+    "phases": [
+      0.62
+    ],
+    "attacks": [
+      {
+        "type": "dash",
+        "name": "Копейный рывок",
+        "cd": 4.8,
+        "windup": 0.6,
+        "dmg": 1.4,
+        "distance": 340,
+        "color": "#ff6a5a"
+      },
+      {
+        "type": "fan",
+        "name": "Знамя войны",
+        "cd": 6.8,
+        "windup": 0.75,
+        "dmg": 1.1,
+        "count": 6,
+        "spread": 1.0,
+        "speed": 430,
+        "color": "#ffb45a",
+        "phase": 1
+      },
+      {
+        "type": "rain",
+        "name": "Град копий",
+        "cd": 10.0,
+        "windup": 0.85,
+        "count": 6,
+        "dmg": 1.25,
+        "radius": 58,
+        "color": "#ff8a6a",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.32,
+      "atkMult": 1.4,
+      "speedMult": 1.2,
+      "label": "ПОСЛЕДНИЙ ПРИКАЗ"
+    }
+  },
+  "guardian": {
+    "title": "Страж главы",
+    "subtitle": "Порождение подземелья",
+    "intro": "Страж поднимается из пола. Путь закрыт.",
+    "phases": [
+      0.6
+    ],
+    "attacks": [
+      {
+        "type": "slam",
+        "name": "Тяжёлый удар",
+        "cd": 5.0,
+        "windup": 0.85,
+        "dmg": 1.3,
+        "radius": 120,
+        "color": "#ffd24a"
+      },
+      {
+        "type": "fan",
+        "name": "Осколки камня",
+        "cd": 7.0,
+        "windup": 0.75,
+        "dmg": 1.0,
+        "count": 4,
+        "spread": 0.8,
+        "speed": 360,
+        "color": "#c8b45a",
+        "phase": 1
+      }
+    ],
+    "enrage": {
+      "hp": 0.4,
+      "atkMult": 1.3,
+      "speedMult": 1.2,
+      "label": "АГОНИЯ СТРАЖА"
+    }
+  }
+}

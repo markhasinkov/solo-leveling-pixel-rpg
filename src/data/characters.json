@@ -1,0 +1,343 @@
+[
+  {
+    "id": "sung-jin-woo",
+    "name": "Сон Чжин Ву",
+    "role": "Охотник E-ранга, позже Монарх Теней",
+    "sprite": "assets/sprites/sung-jin-woo.png",
+    "stats": {
+      "hp": 850,
+      "atk": 120,
+      "def": 70
+    }
+  },
+  {
+    "id": "yoo-jinho",
+    "name": "Ю Чжин Хо",
+    "role": "Охотник D-ранга, вице-мастер гильдии Ахджин",
+    "sprite": "assets/sprites/yoo-jinho.png",
+    "stats": {
+      "hp": 320,
+      "atk": 40,
+      "def": 25
+    }
+  },
+  {
+    "id": "cha-hae-in",
+    "name": "Ча Хе Ин",
+    "role": "Охотница S-ранга, вице-мастер гильдии Ханты",
+    "sprite": "assets/sprites/cha-hae-in.png",
+    "stats": {
+      "hp": 700,
+      "atk": 105,
+      "def": 55
+    }
+  },
+  {
+    "id": "go-gun-hee",
+    "name": "Гу Гон Хи",
+    "role": "Председатель Корейской Ассоциации Охотников, S-ранг",
+    "sprite": "assets/sprites/go-gun-hee.png",
+    "stats": {
+      "hp": 780,
+      "atk": 110,
+      "def": 60
+    }
+  },
+  {
+    "id": "song-chi-yul",
+    "name": "Сон Чхиёль",
+    "role": "Охотник C-ранга, ветеран-наставник",
+    "sprite": "assets/sprites/song-chi-yul.png",
+    "stats": {
+      "hp": 300,
+      "atk": 45,
+      "def": 30
+    }
+  },
+  {
+    "id": "lee-joo-hee",
+    "name": "Ли Чжу Хи",
+    "role": "Охотница B-ранга, целительница",
+    "sprite": "assets/sprites/lee-joo-hee.png",
+    "stats": {
+      "hp": 260,
+      "atk": 20,
+      "def": 20
+    }
+  },
+  {
+    "id": "ahn-sang-min",
+    "name": "Ан Сан Мин",
+    "role": "Сотрудник Ассоциации Охотников",
+    "sprite": "assets/sprites/ahn-sang-min.png",
+    "stats": {
+      "hp": 220,
+      "atk": 25,
+      "def": 18
+    }
+  },
+  {
+    "id": "woo-jin-chul",
+    "name": "У Чжин Чхоль",
+    "role": "Начальник отдела расследований Ассоциации",
+    "sprite": "assets/sprites/woo-jin-chul.png",
+    "stats": {
+      "hp": 340,
+      "atk": 50,
+      "def": 35
+    }
+  },
+  {
+    "id": "baek-yoon-ho",
+    "name": "Пэк Юн Хо",
+    "role": "Мастер гильдии Белый Тигр, S-ранг",
+    "sprite": "assets/sprites/baek-yoon-ho.png",
+    "stats": {
+      "hp": 720,
+      "atk": 100,
+      "def": 58
+    }
+  },
+  {
+    "id": "kim-chul",
+    "name": "Ким Чхоль",
+    "role": "Охотник A-ранга, глава партии в красных воротах",
+    "sprite": "assets/sprites/kim-chul.png",
+    "stats": {
+      "hp": 480,
+      "atk": 70,
+      "def": 45
+    }
+  },
+  {
+    "id": "choi-jong-in",
+    "name": "Чхве Чон Ин",
+    "role": "Мастер гильдии Ханты, S-ранг, маг огня",
+    "sprite": "assets/sprites/choi-jong-in.png",
+    "stats": {
+      "hp": 560,
+      "atk": 115,
+      "def": 35
+    }
+  },
+  {
+    "id": "min-byung-gu",
+    "name": "Мин Бён Гу",
+    "role": "Целитель S-ранга, гильдия Ханты",
+    "sprite": "assets/sprites/min-byung-gu.png",
+    "stats": {
+      "hp": 300,
+      "atk": 15,
+      "def": 22
+    }
+  },
+  {
+    "id": "ashborn",
+    "name": "Эшборн",
+    "role": "Монарх Теней, предшественник Сон Чжин Ву",
+    "sprite": "assets/sprites/ashborn.png",
+    "stats": {
+      "hp": 950,
+      "atk": 140,
+      "def": 80
+    }
+  },
+  {
+    "id": "architect",
+    "name": "Архитектор",
+    "role": "Создатель Системы, Статуя Бога двойного подземелья",
+    "sprite": "assets/sprites/architect.png",
+    "stats": {
+      "hp": 900,
+      "atk": 135,
+      "def": 75
+    }
+  },
+  {
+    "id": "antares",
+    "name": "Антарас",
+    "role": "Монарх Разрушения, король драконов",
+    "sprite": "assets/sprites/antares.png",
+    "stats": {
+      "hp": 1500,
+      "atk": 190,
+      "def": 100
+    }
+  },
+  {
+    "id": "beru",
+    "name": "Бер",
+    "role": "Король муравьёв острова Чеджу, позже теневой солдат",
+    "sprite": "assets/sprites/beru.png",
+    "stats": {
+      "hp": 1100,
+      "atk": 160,
+      "def": 70
+    }
+  },
+  {
+    "id": "igris",
+    "name": "Игрис",
+    "role": "Рыцарь крови, командир армии теней",
+    "sprite": "assets/sprites/igris.png",
+    "stats": {
+      "hp": 800,
+      "atk": 130,
+      "def": 85
+    }
+  },
+  {
+    "id": "baruka",
+    "name": "Барики",
+    "role": "Вождь ледяных эльфов красных ворот",
+    "sprite": "assets/sprites/baruka.png",
+    "stats": {
+      "hp": 900,
+      "atk": 125,
+      "def": 60
+    }
+  },
+  {
+    "id": "statue-of-god",
+    "name": "Статуя Бога",
+    "role": "Босс храма Картенона в двойном подземелье",
+    "sprite": "assets/sprites/statue-of-god.png",
+    "stats": {
+      "hp": 1200,
+      "atk": 150,
+      "def": 90
+    }
+  },
+  {
+    "id": "reed-boss",
+    "name": "Босс камышового логова",
+    "role": "Монстр-босс подземелья с партией Хван Дон Сока",
+    "sprite": "assets/sprites/reed-boss.png",
+    "stats": {
+      "hp": 700,
+      "atk": 95,
+      "def": 45
+    }
+  },
+  {
+    "id": "goblin",
+    "name": "Гоблин",
+    "role": "Монстр E-рангового подземелья",
+    "sprite": "assets/sprites/goblin.png",
+    "stats": {
+      "hp": 60,
+      "atk": 18,
+      "def": 5
+    }
+  },
+  {
+    "id": "orc",
+    "name": "Орк",
+    "role": "Монстр D-рангового подземелья",
+    "sprite": "assets/sprites/orc.png",
+    "stats": {
+      "hp": 140,
+      "atk": 30,
+      "def": 12
+    }
+  },
+  {
+    "id": "knight-ant",
+    "name": "Муравей-рыцарь",
+    "role": "Магический зверь острова Чеджу",
+    "sprite": "assets/sprites/knight-ant.png",
+    "stats": {
+      "hp": 400,
+      "atk": 80,
+      "def": 40
+    }
+  },
+  {
+    "id": "ice-bear",
+    "name": "Ледяной медведь",
+    "role": "Магический зверь ледяного подземелья и красных ворот",
+    "sprite": "assets/sprites/ice-bear.png",
+    "stats": {
+      "hp": 500,
+      "atk": 85,
+      "def": 50
+    }
+  },
+  {
+    "id": "demon-knight",
+    "name": "Демонический рыцарь",
+    "role": "Монстр демонического замка: рыцарь со щитом и багровым клинком",
+    "sprite": "assets/sprites/demon-knight.png",
+    "stats": {
+      "hp": 260,
+      "atk": 52,
+      "def": 28
+    }
+  },
+  {
+    "id": "hellhound",
+    "name": "Адская гончая",
+    "role": "Монстр демонического замка: адская гончая",
+    "sprite": "assets/sprites/hellhound.png",
+    "stats": {
+      "hp": 190,
+      "atk": 44,
+      "def": 14
+    }
+  },
+  {
+    "id": "goblin-shaman",
+    "name": "Гоблин-шаман",
+    "role": "Монстр E-рангового подземелья: гоблин-шаман",
+    "sprite": "assets/sprites/goblin-shaman.png",
+    "stats": {
+      "hp": 110,
+      "atk": 26,
+      "def": 6
+    }
+  },
+  {
+    "id": "cave-spider",
+    "name": "Пещерный паук",
+    "role": "Монстр пещер: гигантский паук",
+    "sprite": "assets/sprites/cave-spider.png",
+    "stats": {
+      "hp": 150,
+      "atk": 32,
+      "def": 8
+    }
+  },
+  {
+    "id": "orc-berserker",
+    "name": "Орк-берсерк",
+    "role": "Монстр D-рангового подземелья: орк-берсерк",
+    "sprite": "assets/sprites/orc-berserker.png",
+    "stats": {
+      "hp": 180,
+      "atk": 38,
+      "def": 10
+    }
+  },
+  {
+    "id": "ice-elf-ranger",
+    "name": "Ледяной эльф-стрелок",
+    "role": "Монстр красных ворот: ледяной эльф-стрелок",
+    "sprite": "assets/sprites/ice-elf-ranger.png",
+    "stats": {
+      "hp": 220,
+      "atk": 42,
+      "def": 16
+    }
+  },
+  {
+    "id": "frost-wolf",
+    "name": "Морозный волк",
+    "role": "Монстр красных ворот: морозный волк",
+    "sprite": "assets/sprites/frost-wolf.png",
+    "stats": {
+      "hp": 200,
+      "atk": 38,
+      "def": 12
+    }
+  }
+]

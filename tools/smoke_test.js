@@ -1,0 +1,867 @@
+// tools/smoke_test.js — headless-проверка всей игры без браузера.
+// Загружает реальные модули и JSON, подменяет DOM/canvas и прогоняет сценарии.
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+
+class ClassList {
+  constructor() { this.set = new Set(); }
+  add(...c) { c.forEach((x) => this.set.add(x)); }
+  remove(...c) { c.forEach((x) => this.set.delete(x)); }
+  toggle(c, force) {
+    if (force === undefined) force = !this.set.has(c);
+    if (force) this.set.add(c); else this.set.delete(c);
+    return force;
+  }
+  contains(c) { return this.set.has(c); }
+}
+
+function makeCtx() {
+  const gradient = { addColorStop() {} };
+  const target = {
+    canvas: { width: 960, height: 540 },
+    createLinearGradient: () => gradient,
+    createRadialGradient: () => gradient,
+    createPattern: () => ({}),
+    measureText: () => ({ width: 10 }),
+    getImageData: () => ({ data: new Uint8ClampedArray(4) }),
+    setTransform() {}, save() {}, restore() {}, translate() {}, scale() {}, rotate() {},
+    drawImage() {}, fillRect() {}, strokeRect() {}, clearRect() {}, beginPath() {},
+    closePath() {}, moveTo() {}, lineTo() {}, arc() {}, ellipse() {}, fill() {}, stroke() {},
+    fillText() {}, strokeText() {}, setLineDash() {}, clip() {}, putImageData() {}
+  };
+  return new Proxy(target, {
+    get(t, k) {
+      if (k in t) return t[k];
+      return function () {};
+    },
+    set(t, k, v) { t[k] = v; return true; }
+  });
+}
+
+let elementSeq = 0;
+class FakeElement {
+  constructor(tag) {
+    this.tagName = String(tag).toUpperCase();
+    this.children = [];
+    this.parentNode = null;
+    this.style = { setProperty() {} };
+    this.classList = new ClassList();
+    this.dataset = {};
+    this.textContent = '';
+    this.innerHTML = '';
+    this.title = '';
+    this.src = '';
+    this.alt = '';
+    this.disabled = false;
+    this.width = 0;
+    this.height = 0;
+    this.offsetWidth = 100;
+    this._listeners = {};
+    this._id = ++elementSeq;
+    this.className = '';
+    this.draggable = false;
+  }
+  get firstChild() { return this.children[0] || null; }
+  appendChild(c) { c.parentNode = this; this.children.push(c); return c; }
+  removeChild(c) {
+    const i = this.children.indexOf(c);
+    if (i >= 0) { this.children.splice(i, 1); c.parentNode = null; }
+    return c;
+  }
+  addEventListener(type, fn) {
+    (this._listeners[type] = this._listeners[type] || []).push(fn);
+  }
+  removeEventListener(type, fn) {
+    const list = this._listeners[type] || [];
+    const i = list.indexOf(fn);
+    if (i >= 0) list.splice(i, 1);
+  }
+  dispatch(type, ev) {
+    (this._listeners[type] || []).forEach((fn) => fn(ev || {}));
+  }
+  click() { this.dispatch('click', {}); }
+  matches(sel) {
+    if (sel.startsWith('.')) return String(this.className).split(/\s+/).includes(sel.slice(1));
+    if (sel.startsWith('#')) return this.id === sel.slice(1);
+    return this.tagName === sel.toUpperCase();
+  }
+  querySelector(sel) {
+    for (const child of this.children) {
+      if (child.matches(sel)) return child;
+      const found = child.querySelector(sel);
+      if (found) return found;
+    }
+    return null;
+  }
+  querySelectorAll(sel) {
+    const out = [];
+    const walk = (node) => {
+      for (const child of node.children) {
+        if (child.matches(sel)) out.push(child);
+        walk(child);
+      }
+    };
+    walk(this);
+    return out;
+  }
+  getContext() { return makeCtx(); }
+  getBoundingClientRect() { return { left: 0, top: 0, width: 118, height: 118 }; }
+  setPointerCapture() {}
+  releasePointerCapture() {}
+  focus() {}
+  blur() {}
+}
+
+const uiRoot = new FakeElement('div');
+uiRoot.id = 'ui-root';
+const canvas = new FakeElement('canvas');
+canvas.id = 'game-canvas';
+canvas.width = 960; canvas.height = 540;
+const wrap = new FakeElement('div');
+wrap.className = 'game-wrap';
+const boot = new FakeElement('div');
+boot.id = 'boot-screen';
+const rotateHint = new FakeElement('div');
+rotateHint.id = 'rotate-hint';
+const rotateBtn = new FakeElement('button');
+rotateBtn.id = 'rotate-continue';
+const docElement = new FakeElement('html');
+const body = new FakeElement('body');
+
+const byId = {
+  'game-canvas': canvas,
+  'ui-root': uiRoot,
+  'boot-screen': boot,
+  'rotate-hint': rotateHint,
+  'rotate-continue': rotateBtn
+};
+
+const domReadyListeners = [];
+const documentStub = {
+  readyState: 'loading',
+  body,
+  documentElement: docElement,
+  createElement(tag) { return new FakeElement(tag); },
+  getElementById(id) { return byId[id] || null; },
+  querySelector(sel) {
+    if (sel === '.game-wrap') return wrap;
+    return wrap.querySelector(sel);
+  },
+  querySelectorAll(sel) { return wrap.querySelectorAll(sel); },
+  addEventListener(type, fn) { if (type === 'DOMContentLoaded') domReadyListeners.push(fn); }
+};
+
+let now = 0;
+const rafQueue = [];
+const timers = [];
+let timerSeq = 0;
+
+const storage = new Map();
+
+function readJson(url) {
+  const clean = url.replace(/^\.?\//, '');
+  const file = path.join(ROOT, clean);
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+const sandbox = {
+  console,
+  document: documentStub,
+  navigator: { maxTouchPoints: 0, userAgent: 'NodeSmokeTest' },
+  InnerWidth: 960,
+  localStorage: {
+    getItem: (k) => (storage.has(k) ? storage.get(k) : null),
+    setItem: (k, v) => storage.set(k, String(v)),
+    removeItem: (k) => storage.delete(k)
+  },
+  performance: { now: () => now },
+  requestAnimationFrame(cb) { rafQueue.push(cb); return rafQueue.length; },
+  setTimeout(fn, ms) { const id = ++timerSeq; timers.push({ id, at: now + (ms || 0), fn }); return id; },
+  clearTimeout(id) { const i = timers.findIndex((t) => t.id === id); if (i >= 0) timers.splice(i, 1); },
+  Image: class FakeImage {
+    constructor() { this.onload = null; this.onerror = null; this._src = ''; }
+    set src(v) { this._src = v; if (this.onerror) this.onerror(); }
+    get src() { return this._src; }
+  },
+  fetch(url) {
+    try {
+      const data = readJson(String(url));
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(data) });
+    } catch (e) {
+      return Promise.resolve({ ok: false, status: 404, json: () => Promise.reject(e) });
+    }
+  },
+  Math, JSON, Object, Array, Promise, Number, String, Boolean, Set, Map, Date, Error,
+  parseInt, parseFloat, isNaN, isFinite, encodeURIComponent, decodeURIComponent,
+  queueMicrotask
+};
+sandbox.window = sandbox;
+sandbox.globalThis = sandbox;
+sandbox.self = sandbox;
+Object.defineProperty(sandbox, 'innerWidth', { get: () => 960, set: () => {} });
+Object.defineProperty(sandbox, 'innerHeight', { get: () => 540, set: () => {} });
+sandbox.addEventListener = function () {};
+sandbox.removeEventListener = function () {};
+
+vm.createContext(sandbox);
+
+const scripts = [
+  'engine.js', 'formulas.js', 'audio.js', 'effects.js', 'player.js', 'boss.js',
+  'combat.js', 'progress.js', 'loot.js', 'quests.js', 'world.js', 'dialogue.js',
+  'shadows.js', 'ui.js', 'save.js', 'tg.js', 'main.js'
+];
+for (const f of scripts) {
+  const code = fs.readFileSync(path.join(ROOT, 'src', 'js', f), 'utf8');
+  vm.runInContext(code, sandbox, { filename: f });
+}
+
+let failures = 0;
+function assert(cond, msg) {
+  if (cond) console.log('  OK  ' + msg);
+  else { failures++; console.log('  FAIL ' + msg); }
+}
+
+function advance(ms) {
+  const steps = Math.max(1, Math.round(ms / 16));
+  for (let s = 0; s < steps; s++) {
+    now += 16;
+    const due = timers.filter((t) => t.at <= now);
+    for (const t of due) {
+      const i = timers.indexOf(t);
+      if (i >= 0) timers.splice(i, 1);
+      try { t.fn(); } catch (e) { console.error('timer error', e); failures++; }
+    }
+    const q = rafQueue.splice(0);
+    for (const cb of q) cb(now);
+  }
+}
+
+function press(key) {
+  sandbox.Engine.Input.keys.add(key);
+  sandbox.Engine.Input.pressed.add(key);
+}
+function release(key) { sandbox.Engine.Input.keys.delete(key); }
+
+(async () => {
+  const Solo = sandbox.window.SoloGame;
+  assert(!!Solo && typeof Solo.loadData === 'function', 'window.SoloGame.loadData существует');
+  const data = await Solo.loadData();
+  assert(Array.isArray(data.chapters) && data.chapters.length === 12, 'loadData отдаёт 12 глав');
+  assert(Array.isArray(data.characters) && data.characters.length >= 20, 'loadData отдаёт персонажей');
+
+  const game = Solo.Game;
+  await game.init();
+  advance(100);
+
+  assert(game.loading === false, 'игра загружена');
+  assert(game.chapter && game.chapter.id === 1, 'старт с главы 1');
+  assert(game.player && game.player.hp > 0, 'игрок создан');
+  assert(game.boss && game.boss.name === 'Статуя Бога', 'босс главы 1 — Статуя Бога');
+  assert(game.monsters.length >= 3, 'враги главы 1 созданы: ' + game.monsters.length);
+  assert(game.npcs.length >= 2, 'NPC главы 1 созданы: ' + game.npcs.length);
+  assert(uiRoot.children.length > 5, 'UI построен (' + uiRoot.children.length + ' корневых блоков)');
+
+  // ---------- Сюжетное вступление ----------
+  assert(sandbox.Dialogue.active, 'сюжетное вступление главы показывается автоматически');
+  const storyIntroLines = sandbox.Dialogue.lines.length;
+  assert(storyIntroLines >= 3, 'сюжетное вступление содержит сцену (' + storyIntroLines + ' реплик)');
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+
+  // ---------- Движение и удар ----------
+  const x0 = game.player.x;
+  press('d');
+  advance(240);
+  release('d');
+  assert(game.player.x > x0 + 5, 'игрок двигается вправо (D)');
+
+  const target = game.monsters.find((m) => !m.dead && !m.isBoss);
+  assert(!!target, 'есть обычный враг для теста');
+  game.player.x = target.x - 30;
+  game.player.y = target.y;
+  game.player.face = 1;
+  game.player.attackTimer = 0;
+  const hpBefore = target.hp;
+  game.playerAttack(game.player);
+  assert(target.hp < hpBefore, 'обычная атака наносит урон (' + hpBefore + ' → ' + target.hp + ')');
+
+  // ---------- Умения ----------
+  game.progress.level = 10;
+  game.progress.recalc();
+  game.player.syncStats(game.progress.stats, false);
+  game.player.mp = game.player.maxMp;
+  const mpBefore = game.player.mp;
+  game.castSkillSlot(0);
+  assert(game.player.mp < mpBefore, 'умение тратит ману (' + mpBefore + ' → ' + game.player.mp + ')');
+  assert(sandbox.Combat.cooldownLeft('shadow-slash') > 0, 'умение уходит в перезарядку');
+  advance(120);
+
+  // ---------- Опыт и таланты ----------
+  const lvlBefore = game.progress.level;
+  const tpBefore = game.progress.talentPoints;
+  game.progress.xp = game.progress.xpNext() - 1;
+  game.addXp(10);
+  assert(game.progress.level === lvlBefore + 1, 'опыт повышает уровень');
+  assert(game.progress.talentPoints > tpBefore, 'за уровень даётся очко таланта');
+  const firstNode = Object.values(game.progress.nodesById).find((n) => game.progress.canLearn(n.id).ok);
+  if (firstNode) {
+    const res = game.learnTalent(firstNode.id);
+    assert(res.ok && game.progress.rank(firstNode.id) === 1, 'талант изучается: ' + firstNode.name);
+  } else {
+    assert(false, 'нет доступного таланта для теста');
+  }
+
+  // ---------- Инвентарь и экипировка ----------
+  game.grantItem('rusty-dagger', 1, { notable: false });
+  const atkBefore = game.progress.stats.atk;
+  game.equipItem('rusty-dagger');
+  assert(game.progress.stats.atk > atkBefore, 'экипировка повышает атаку');
+  assert(game.inventory.equipment.weapon === 'rusty-dagger', 'оружие надето в слот');
+  game.grantItem('hp-potion-small', 2, { notable: false });
+  game.player.hp = Math.max(1, game.player.maxHp - 300);
+  const hpPotionBefore = game.player.hp;
+  const used = game.useItem('hp-potion-small');
+  assert(used && game.player.hp > hpPotionBefore, 'зелье лечения восстанавливает HP');
+
+  // ---------- Секрет и загадка ----------
+  const secret = game.world.secrets[0];
+  assert(!!secret, 'секрет главы существует');
+  game.player.x = secret.x + secret.w / 2 - game.player.w / 2;
+  game.player.y = game.world.floorY - game.player.h;
+  const secretsBefore = game.stats.secrets;
+  const found = game.world.tryInteract(game.player, game);
+  assert(found && secret.found, 'тайник находится через E');
+  assert(game.stats.secrets === secretsBefore + 1, 'найденный тайник учитывается в статистике');
+  assert(!!sandbox.Quests.stateOf('hidden-secrets'), 'найденный тайник открывает скрытый квест «Шёпот стен»');
+  const sideSecret = sandbox.Quests.stateOf('side-1b');
+  assert(sideSecret && sideSecret.status === 'completed', 'побочный квест за тайник выполняется');
+
+  const puzzle = game.world.puzzles[0];
+  assert(!!puzzle, 'загадка главы существует');
+  puzzle.sequence.forEach((idx) => game.world.activateDevice(puzzle, idx, game));
+  assert(puzzle.solved, 'загадка решается правильной последовательностью');
+  assert(!!puzzle.rewardChest, 'за решение появляется сундук');
+  puzzle.rewardChest.opened = false;
+  game.player.x = puzzle.rewardChest.x + 4;
+  game.player.y = game.world.floorY - game.player.h;
+  const chestOk = game.world.tryInteract(game.player, game);
+  assert(chestOk && puzzle.rewardChest.opened, 'сундук за загадку открывается');
+  assert(!!sandbox.Quests.stateOf('hidden-puzzle'), 'решение загадки открывает скрытый квест');
+
+  // Отводим игрока от босса, чтобы он не начал бой во время проверки механик
+  game.player.x = 90;
+  game.player.y = game.world.floorY - game.player.h;
+  game.boss.x = game.boss.homeX;
+  game.boss.engaged = false;
+  sandbox.Engine.Camera.snap(game.player, game.level.worldW, game.level.worldH);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+
+  // ---------- Механики всех боссов ----------
+  game.player.invulnTimer = 999;
+  game.player.hp = game.player.maxHp = 99999;
+  let mechanicsErrors = 0;
+  for (const bid of Object.keys(game.bossesData)) {
+    const bd = game.bossesData[bid];
+    let boss;
+    try {
+      boss = new sandbox.window.Boss(900, game.world.floorY - 80, {
+        w: 70, h: 80, hp: 5000, atk: 100, def: 20,
+        name: bd.title || bid, lootId: 'guardian', bossData: bd
+      });
+      bd.attacks.forEach((atk) => boss.executeAttack(atk, game));
+    } catch (e) {
+      mechanicsErrors++;
+      console.log('    boss mechanics error ' + bid + ': ' + e.message);
+    }
+  }
+  advance(2600);
+  assert(mechanicsErrors === 0, 'все типы атак боссов исполняются без ошибок');
+  sandbox.Effects.reset();
+  for (const m of game.monsters) {
+    if (m.summoned) { m.dead = true; m.deathTimer = 0; }
+  }
+  game.player.invulnTimer = 0;
+  game.player.hp = game.player.maxHp;
+
+  // ---------- Диалог босса перед боем ----------
+  game._pendingZoneStory = null;
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  game.player.invulnTimer = 999;
+  game.player.x = game.boss.x - 420;
+  game.player.y = game.world.floorY - game.player.h;
+  advance(400);
+  assert(game.boss.engaged, 'босс входит в бой при приближении');
+  assert(game._bossDlgPlayed && sandbox.Dialogue.active, 'перед боем проигрывается сюжетный диалог босса');
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  game.player.x = 90;
+  game.player.y = game.world.floorY - game.player.h;
+  sandbox.Engine.Camera.snap(game.player, game.level.worldW, game.level.worldH);
+
+  // ---------- Мышь и выбор умения ----------
+  game.progress.level = 10;
+  game.progress.recalc();
+  game.player.syncStats(game.progress.stats, true);
+  const I = sandbox.Engine.Input;
+  I.touchMode = false;
+  I.mouse.overCanvas = true;
+  I.mouse.active = true;
+  I.mouse.screenX = 480;
+  I.mouse.screenY = 300;
+  const aim = sandbox.Combat.aimVector(game);
+  assert(aim.source === 'mouse', 'мышь задаёт направление прицела');
+  I.mouse.left = true;
+  assert(I.action('attack') === true, 'ЛКМ включает удержание атаки');
+  I.mouse.left = false;
+  I.mouse.rightPressed = true;
+  assert(I.mouse.rightPressed === true, 'ПКМ фиксирует каст выбранного умения');
+  game.selectedSkill = 0;
+  game.cycleSelectedSkill(1);
+  assert(game.selectedSkill === 1, 'колесо/цикл переключает выбранное умение');
+  I.mouse.overCanvas = false;
+  I.mouse.active = false;
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+
+  // ---------- Мобильная раскладка ----------
+  game.settings.leftHanded = true;
+  sandbox.UI.applyHandedness();
+  assert(sandbox.document.body.classList.contains('left-handed'), 'раскладка для левши включается');
+
+  // ---------- Квесты, лут, завершение главы ----------
+  const mainQuest = sandbox.Quests.byId['main-1'];
+  assert(!!mainQuest && sandbox.Quests.stateOf('main-1'), 'сюжетный квест главы активен');
+  game.inventory.items = {};
+  game.monsters.filter((m) => !m.isBoss && !m.dead).forEach((m) => game.damageMonster(m, 99999, { source: 'basic' }));
+  assert(game.monsters.filter((m) => !m.isBoss).every((m) => m.dead), 'обычные враги побеждены');
+  game.damageMonster(game.boss, 99999, { source: 'basic' });
+  advance(1800);
+  assert(game.boss.dead, 'босс повержен');
+  assert(sandbox.Dialogue.active || game.state === 'chapterEnd', 'после победы начинается диалог главы');
+  if (sandbox.Dialogue.active) {
+    for (let i = 0; i < 20 && sandbox.Dialogue.active; i++) {
+      press('e'); advance(100); release('e');
+    }
+  }
+  advance(200);
+  assert(game.chapterIndex === 1, 'после главы 1 открывается глава 2 (index=' + game.chapterIndex + ')');
+  const mainState = sandbox.Quests.stateOf('main-1');
+  assert(mainState && mainState.status === 'completed', 'сюжетный квест главы 1 завершён и награждён');
+  assert(game.inventory.count('hunter-dagger') + game.inventory.count('hunter-jacket') > 0, 'с босса гарантированно падает снаряжение');
+  assert(game.boss === null || game.chapterIndex === 1, 'состояние главы корректно после перехода');
+
+  // ---------- Сохранение ----------
+  game.persist();
+  const raw = storage.get('solo-leveling-save');
+  assert(!!raw, 'сохранение записано');
+  const saved = JSON.parse(raw);
+  assert(saved.version === 3 && saved.progress && saved.inventory, 'сохранение v3 содержит прогресс, инвентарь и теней');
+  const loaded = sandbox.SaveSystem.load();
+  assert(loaded && loaded.version === 3 && loaded.chapterIndex === 1, 'сохранение читается обратно');
+
+  // ---------- UI-панели ----------
+  try {
+    sandbox.UI.toggleInventory();
+    assert(sandbox.UI.inventory.style.display !== 'none', 'инвентарь открывается');
+    sandbox.UI.renderInventory();
+    sandbox.UI.closeAllPanels();
+    sandbox.UI.toggleTalents();
+    assert(sandbox.UI.talents.style.display !== 'none', 'древо талантов открывается');
+    sandbox.UI.refreshTalents();
+    sandbox.UI.closeAllPanels();
+    sandbox.UI.toggleQuests();
+    assert(sandbox.UI.quest.style.display !== 'none', 'журнал квестов открывается');
+    sandbox.UI.renderQuests();
+    assert(!!sandbox.UI.questContent.querySelector('.story-summary'), 'в журнале показывается сводка сюжета главы');
+    sandbox.UI.closeAllPanels();
+    sandbox.UI.toggleMenu();
+    assert(sandbox.UI.menu.style.display !== 'none', 'меню открывается');
+    assert(sandbox.UI.menuShadow.textContent.indexOf('Теневая армия:') === 0, 'в меню есть строка теневой армии');
+    sandbox.UI.closeAllPanels();
+    sandbox.UI.enableTouch(true);
+    assert(!!sandbox.UI.touch, 'touch-управление включается');
+    sandbox.UI.enableTouch(false);
+    press('y');
+    advance(60);
+    release('y');
+    assert(sandbox.UI.shadowPanel.style.display !== 'none', 'Y открывает панель теневой армии');
+    sandbox.UI.closeAllPanels();
+
+    // ---------- Хаб гильдии Ахджин ----------
+    game.unlocked = 1;
+    game.chapterIndex = 1;
+    assert(!sandbox.UI.hubUnlocked(), 'до главы 9 хаб гильдии закрыт');
+    sandbox.UI.toggleHub();
+    assert(sandbox.UI.hub.style.display === 'none', 'закрытый хаб не открывается');
+    game.unlocked = 8;
+    press('g');
+    advance(60);
+    release('g');
+    assert(sandbox.UI.hub.style.display !== 'none', 'G открывает хаб гильдии');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-chapter').length === 12, 'доска контрактов показывает 12 глав');
+    const openChapters = Array.from(sandbox.UI.hub.querySelectorAll('.hub-chapter'))
+      .filter((b) => String(b.className).indexOf('locked') < 0);
+    assert(openChapters.length === 9, 'в хабе доступны открытые главы');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-shadow-card').length === 2, 'в хабе два слота отряда');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-act').length === 4, 'снабжение хаба предлагает 4 раздела');
+    game.inventory.add('hp-potion-small', 1);
+    game.player.hp = 1;
+    sandbox.UI.renderHub();
+    const hubHeal = Array.from(sandbox.UI.hub.querySelectorAll('.hub-link'))
+      .find((b) => b.textContent === 'ВЫПИТЬ');
+    assert(hubHeal && !hubHeal.disabled, 'хаб предлагает выпить зелье');
+    hubHeal.click();
+    assert(game.player.hp > 1, 'зелье из хаба лечит игрока');
+    const hubChapter = openChapters[0];
+    hubChapter.click();
+    advance(80);
+    assert(game.chapterIndex === 0 && sandbox.UI.hub.style.display === 'none',
+      'контракт с доски возвращает в выбранную главу');
+    sandbox.UI.closeAllPanels();
+  } catch (e) {
+    failures++;
+    console.log('  FAIL UI panels: ' + e.stack);
+  }
+
+  // ---------- Смерть и возрождение ----------
+  game.startChapter(0, { replay: true });
+  advance(100);
+  game.player.hp = 1;
+  game.player.invulnTimer = 0;
+  game.hurtPlayer(99999, { source: 'test' });
+  assert(game.state === 'dead', 'при нуле HP наступает смерть');
+  game.respawn();
+  advance(100);
+  assert(game.state === 'play' && game.player.hp === game.player.maxHp, 'возрождение восстанавливает HP');
+
+  // ---------- Все главы: боссы, секреты, загадки ----------
+  game.savedWorld = {};
+  const chapterReport = [];
+  let bossMissing = 0, puzzleFail = 0;
+  for (let i = 0; i < game.chapters.length; i++) {
+    game.startChapter(i, { replay: true });
+    const w = game.world;
+    const p = w.puzzles[0];
+    if (p) {
+      p.sequence.forEach((idx) => {
+        if (p.kind === 'orbs') {
+          const d = p.devices[idx];
+          w.hitOrbsRect({ x: d.x, y: d.y, w: d.w, h: d.h }, game);
+        } else {
+          w.activateDevice(p, idx, game);
+        }
+      });
+      if (!p.solved || !p.rewardChest) puzzleFail++;
+    }
+    if (!game.boss) bossMissing++;
+    chapterReport.push({
+      id: game.chapter.id,
+      boss: game.boss ? game.boss.name : '—',
+      bossAnim: game.boss ? game.boss.animId : '—',
+      bossSubtitle: game.boss ? game.boss.subtitle : '—',
+      arena: !!w.arena,
+      cutin: !!w.cutinPath,
+      scenes: w.scenes.length,
+      monsters: game.monsters.length,
+      npcs: game.npcs.length,
+      secret: !!w.secrets[0],
+      puzzle: p ? p.kind : '—'
+    });
+    const state = w.serialize();
+    assert(!!state && typeof state === 'object', 'мир главы ' + game.chapter.id + ' сериализуется');
+  }
+  assert(bossMissing === 0, 'в каждой главе есть босс');
+  assert(puzzleFail === 0, 'загадки всех типов (руны/рычаги/сферы) решаются');
+  const ch3 = chapterReport.find((r) => r.id === 3);
+  assert(ch3 && ch3.boss !== 'Гоблин', 'в главе 3 не назначается гоблин-босс');
+  assert(chapterReport.every((r) => r.secret && r.puzzle !== '—'), 'в каждой главе есть секрет и загадка');
+  assert(chapterReport.every((r) => r.arena && r.cutin && r.scenes >= 2),
+    'в каждой главе есть арена, cut-in и две сцены');
+  const bossIdentities = {
+    2: ['Тень испытания', 'architect', 'shadow-trial'],
+    3: ['Древний страж шахты', 'statue-of-god', 'mine-guardian'],
+    7: ['Измерительный голем', 'architect', 'measure-golem'],
+    9: ['Тень Ахджин', 'sung-jin-woo', 'ahjin-shadow'],
+    11: ['Герольд Монархов', 'ashborn', 'war-herald']
+  };
+  for (const cid of Object.keys(bossIdentities)) {
+    const row = chapterReport.find((r) => r.id === Number(cid));
+    const expected = bossIdentities[cid];
+    assert(row && row.boss === expected[0] && row.bossAnim === expected[1],
+      'у главы ' + cid + ' свой облик и имя босса');
+    assert(game.bossesData[expected[2]] && game.bossesData[expected[2]].title === expected[0],
+      'у главы ' + cid + ' свой профиль босса');
+  }
+  assert(chapterReport.find((r) => r.id === 4).bossSubtitle.indexOf('болот') >= 0,
+    'у камышового босса свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 10).bossSubtitle.indexOf('Монарх') >= 0,
+    'у Эшборна свой подзаголовок');
+  advance(100);
+
+  // ---------- Враги глав 3–5 ----------
+  game.startChapter(2, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  const caveIds = game.monsters.map((m) => m.lootId);
+  assert(caveIds.indexOf('goblin-shaman') >= 0, 'в главе 3 есть гоблин-шаман');
+  assert(caveIds.indexOf('cave-spider') >= 0, 'в главе 3 есть пещерный паук');
+  const spider = game.monsters.find((m) => m.lootId === 'cave-spider');
+  assert(spider.trait.lunge && spider.trait.onHitSlow > 0, 'паук прыгает и замедляет');
+  const shaman = game.monsters.find((m) => m.lootId === 'goblin-shaman');
+  assert(shaman.trait.ranged && shaman.trait.projectileSlow > 0, 'шаман стреляет замедляющим снарядом');
+
+  game.startChapter(3, { replay: true });
+  advance(80);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  const berserker = game.monsters.find((m) => m.lootId === 'orc-berserker');
+  assert(!!berserker, 'в главе 4 есть орк-берсерк');
+  const normalSpeed = berserker.speed;
+  berserker.hp = Math.floor(berserker.maxHp * 0.3);
+  advance(80);
+  assert(berserker.berserked && berserker.speed > normalSpeed, 'орк-берсерк впадает в ярость при низком HP');
+
+  game.startChapter(4, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  const iceIds = game.monsters.map((m) => m.lootId);
+  assert(iceIds.indexOf('ice-elf-ranger') >= 0, 'в главе 5 есть ледяной эльф-стрелок');
+  assert(iceIds.indexOf('frost-wolf') >= 0, 'в главе 5 есть морозный волк');
+  const ranger = game.monsters.find((m) => m.lootId === 'ice-elf-ranger');
+  assert(ranger.trait.ranged && ranger.trait.projectileColor === '#bfe6f7', 'эльф стреляет ледяными снарядами');
+
+  // ---------- Локальные квесты глав 3–5 ----------
+  const clearQuestChapter = (idx) => {
+    game.startChapter(idx, { replay: true });
+    advance(80);
+    if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+    game.player.invulnTimer = 999;
+    game.player.hp = game.player.maxHp = 999999;
+  };
+  const interactAll = (count) => {
+    const objects = game.world.questObjects.slice();
+    objects.forEach((o) => {
+      game.player.x = o.x + o.w / 2 - game.player.w / 2;
+      game.player.y = game.world.floorY - game.player.h;
+      game.world.tryInteract(game.player, game);
+    });
+    return objects;
+  };
+
+  clearQuestChapter(2);
+  const miners = interactAll();
+  assert(miners.length === 3 && miners.every((o) => o.done), 'шахтёры спасаются интерактивно');
+  assert(sandbox.Quests.stateOf('side-3c').status === 'completed', 'квест «Заживо погребённые» завершается');
+
+  clearQuestChapter(3);
+  const hunters = interactAll();
+  assert(hunters.length === 3 && hunters.every((o) => o.done), 'раненые охотники выводятся');
+  assert(sandbox.Quests.stateOf('side-4c').status === 'completed', 'квест «Долг партии» завершается');
+
+  clearQuestChapter(4);
+  const braziers = interactAll();
+  assert(braziers.length === 3 && braziers.every((o) => o.done), 'жаровни зажигаются');
+  assert(sandbox.Quests.stateOf('side-5c').status === 'completed', 'квест «Тепло для живых» завершается');
+  game.startChapter(4, { replay: true });
+  advance(80);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  assert(game.world.questObjects.every((o) => o.done), 'зажжённые жаровни сохраняются');
+
+  clearQuestChapter(2);
+  game.onBossPhase({ name: 'Древний страж шахты', bossData: game.bossesData.guardian }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('трещиной') >= 0, 'у стража шахты есть фазовая реплика');
+  game.onBossEnrage({ name: 'Древний страж шахты', bossData: game.bossesData.guardian });
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('Стены содрогаются') >= 0, 'у стража шахты есть реплика ярости');
+  clearQuestChapter(3);
+  game.onBossPhase({ name: 'Камышовый босс', bossData: game.bossesData['reed-boss'] }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('Логово') >= 0, 'у камышового босса есть фазовая реплика');
+  clearQuestChapter(4);
+  game.onBossPhase({ name: 'Барики', bossData: game.bossesData.baruka }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('клан') >= 0, 'у Барики есть фазовая реплика');
+
+  // ---------- Глава 6: новые враги, доспехи, фазы и тень ----------
+  game.startChapter(5, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  game.player.invulnTimer = 999;
+  game.player.hp = game.player.maxHp = 999999;
+  const knights = game.monsters.filter((m) => m.lootId === 'demon-knight');
+  const hounds = game.monsters.filter((m) => m.lootId === 'hellhound');
+  assert(knights.length >= 3, 'в главе 6 есть демонические рыцари (' + knights.length + ')');
+  assert(hounds.length >= 2, 'в главе 6 есть адские гончие (' + hounds.length + ')');
+  const knight = knights[0];
+  knight.hp = knight.maxHp;
+  game.player.x = knight.x - 30;
+  game.player.y = knight.y;
+  knight.face = -1;
+  game.damageMonster(knight, 100, { source: 'basic', color: '#fff' });
+  const frontLoss = knight.maxHp - knight.hp;
+  knight.hp = knight.maxHp;
+  game.player.x = knight.x - 30;
+  knight.face = -1;
+  game.damageMonster(knight, 100, { source: 'nova', color: '#fff' });
+  knight.hp = knight.maxHp;
+  game.damageMonster(knight, 100, { source: 'basic', color: '#fff' });
+  const brokenLoss = knight.maxHp - knight.hp;
+  assert(frontLoss < brokenLoss, 'щит рыцаря держит удар, но ломается от умения (front ' + frontLoss + ' < broken ' + brokenLoss + ')');
+  game.onBossPhase({ name: 'Игрис', bossData: game.bossesData.igris }, 1);
+  assert(sandbox.UI.bossBarkText.textContent.indexOf('клинок') >= 0, 'фаза Игриса показывает боевую реплику');
+
+  const racks = game.world.racks;
+  assert(racks.length === 4, 'в главе 6 четыре проклятые стойки');
+  racks.forEach((rack) => {
+    game.player.x = rack.x + rack.w / 2 - game.player.w / 2;
+    game.player.y = game.world.floorY - game.player.h;
+    const before = game.monsters.length;
+    const ok = game.world.tryInteract(game.player, game);
+    assert(ok && rack.broken, 'стойка доспехов освобождается');
+    assert(game.monsters.length === before + 1, 'из стойки появляется демонический рыцарь');
+  });
+  assert(sandbox.Quests.stateOf('side-6c') && sandbox.Quests.stateOf('side-6c').status === 'completed',
+    'квест «Освободить доспехи павших» завершается');
+  game.startChapter(5, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  assert(game.world.racks.every((r) => r.broken), 'разбитые стойки сохраняются после перезапуска главы');
+
+  // Извлечение тени Игриса
+  game.startChapter(5, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  game.player.invulnTimer = 999;
+  game.player.hp = game.player.maxHp = 999999;
+  game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+  game.damageMonster(game.boss, 99999999, { source: 'basic' });
+  advance(200);
+  assert(game._shadowAvailable && game._extractionStarted, 'после победы над Игрисом начинается извлечение тени');
+  advance(1200);
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(100);
+  assert(game.hasShadow('igris') && game.shadows.equipped.indexOf('igris') >= 0, 'тень Игриса извлечена и экипирована');
+
+  game.startChapter(6, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  assert(game.allies.some((a) => a.shadowId === 'igris'), 'тень Игриса сопровождает игрока в следующей главе');
+  game.toggleShadow('igris');
+  assert(!game.allies.some((a) => a.shadowId === 'igris'), 'тень можно отправить в резерв');
+  game.toggleShadow('igris');
+  assert(game.allies.some((a) => a.shadowId === 'igris'), 'тень возвращается в строй');
+
+  // Прокачка и вторая/третья тени
+  game.inventory.add('shadow-essence', 10);
+  const essenceBefore = game.inventory.count('shadow-essence');
+  assert(game.upgradeShadow('igris') && game.shadowLevel('igris') === 2, 'тень Игриса прокачивается эссенцией');
+  assert(game.inventory.count('shadow-essence') === essenceBefore - 1, 'прокачка тратит эссенцию');
+
+  game.startChapter(4, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  game.player.invulnTimer = 999;
+  game.player.hp = game.player.maxHp = 999999;
+  game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+  game.damageMonster(game.boss, 99999999, { source: 'basic' });
+  advance(200);
+  assert(game._shadowExtractionId === 'baruka', 'после победы над Барикой доступна его тень');
+  advance(1200);
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(100);
+  assert(game.hasShadow('baruka'), 'тень Барики извлечена');
+
+  game.startChapter(7, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  game.player.invulnTimer = 999;
+  game.player.hp = game.player.maxHp = 999999;
+  game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+  game.damageMonster(game.boss, 99999999, { source: 'basic' });
+  advance(200);
+  assert(game._shadowExtractionId === 'beru', 'после победы над Бером доступна его тень');
+  advance(1200);
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(100);
+  assert(game.hasShadow('beru'), 'тень Бера извлечена');
+  assert(game.shadows.equipped.length === 2 && game.shadows.equipped.indexOf('beru') < 0,
+    'при заполненных слотах Бер остаётся в резерве');
+  game.toggleShadow('beru');
+  assert(game.shadows.equipped.indexOf('beru') < 0, 'третий слот не активируется');
+  game.toggleShadow('igris');
+  game.toggleShadow('beru');
+  assert(game.shadows.equipped.indexOf('beru') >= 0, 'Бер занимает освободившийся слот');
+  assert(game.allies.some((a) => a.shadowId === 'baruka' && a.attackStyle === 'projectile'),
+    'Барика атакует ледяными снарядами');
+  assert(game.allies.some((a) => a.shadowId === 'beru' && a.attackStyle === 'multi'),
+    'Бер использует быстрые множественные удары');
+
+  sandbox.UI.toggleShadows();
+  assert(sandbox.UI.shadowPanel.style.display !== 'none', 'панель теневой армии открывается');
+  assert(sandbox.UI.shadowBody.children.length > 0, 'панель показывает теней и слоты');
+  sandbox.UI.closeAllPanels();
+  game.persist();
+  const shadowSave = JSON.parse(storage.get('solo-leveling-save'));
+  assert(shadowSave.shadows.levels.igris === 2 && shadowSave.shadows.owned.baruka &&
+    shadowSave.shadows.owned.beru, 'уровни и состав теней сохраняются');
+
+  // ---------- Миграция сохранения v1 ----------
+  const currentSave = storage.get('solo-leveling-save');
+  storage.set('solo-leveling-save', JSON.stringify({
+    chapterIndex: 2, unlocked: 3, hp: 100, maxHp: 100, atk: 10, def: 1,
+    level: 4, kills: 7, items: [{ name: 'Гоблин', qty: 2 }]
+  }));
+  const migrated = sandbox.SaveSystem.load();
+  assert(migrated && migrated.version === 3, 'старое сохранение v1 мигрирует в v3');
+  assert(migrated && migrated.progress.level === 4 && migrated.inventory.items.length === 1, 'миграция сохраняет уровень и трофеи');
+  storage.set('solo-leveling-save', JSON.stringify({
+    version: 2, savedAt: 1, chapterIndex: 3, unlocked: 4,
+    progress: { level: 6 }, inventory: { items: [] }, world: {}, storySeen: {},
+    stats: {}, settings: {}, finished: false
+  }));
+  const migratedV2 = sandbox.SaveSystem.load();
+  assert(migratedV2 && migratedV2.version === 3 && migratedV2.progress.level === 6 &&
+    migratedV2.shadows && Array.isArray(migratedV2.shadows.equipped), 'сохранение v2 мигрирует в v3 без потери прогресса');
+  if (currentSave) storage.set('solo-leveling-save', currentSave);
+
+  // ---------- Финальная отрисовка ----------
+  try {
+    game.render();
+    assert(true, 'кадр отрисовывается без ошибок');
+  } catch (e) {
+    failures++;
+    console.log('  FAIL render: ' + e.stack);
+  }
+
+  // ---------- Лор-подсказка и кинематографическая сцена ----------
+  game.startChapter(0, { replay: true });
+  advance(100);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  const loreEntry = game.world.lore[0];
+  game.player.x = loreEntry.x + loreEntry.w / 2 - game.player.w / 2;
+  game.player.y = game.world.floorY - game.player.h;
+  const loreHint = game.world.getHint(game.player);
+  assert(!!loreHint && loreHint.indexOf('Прочитать') >= 0, 'подсказка у лор-записи не ломает игровой цикл');
+
+  game.world.zones.forEach((z) => { game.world.seenZones[z.id] = true; });
+  game._pendingZoneStory = null;
+  const storyScene = game.world.scenes[0];
+  game.player.x = storyScene.x + 10;
+  game.player.y = game.world.floorY - game.player.h;
+  advance(60);
+  assert(storyScene.triggered && game.state === 'scene', 'сюжетная сцена запускается при входе в триггер');
+  assert(sandbox.UI.cutinLayer.style.display !== 'none', 'cut-in портрет показывается');
+  assert(uiRoot.classList.contains('cinematic'), 'кинематографические плашки включаются');
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(60);
+  assert(game.state === 'play' && !uiRoot.classList.contains('cinematic'), 'после сцены управление возвращается');
+  assert(game.savedWorld[game.chapter.id].scenes[storyScene.id] === true, 'просмотренная сцена сохраняется');
+
+  game.startChapter(0, { replay: true });
+  advance(80);
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  assert(game.world.scenes[0].triggered === true, 'сцена не повторяется после перезагрузки главы');
+
+  console.log(failures === 0 ? '\nSMOKE TEST: ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ' : '\nSMOKE TEST: ОШИБОК ' + failures);
+  process.exit(failures === 0 ? 0 : 1);
+})().catch((e) => {
+  console.error('SMOKE TEST CRASH:', e);
+  process.exit(2);
+});

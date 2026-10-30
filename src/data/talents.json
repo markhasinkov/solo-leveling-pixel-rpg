@@ -1,0 +1,86 @@
+{
+  "branches": [
+    { "id": "strength", "name": "Сила", "color": "#e8674a", "desc": "Урон, критические удары, вампиризм." },
+    { "id": "agility", "name": "Ловкость", "color": "#4ad8c8", "desc": "Скорость, атака, рывки." },
+    { "id": "endurance", "name": "Стойкость", "color": "#e8c76a", "desc": "Здоровье, защита, регенерация." },
+    { "id": "shadow", "name": "Тень", "color": "#a06cff", "desc": "Мана, умения, армия теней." }
+  ],
+  "nodes": [
+    {
+      "id": "str-1", "branch": "strength", "name": "Тяжёлая рука", "desc": "+6% урона за ранг",
+      "maxRank": 5, "cost": 1, "levelReq": 1, "x": 0, "y": 0, "effect": { "damagePct": 0.06 }
+    },
+    {
+      "id": "str-2", "branch": "strength", "name": "Критический удар", "desc": "+4% шанса крита за ранг",
+      "maxRank": 5, "cost": 1, "levelReq": 3, "requires": ["str-1"], "x": 0, "y": 1,
+      "effect": { "critChance": 0.04 }
+    },
+    {
+      "id": "str-3", "branch": "strength", "name": "Жажда крови", "desc": "+3% вампиризма за ранг",
+      "maxRank": 3, "cost": 1, "levelReq": 6, "requires": ["str-2"], "x": 0, "y": 2,
+      "effect": { "lifesteal": 0.03 }
+    },
+    {
+      "id": "str-4", "branch": "strength", "name": "Клинок Монарха", "desc": "+20% урона умений",
+      "maxRank": 1, "cost": 2, "levelReq": 10, "requires": ["str-3"], "x": 0, "y": 3,
+      "effect": { "skillDamagePct": 0.2 }
+    },
+    {
+      "id": "agi-1", "branch": "agility", "name": "Лёгкий шаг", "desc": "+7% скорости движения за ранг",
+      "maxRank": 3, "cost": 1, "levelReq": 1, "x": 1, "y": 0, "effect": { "speedPct": 0.07 }
+    },
+    {
+      "id": "agi-2", "branch": "agility", "name": "Быстрые руки", "desc": "+8% скорости атаки за ранг",
+      "maxRank": 4, "cost": 1, "levelReq": 3, "requires": ["agi-1"], "x": 1, "y": 1,
+      "effect": { "attackSpeedPct": 0.08 }
+    },
+    {
+      "id": "agi-3", "branch": "agility", "name": "Двойной прыжок", "desc": "Позволяет прыгать второй раз в воздухе",
+      "maxRank": 1, "cost": 2, "levelReq": 6, "requires": ["agi-2"], "x": 1, "y": 2,
+      "effect": { "doubleJump": 1 }
+    },
+    {
+      "id": "agi-4", "branch": "agility", "name": "Тень ветра", "desc": "-15% перезарядки умений",
+      "maxRank": 1, "cost": 2, "levelReq": 10, "requires": ["agi-3"], "x": 1, "y": 3,
+      "effect": { "cooldownPct": 0.15 }
+    },
+    {
+      "id": "end-1", "branch": "endurance", "name": "Крепкое тело", "desc": "+7% максимального HP за ранг",
+      "maxRank": 5, "cost": 1, "levelReq": 1, "x": 2, "y": 0, "effect": { "maxHpPct": 0.07 }
+    },
+    {
+      "id": "end-2", "branch": "endurance", "name": "Каменная кожа", "desc": "+6% защиты за ранг",
+      "maxRank": 4, "cost": 1, "levelReq": 3, "requires": ["end-1"], "x": 2, "y": 1,
+      "effect": { "defPct": 0.06 }
+    },
+    {
+      "id": "end-3", "branch": "endurance", "name": "Регенерация", "desc": "+0.6% HP в секунду за ранг",
+      "maxRank": 3, "cost": 1, "levelReq": 6, "requires": ["end-2"], "x": 2, "y": 2,
+      "effect": { "hpRegen": 0.006 }
+    },
+    {
+      "id": "end-4", "branch": "endurance", "name": "Сердце Монарха", "desc": "+25% максимального HP",
+      "maxRank": 1, "cost": 2, "levelReq": 10, "requires": ["end-3"], "x": 2, "y": 3,
+      "effect": { "maxHpPct": 0.25 }
+    },
+    {
+      "id": "shd-1", "branch": "shadow", "name": "Резерв тьмы", "desc": "+8% максимальной маны за ранг",
+      "maxRank": 4, "cost": 1, "levelReq": 1, "x": 3, "y": 0, "effect": { "maxMpPct": 0.08 }
+    },
+    {
+      "id": "shd-2", "branch": "shadow", "name": "Поток тени", "desc": "+0.8 маны в секунду за ранг",
+      "maxRank": 3, "cost": 1, "levelReq": 3, "requires": ["shd-1"], "x": 3, "y": 1,
+      "effect": { "mpRegen": 0.8 }
+    },
+    {
+      "id": "shd-3", "branch": "shadow", "name": "Хозяин теней", "desc": "+1 теневой солдат в армии",
+      "maxRank": 2, "cost": 1, "levelReq": 6, "requires": ["shd-2"], "x": 3, "y": 2,
+      "effect": { "allyCount": 1 }
+    },
+    {
+      "id": "shd-4", "branch": "shadow", "name": "Воля Монарха", "desc": "+15% урона умений и -10% их стоимости",
+      "maxRank": 1, "cost": 2, "levelReq": 10, "requires": ["shd-3"], "x": 3, "y": 3,
+      "effect": { "skillDamagePct": 0.15, "mpCostPct": -0.1 }
+    }
+  ]
+}

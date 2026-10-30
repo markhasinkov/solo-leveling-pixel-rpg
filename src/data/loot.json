@@ -1,0 +1,1297 @@
+{
+  "items": [
+    {
+      "id": "hp-potion-small",
+      "name": "Малое зелье лечения",
+      "type": "consumable",
+      "rarity": "common",
+      "icon": "assets/sprites/icons/item-hp-potion-small.png",
+      "price": 25,
+      "value": 10,
+      "desc": "Восстанавливает 150 HP.",
+      "use": {
+        "heal": 150
+      }
+    },
+    {
+      "id": "hp-potion-medium",
+      "name": "Зелье лечения",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-hp-potion-medium.png",
+      "price": 60,
+      "value": 25,
+      "desc": "Восстанавливает 380 HP.",
+      "use": {
+        "heal": 380
+      }
+    },
+    {
+      "id": "hp-potion-large",
+      "name": "Большое зелье лечения",
+      "type": "consumable",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-hp-potion-large.png",
+      "price": 140,
+      "value": 60,
+      "desc": "Восстанавливает 50% HP.",
+      "use": {
+        "healPct": 0.5
+      }
+    },
+    {
+      "id": "mp-potion",
+      "name": "Зелье маны",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-mp-potion.png",
+      "price": 55,
+      "value": 22,
+      "desc": "Восстанавливает 60 маны.",
+      "use": {
+        "mana": 60
+      }
+    },
+    {
+      "id": "elixir",
+      "name": "Эликсир возрождения",
+      "type": "consumable",
+      "rarity": "epic",
+      "icon": "assets/sprites/icons/item-elixir.png",
+      "price": 320,
+      "value": 150,
+      "desc": "Полностью восстанавливает HP и ману.",
+      "use": {
+        "full": true
+      }
+    },
+    {
+      "id": "elixir-power",
+      "name": "Эликсир силы",
+      "type": "elixir",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-elixir-power.png",
+      "price": 500,
+      "value": 200,
+      "desc": "Навсегда повышает силу атаки на 4.",
+      "use": {
+        "permAtk": 4
+      }
+    },
+    {
+      "id": "elixir-vitality",
+      "name": "Эликсир живучести",
+      "type": "elixir",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-elixir-vitality.png",
+      "price": 500,
+      "value": 200,
+      "desc": "Навсегда повышает максимальное HP на 40.",
+      "use": {
+        "permHp": 40
+      }
+    },
+    {
+      "id": "elixir-spirit",
+      "name": "Эликсир духа",
+      "type": "elixir",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-elixir-spirit.png",
+      "price": 450,
+      "value": 180,
+      "desc": "Навсегда повышает максимальную ману на 15.",
+      "use": {
+        "permMp": 15
+      }
+    },
+    {
+      "id": "goblin-fang",
+      "name": "Клык гоблина",
+      "type": "material",
+      "rarity": "common",
+      "icon": "assets/sprites/icons/item-goblin-fang.png",
+      "price": 8,
+      "value": 4,
+      "desc": "Материал для алхимии Ассоциации."
+    },
+    {
+      "id": "orc-tusk",
+      "name": "Клык орка",
+      "type": "material",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-orc-tusk.png",
+      "price": 18,
+      "value": 9,
+      "desc": "Ценится кузнецами подземелий."
+    },
+    {
+      "id": "bear-fur",
+      "name": "Шкура ледяного медведя",
+      "type": "material",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-bear-fur.png",
+      "price": 22,
+      "value": 11,
+      "desc": "Тёплая шкура, не боится мороза."
+    },
+    {
+      "id": "ant-carapace",
+      "name": "Панцирь муравья-рыцаря",
+      "type": "material",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-ant-carapace.png",
+      "price": 40,
+      "value": 20,
+      "desc": "Твёрже стали. Сырьё для тяжёлой брони."
+    },
+    {
+      "id": "ice-crystal",
+      "name": "Осколок вечной мерзлоты",
+      "type": "material",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-ice-crystal.png",
+      "price": 55,
+      "value": 28,
+      "desc": "Не тает даже в огне."
+    },
+    {
+      "id": "demon-horn",
+      "name": "Рог демона",
+      "type": "material",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-demon-horn.png",
+      "price": 70,
+      "value": 35,
+      "desc": "Источает слабую демоническую энергию."
+    },
+    {
+      "id": "shadow-essence",
+      "name": "Эссенция тени",
+      "type": "material",
+      "rarity": "epic",
+      "icon": "assets/sprites/icons/item-shadow-essence.png",
+      "price": 120,
+      "value": 60,
+      "desc": "Сгусток тьмы, из которого плетутся теневые солдаты."
+    },
+    {
+      "id": "dragon-scale",
+      "name": "Драконья чешуя",
+      "type": "material",
+      "rarity": "legendary",
+      "icon": "assets/sprites/icons/item-dragon-scale.png",
+      "price": 250,
+      "value": 120,
+      "desc": "Чешуя Монарха Разрушения. Почти несокрушима."
+    },
+    {
+      "id": "obsidian-shard",
+      "name": "Обсидиановый обломок",
+      "type": "material",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-obsidian-shard.png",
+      "price": 60,
+      "value": 30,
+      "desc": "Обломок статуи Бога. Хранит эхо приговора."
+    },
+    {
+      "id": "temple-relic",
+      "name": "Реликвия храма",
+      "type": "material",
+      "rarity": "epic",
+      "icon": "assets/sprites/icons/item-temple-relic.png",
+      "price": 140,
+      "value": 70,
+      "desc": "Печать храма Картенона."
+    },
+    {
+      "id": "rusty-dagger",
+      "name": "Ржавый кинжал",
+      "type": "weapon",
+      "rarity": "common",
+      "icon": "assets/sprites/icons/item-rusty-dagger.png",
+      "price": 40,
+      "value": 20,
+      "desc": "Оружие E-ранга. Лучше, чем ничего.",
+      "stats": {
+        "atk": 8
+      }
+    },
+    {
+      "id": "hunter-dagger",
+      "name": "Кинжал охотника",
+      "type": "weapon",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-hunter-dagger.png",
+      "price": 120,
+      "value": 60,
+      "desc": "Стандартный клинок охотника.",
+      "stats": {
+        "atk": 22,
+        "critChance": 0.02
+      }
+    },
+    {
+      "id": "frost-blade",
+      "name": "Морозный клинок",
+      "type": "weapon",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-frost-blade.png",
+      "price": 320,
+      "value": 160,
+      "desc": "Оставляет на врагах ледяные трещины.",
+      "stats": {
+        "atk": 48,
+        "critChance": 0.03
+      }
+    },
+    {
+      "id": "demon-knight-blade",
+      "name": "Клинок рыцаря крови",
+      "type": "weapon",
+      "rarity": "epic",
+      "icon": "assets/sprites/icons/item-demon-knight-blade.png",
+      "price": 780,
+      "value": 390,
+      "desc": "Оружие Игриса. Помнит клятву.",
+      "stats": {
+        "atk": 78,
+        "critChance": 0.05
+      }
+    },
+    {
+      "id": "kamish-dagger",
+      "name": "Кинжал Камиша",
+      "type": "weapon",
+      "rarity": "legendary",
+      "icon": "assets/sprites/icons/item-kamish-dagger.png",
+      "price": 1600,
+      "value": 800,
+      "desc": "Выкован из клыка дракона Камиша.",
+      "stats": {
+        "atk": 112,
+        "critChance": 0.08
+      }
+    },
+    {
+      "id": "monarch-blade",
+      "name": "Клинок Монарха Теней",
+      "type": "weapon",
+      "rarity": "legendary",
+      "icon": "assets/sprites/icons/item-monarch-blade.png",
+      "price": 2400,
+      "value": 1200,
+      "desc": "Тень, обретшая форму клинка.",
+      "stats": {
+        "atk": 158,
+        "critChance": 0.1
+      }
+    },
+    {
+      "id": "hunter-jacket",
+      "name": "Куртка охотника",
+      "type": "armor",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-hunter-jacket.png",
+      "price": 110,
+      "value": 55,
+      "desc": "Плотная ткань с магической пропиткой.",
+      "stats": {
+        "hp": 60,
+        "def": 4
+      }
+    },
+    {
+      "id": "reinforced-armor",
+      "name": "Укреплённый доспех",
+      "type": "armor",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-reinforced-armor.png",
+      "price": 300,
+      "value": 150,
+      "desc": "Пластины из панциря муравья-рыцаря.",
+      "stats": {
+        "hp": 150,
+        "def": 10
+      }
+    },
+    {
+      "id": "frost-mail",
+      "name": "Морозная кольчуга",
+      "type": "armor",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-frost-mail.png",
+      "price": 420,
+      "value": 210,
+      "desc": "Холод отводит удары.",
+      "stats": {
+        "hp": 240,
+        "def": 15
+      }
+    },
+    {
+      "id": "demon-plate",
+      "name": "Демоническая броня",
+      "type": "armor",
+      "rarity": "epic",
+      "icon": "assets/sprites/icons/item-demon-plate.png",
+      "price": 900,
+      "value": 450,
+      "desc": "Багрец и золото демонического замка.",
+      "stats": {
+        "hp": 380,
+        "def": 24
+      }
+    },
+    {
+      "id": "monarch-cloak",
+      "name": "Мантия Монарха",
+      "type": "armor",
+      "rarity": "legendary",
+      "icon": "assets/sprites/icons/item-monarch-cloak.png",
+      "price": 2000,
+      "value": 1000,
+      "desc": "Соткана из чистой тьмы.",
+      "stats": {
+        "hp": 540,
+        "def": 34,
+        "mp": 40
+      }
+    },
+    {
+      "id": "agility-ring",
+      "name": "Кольцо ловкости",
+      "type": "accessory",
+      "rarity": "uncommon",
+      "icon": "assets/sprites/icons/item-agility-ring.png",
+      "price": 160,
+      "value": 80,
+      "desc": "Движения становятся легче.",
+      "stats": {
+        "speedPct": 0.06
+      }
+    },
+    {
+      "id": "shadow-amulet",
+      "name": "Амулет тени",
+      "type": "accessory",
+      "rarity": "rare",
+      "icon": "assets/sprites/icons/item-shadow-amulet.png",
+      "price": 380,
+      "value": 190,
+      "desc": "Пульсирует в такт вашей мане.",
+      "stats": {
+        "mp": 30,
+        "mpRegen": 1.2
+      }
+    },
+    {
+      "id": "monarch-seal",
+      "name": "Печать Монарха",
+      "type": "accessory",
+      "rarity": "legendary",
+      "icon": "assets/sprites/icons/item-monarch-seal.png",
+      "price": 1800,
+      "value": 900,
+      "desc": "Символ власти над тенями.",
+      "stats": {
+        "atk": 36,
+        "hp": 120
+      }
+    }
+  ],
+  "tables": {
+    "goblin": {
+      "gold": [
+        4,
+        9
+      ],
+      "drops": [
+        {
+          "id": "goblin-fang",
+          "chance": 0.85,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hp-potion-small",
+          "chance": 0.14,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "rusty-dagger",
+          "chance": 0.05,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "orc": {
+      "gold": [
+        10,
+        20
+      ],
+      "drops": [
+        {
+          "id": "orc-tusk",
+          "chance": 0.85,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.12,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hunter-dagger",
+          "chance": 0.05,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "knight-ant": {
+      "gold": [
+        20,
+        36
+      ],
+      "drops": [
+        {
+          "id": "ant-carapace",
+          "chance": 0.85,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.15,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "reinforced-armor",
+          "chance": 0.05,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "ice-bear": {
+      "gold": [
+        18,
+        32
+      ],
+      "drops": [
+        {
+          "id": "bear-fur",
+          "chance": 0.85,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "ice-crystal",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "frost-blade",
+          "chance": 0.05,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "statue-of-god": {
+      "gold": [
+        120,
+        180
+      ],
+      "drops": [
+        {
+          "id": "temple-relic",
+          "chance": 1,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "obsidian-shard",
+          "chance": 1,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hunter-dagger",
+          "chance": 0.7,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hunter-jacket",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hp-potion-small",
+          "chance": 1,
+          "qty": [
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    "reed-boss": {
+      "gold": [
+        80,
+        120
+      ],
+      "drops": [
+        {
+          "id": "orc-tusk",
+          "chance": 1,
+          "qty": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.8,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "frost-blade",
+          "chance": 0.35,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "baruka": {
+      "gold": [
+        150,
+        220
+      ],
+      "drops": [
+        {
+          "id": "ice-crystal",
+          "chance": 1,
+          "qty": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "frost-blade",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "frost-mail",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "agility-ring",
+          "chance": 0.4,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "igris": {
+      "gold": [
+        220,
+        300
+      ],
+      "drops": [
+        {
+          "id": "demon-horn",
+          "chance": 1,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "demon-knight-blade",
+          "chance": 0.6,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "demon-plate",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "beru": {
+      "gold": [
+        300,
+        420
+      ],
+      "drops": [
+        {
+          "id": "ant-carapace",
+          "chance": 1,
+          "qty": [
+            3,
+            5
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.9,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "kamish-dagger",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-amulet",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "ashborn": {
+      "gold": [
+        450,
+        600
+      ],
+      "drops": [
+        {
+          "id": "shadow-essence",
+          "chance": 1,
+          "qty": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": "monarch-blade",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "monarch-cloak",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "antares": {
+      "gold": [
+        900,
+        1200
+      ],
+      "drops": [
+        {
+          "id": "dragon-scale",
+          "chance": 1,
+          "qty": [
+            3,
+            5
+          ]
+        },
+        {
+          "id": "kamish-dagger",
+          "chance": 0.8,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "monarch-seal",
+          "chance": 0.7,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "elixir",
+          "chance": 1,
+          "qty": [
+            2,
+            3
+          ]
+        }
+      ]
+    },
+    "architect": {
+      "gold": [
+        400,
+        520
+      ],
+      "drops": [
+        {
+          "id": "obsidian-shard",
+          "chance": 1,
+          "qty": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "temple-relic",
+          "chance": 0.8,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "demon-knight-blade",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "guardian": {
+      "gold": [
+        25,
+        45
+      ],
+      "drops": [
+        {
+          "id": "shadow-essence",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hp-potion-small",
+          "chance": 0.6,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "demon-knight": {
+      "gold": [
+        26,
+        42
+      ],
+      "drops": [
+        {
+          "id": "demon-horn",
+          "chance": 0.8,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.14,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.07,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "demon-knight-blade",
+          "chance": 0.04,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "hellhound": {
+      "gold": [
+        16,
+        28
+      ],
+      "drops": [
+        {
+          "id": "demon-horn",
+          "chance": 0.55,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.12,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.04,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "goblin-shaman": {
+      "gold": [
+        12,
+        22
+      ],
+      "drops": [
+        {
+          "id": "goblin-fang",
+          "chance": 0.75,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.16,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.03,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "cave-spider": {
+      "gold": [
+        14,
+        24
+      ],
+      "drops": [
+        {
+          "id": "goblin-fang",
+          "chance": 0.6,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hp-potion-small",
+          "chance": 0.18,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.12,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "orc-berserker": {
+      "gold": [
+        18,
+        32
+      ],
+      "drops": [
+        {
+          "id": "orc-tusk",
+          "chance": 0.8,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.16,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hunter-dagger",
+          "chance": 0.04,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "ice-elf-ranger": {
+      "gold": [
+        26,
+        42
+      ],
+      "drops": [
+        {
+          "id": "ice-crystal",
+          "chance": 0.7,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.18,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "frost-blade",
+          "chance": 0.04,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "frost-wolf": {
+      "gold": [
+        22,
+        36
+      ],
+      "drops": [
+        {
+          "id": "bear-fur",
+          "chance": 0.7,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "ice-crystal",
+          "chance": 0.2,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.12,
+          "qty": [
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  },
+  "chests": {
+    "common": {
+      "gold": [
+        20,
+        45
+      ],
+      "drops": [
+        {
+          "id": "hp-potion-small",
+          "chance": 0.8,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.4,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "goblin-fang",
+          "chance": 0.5,
+          "qty": [
+            2,
+            4
+          ]
+        }
+      ]
+    },
+    "rare": {
+      "gold": [
+        60,
+        110
+      ],
+      "drops": [
+        {
+          "id": "hp-potion-medium",
+          "chance": 0.9,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "mp-potion",
+          "chance": 0.7,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "agility-ring",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.4,
+          "qty": [
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    "epic": {
+      "gold": [
+        140,
+        220
+      ],
+      "drops": [
+        {
+          "id": "hp-potion-large",
+          "chance": 0.9,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "elixir",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-amulet",
+          "chance": 0.5,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "demon-knight-blade",
+          "chance": 0.25,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "shadow-essence",
+          "chance": 0.8,
+          "qty": [
+            1,
+            3
+          ]
+        }
+      ]
+    },
+    "legendary": {
+      "gold": [
+        400,
+        650
+      ],
+      "drops": [
+        {
+          "id": "elixir",
+          "chance": 1,
+          "qty": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "monarch-blade",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "monarch-cloak",
+          "chance": 0.3,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "monarch-seal",
+          "chance": 0.4,
+          "qty": [
+            1,
+            1
+          ]
+        },
+        {
+          "id": "dragon-scale",
+          "chance": 1,
+          "qty": [
+            2,
+            4
+          ]
+        }
+      ]
+    }
+  },
+  "shop": [
+    {
+      "id": "hp-potion-small",
+      "price": 25
+    },
+    {
+      "id": "hp-potion-medium",
+      "price": 60
+    },
+    {
+      "id": "hp-potion-large",
+      "price": 140
+    },
+    {
+      "id": "mp-potion",
+      "price": 55
+    },
+    {
+      "id": "elixir",
+      "price": 320
+    },
+    {
+      "id": "elixir-power",
+      "price": 500
+    },
+    {
+      "id": "elixir-vitality",
+      "price": 500
+    },
+    {
+      "id": "elixir-spirit",
+      "price": 450
+    }
+  ]
+}

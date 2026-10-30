@@ -1,0 +1,1248 @@
+{
+  "main": [
+    {
+      "id": "main-1",
+      "chapter": 1,
+      "title": "Двойное подземелье",
+      "desc": "Выжить в храме Картенона и принять Систему.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 3,
+          "label": "Победить врагов храма"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 140,
+        "gold": 100,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-2",
+      "chapter": 2,
+      "title": "Пробуждение",
+      "desc": "Принять Систему и начать тренировки.",
+      "objectives": [
+        {
+          "type": "talk",
+          "count": 3,
+          "label": "Поговорить со всеми в палате"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 160,
+        "gold": 110,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "mp-potion",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-3",
+      "chapter": 3,
+      "title": "Первое соло",
+      "desc": "Зачистить E-ранговое подземелье в одиночку.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Победить монстров подземелья"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 220,
+        "gold": 140,
+        "talentPoints": 0,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-4",
+      "chapter": 4,
+      "title": "Логово орков",
+      "desc": "Победить камышового босса и заключить союз с Ю Чжин Хо.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Зачистить логово"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 280,
+        "gold": 180,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "hp-potion-medium",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-5",
+      "chapter": 5,
+      "title": "Красные ворота",
+      "desc": "Выжить в красных воротах и победить Барики.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Отбиться от ледяных тварей"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 340,
+        "gold": 220,
+        "talentPoints": 0,
+        "items": [
+          {
+            "id": "hp-potion-medium",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-6",
+      "chapter": 6,
+      "title": "Демонический замок",
+      "desc": "Победить Игриса и получить скрытый класс.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Пробиться через демонов"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 420,
+        "gold": 260,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "ice-crystal",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-7",
+      "chapter": 7,
+      "title": "Пересмотр ранга",
+      "desc": "Доказать Ассоциации свою силу.",
+      "objectives": [
+        {
+          "type": "talk",
+          "count": 3,
+          "label": "Поговорить с членами Ассоциации"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 460,
+        "gold": 300,
+        "talentPoints": 0,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-8",
+      "chapter": 8,
+      "title": "Остров Чеджу",
+      "desc": "Уничтожить муравьиный улей и короля Берю.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Прорваться через улей"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 540,
+        "gold": 340,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "shadow-essence",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-9",
+      "chapter": 9,
+      "title": "Гильдия Ахджин",
+      "desc": "Основать гильдию и подготовиться к возвращению.",
+      "objectives": [
+        {
+          "type": "talk",
+          "count": 3,
+          "label": "Поговорить с союзниками"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 580,
+        "gold": 380,
+        "talentPoints": 0,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-10",
+      "chapter": 10,
+      "title": "Наследие Монарха",
+      "desc": "Вернуться в храм Картенона за наследием Эшборна.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Одолеть стражей храма"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 640,
+        "gold": 420,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "shadow-essence",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-11",
+      "chapter": 11,
+      "title": "Война Монархов",
+      "desc": "Отразить вторжение и сдержать обещание.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 5,
+          "label": "Отбить атаки армий Монархов"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Пройти главу"
+        }
+      ],
+      "rewards": {
+        "xp": 720,
+        "gold": 480,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "main-12",
+      "chapter": 12,
+      "title": "Монарх Разрушения",
+      "desc": "Победить Антараса и закрыть врата между мирами.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 5,
+          "label": "Пробиться к Антарасу"
+        },
+        {
+          "type": "chapter",
+          "count": 1,
+          "label": "Завершить историю"
+        }
+      ],
+      "rewards": {
+        "xp": 1000,
+        "gold": 800,
+        "talentPoints": 2,
+        "items": [
+          {
+            "id": "dragon-scale",
+            "qty": 2
+          },
+          {
+            "id": "elixir",
+            "qty": 2
+          }
+        ]
+      }
+    }
+  ],
+  "side": [
+    {
+      "id": "side-1a",
+      "chapter": 1,
+      "title": "Осколки приговора",
+      "desc": "Собрать обломок статуи Бога — след древнего приговора.",
+      "objectives": [
+        {
+          "type": "collect",
+          "target": "obsidian-shard",
+          "count": 1,
+          "label": "Добыть обсидиановый обломок"
+        }
+      ],
+      "rewards": {
+        "xp": 80,
+        "gold": 60,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-1b",
+      "chapter": 1,
+      "title": "Немая молитва",
+      "desc": "Найти тайник, спрятанный за алтарём храма.",
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 1,
+          "label": "Найти секрет храма"
+        }
+      ],
+      "rewards": {
+        "xp": 100,
+        "gold": 80,
+        "items": [
+          {
+            "id": "mp-potion",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-2a",
+      "chapter": 2,
+      "title": "Забота о команде",
+      "desc": "Поговорить со всеми, кто пришёл в палату.",
+      "objectives": [
+        {
+          "type": "talk",
+          "count": 3,
+          "label": "Поговорить с посетителями"
+        }
+      ],
+      "rewards": {
+        "xp": 90,
+        "gold": 50,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-2b",
+      "chapter": 2,
+      "title": "Ежедневная тренировка",
+      "desc": "Система требует ежедневный квест. Примените умения в бою.",
+      "objectives": [
+        {
+          "type": "skill",
+          "count": 3,
+          "label": "Использовать любое умение"
+        }
+      ],
+      "rewards": {
+        "xp": 120,
+        "gold": 70,
+        "talentPoints": 0,
+        "items": [
+          {
+            "id": "mp-potion",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-3c",
+      "chapter": 3,
+      "title": "Заживо погребённые",
+      "desc": "Обвал запер шахтёров в штольне. Пока гоблины рыщут рядом, у них нет шансов выбраться самим.",
+      "objectives": [
+        {
+          "type": "rescue",
+          "count": 3,
+          "label": "Спасти шахтёров из-под завала"
+        }
+      ],
+      "rewards": {
+        "xp": 200,
+        "gold": 140,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 2
+          },
+          {
+            "id": "mp-potion",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-3a",
+      "chapter": 3,
+      "title": "Клык за клык",
+      "desc": "Гоблины больше не пугают. Уничтожить их логово.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Победить гоблинов"
+        }
+      ],
+      "rewards": {
+        "xp": 140,
+        "gold": 90,
+        "items": [
+          {
+            "id": "hp-potion-small",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-3b",
+      "chapter": 3,
+      "title": "Тайник E-ранга",
+      "desc": "В стенах подземелья есть щель, которой нет на карте.",
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 1,
+          "label": "Найти тайник подземелья"
+        }
+      ],
+      "rewards": {
+        "xp": 160,
+        "gold": 120,
+        "items": [
+          {
+            "id": "hunter-dagger",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-4c",
+      "chapter": 4,
+      "title": "Долг партии",
+      "desc": "Раненые охотники партии остались в камышах. Вытащите их, пока логово не забрало ещё одну жизнь.",
+      "objectives": [
+        {
+          "type": "rescue",
+          "count": 3,
+          "label": "Вывести раненых охотников"
+        }
+      ],
+      "rewards": {
+        "xp": 260,
+        "gold": 180,
+        "items": [
+          {
+            "id": "orc-tusk",
+            "qty": 2
+          },
+          {
+            "id": "hp-potion-medium",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-4a",
+      "chapter": 4,
+      "title": "Оркская тропа",
+      "desc": "Расчистить путь партии через орочье логово.",
+      "objectives": [
+        {
+          "type": "kill",
+          "target": "orc",
+          "count": 3,
+          "label": "Победить орков"
+        }
+      ],
+      "rewards": {
+        "xp": 190,
+        "gold": 130,
+        "items": [
+          {
+            "id": "orc-tusk",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-4b",
+      "chapter": 4,
+      "title": "Дар камышового логова",
+      "desc": "Разгадать механизм старого алтаря логова.",
+      "objectives": [
+        {
+          "type": "puzzle",
+          "count": 1,
+          "label": "Решить загадку логова"
+        }
+      ],
+      "rewards": {
+        "xp": 220,
+        "gold": 160,
+        "items": [
+          {
+            "id": "hp-potion-medium",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-5c",
+      "chapter": 5,
+      "title": "Тепло для живых",
+      "desc": "Красные ворота не выпускают. Зажгите три жаровни, чтобы выжившие не замёрзли до рассвета.",
+      "objectives": [
+        {
+          "type": "light",
+          "count": 3,
+          "label": "Зажечь жаровни в лагере"
+        }
+      ],
+      "rewards": {
+        "xp": 320,
+        "gold": 230,
+        "items": [
+          {
+            "id": "ice-crystal",
+            "qty": 2
+          },
+          {
+            "id": "bear-fur",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-5a",
+      "chapter": 5,
+      "title": "Спасти слабых",
+      "desc": "Пока красные ворота открыты, слабые зависят от вас.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 4,
+          "label": "Отбиться от ледяных тварей"
+        }
+      ],
+      "rewards": {
+        "xp": 260,
+        "gold": 180,
+        "items": [
+          {
+            "id": "bear-fur",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-5b",
+      "chapter": 5,
+      "title": "Ледяная загадка",
+      "desc": "Порядок рун на полу скрыт под наледью.",
+      "objectives": [
+        {
+          "type": "puzzle",
+          "count": 1,
+          "label": "Решить ледяную загадку"
+        }
+      ],
+      "rewards": {
+        "xp": 280,
+        "gold": 200,
+        "items": [
+          {
+            "id": "ice-crystal",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-6c",
+      "chapter": 6,
+      "title": "Освободить доспехи павших",
+      "desc": "Проклятые стойки замка держат души рыцарей. Разбейте четыре печати и освободите их.",
+      "objectives": [
+        {
+          "type": "armor",
+          "count": 4,
+          "label": "Освободить проклятые доспехи"
+        }
+      ],
+      "rewards": {
+        "xp": 420,
+        "gold": 300,
+        "items": [
+          {
+            "id": "shadow-essence",
+            "qty": 1
+          },
+          {
+            "id": "hp-potion-medium",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-6a",
+      "chapter": 6,
+      "title": "Кровь демонов",
+      "desc": "Принести доказательство победы над демоническим замком.",
+      "objectives": [
+        {
+          "type": "collect",
+          "target": "demon-horn",
+          "count": 1,
+          "label": "Добыть рог демона"
+        }
+      ],
+      "rewards": {
+        "xp": 300,
+        "gold": 220,
+        "items": [
+          {
+            "id": "mp-potion",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-6b",
+      "chapter": 6,
+      "title": "Воля клинка",
+      "desc": "Игрис признаёт лишь тех, кто не ищет лёгких путей. Победите его без зелий.",
+      "objectives": [
+        {
+          "type": "noPotionBoss",
+          "count": 1,
+          "label": "Победить босса без зелий"
+        }
+      ],
+      "rewards": {
+        "xp": 350,
+        "gold": 260,
+        "items": [
+          {
+            "id": "demon-knight-blade",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-7a",
+      "chapter": 7,
+      "title": "Разбитый шар",
+      "desc": "Ассоциация расставила измерительные сферы. Разбейте их в верном порядке.",
+      "objectives": [
+        {
+          "type": "puzzle",
+          "count": 1,
+          "label": "Разбить сферы в верном порядке"
+        }
+      ],
+      "rewards": {
+        "xp": 340,
+        "gold": 260,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-7b",
+      "chapter": 7,
+      "title": "Уважение председателя",
+      "desc": "Гу Гон Хи хочет услышать ваш ответ лично.",
+      "objectives": [
+        {
+          "type": "talk",
+          "count": 3,
+          "label": "Поговорить с членами Ассоциации"
+        }
+      ],
+      "rewards": {
+        "xp": 320,
+        "gold": 300,
+        "items": [
+          {
+            "id": "agility-ring",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-8a",
+      "chapter": 8,
+      "title": "Муравьиный вал",
+      "desc": "Строй муравьёв-рыцарей не должен прорваться к охотникам.",
+      "objectives": [
+        {
+          "type": "kill",
+          "target": "knight-ant",
+          "count": 3,
+          "label": "Победить муравьёв-рыцарей"
+        }
+      ],
+      "rewards": {
+        "xp": 400,
+        "gold": 300,
+        "items": [
+          {
+            "id": "ant-carapace",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-8b",
+      "chapter": 8,
+      "title": "Клад улья",
+      "desc": "В глубине улья спрятано то, что Бер не успел поглотить.",
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 1,
+          "label": "Найти тайник улья"
+        }
+      ],
+      "rewards": {
+        "xp": 450,
+        "gold": 340,
+        "items": [
+          {
+            "id": "reinforced-armor",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-9a",
+      "chapter": 9,
+      "title": "Спарринг с Хе Ин",
+      "desc": "Ча Хе Ин ждёт боя. Покажите всё, чему научились.",
+      "objectives": [
+        {
+          "type": "skill",
+          "count": 5,
+          "label": "Применить умения в бою"
+        }
+      ],
+      "rewards": {
+        "xp": 480,
+        "gold": 360,
+        "items": [
+          {
+            "id": "shadow-amulet",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-9b",
+      "chapter": 9,
+      "title": "Сейф гильдии",
+      "desc": "В новой штаб-квартире есть стена, которая звучит пусто.",
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 1,
+          "label": "Найти секрет гильдии"
+        }
+      ],
+      "rewards": {
+        "xp": 520,
+        "gold": 400,
+        "items": [
+          {
+            "id": "elixir-power",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-10a",
+      "chapter": 10,
+      "title": "Наследие без страха",
+      "desc": "Эшборн судит наследника по тому, как он сражается. Без зелий.",
+      "objectives": [
+        {
+          "type": "noPotionBoss",
+          "count": 1,
+          "label": "Победить Эшборна без зелий"
+        }
+      ],
+      "rewards": {
+        "xp": 560,
+        "gold": 440,
+        "items": [
+          {
+            "id": "shadow-essence",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-10b",
+      "chapter": 10,
+      "title": "Шёпот храма",
+      "desc": "Тайная комната Картенона откроется лишь решившему древнюю загадку.",
+      "objectives": [
+        {
+          "type": "puzzle",
+          "count": 1,
+          "label": "Решить загадку храма"
+        }
+      ],
+      "rewards": {
+        "xp": 600,
+        "gold": 460,
+        "items": [
+          {
+            "id": "temple-relic",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-11a",
+      "chapter": 11,
+      "title": "Война теней",
+      "desc": "Армии Монархов идут на мир людей. Не пропустить ни одну.",
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 5,
+          "label": "Уничтожить захватчиков"
+        }
+      ],
+      "rewards": {
+        "xp": 650,
+        "gold": 500,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-11b",
+      "chapter": 11,
+      "title": "Приказ армии",
+      "desc": "Теневым солдатам нужен командир. Отдайте приказ дважды.",
+      "objectives": [
+        {
+          "type": "skill",
+          "target": "shadow-army",
+          "count": 2,
+          "label": "Призвать Армию Теней"
+        }
+      ],
+      "rewards": {
+        "xp": 620,
+        "gold": 480,
+        "items": [
+          {
+            "id": "shadow-essence",
+            "qty": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-12a",
+      "chapter": 12,
+      "title": "Последний рубеж",
+      "desc": "Битва с Антарасом решит судьбу миров. Никаких зелий — только воля.",
+      "objectives": [
+        {
+          "type": "noPotionBoss",
+          "count": 1,
+          "label": "Победить Антараса без зелий"
+        }
+      ],
+      "rewards": {
+        "xp": 900,
+        "gold": 700,
+        "items": [
+          {
+            "id": "monarch-blade",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "side-12b",
+      "chapter": 12,
+      "title": "Сокровищница Монарха",
+      "desc": "В храме осталась казна прежнего Монарха Теней. Тайник и механизм ведут к ней.",
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 1,
+          "label": "Найти тайник храма"
+        },
+        {
+          "type": "puzzle",
+          "count": 1,
+          "label": "Решить загадку храма"
+        }
+      ],
+      "rewards": {
+        "xp": 950,
+        "gold": 900,
+        "items": [
+          {
+            "id": "monarch-seal",
+            "qty": 1
+          }
+        ]
+      }
+    }
+  ],
+  "hidden": [
+    {
+      "id": "hidden-secrets",
+      "title": "Шёпот стен",
+      "desc": "Стены подземелий шепчут тому, кто умеет слушать. Соберите четыре тайника.",
+      "discover": {
+        "event": "secret",
+        "count": 1
+      },
+      "objectives": [
+        {
+          "type": "secret",
+          "count": 4,
+          "label": "Найти тайники подземелий"
+        }
+      ],
+      "rewards": {
+        "xp": 600,
+        "gold": 500,
+        "talentPoints": 2,
+        "items": [
+          {
+            "id": "shadow-amulet",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-kill",
+      "title": "Тень без имени",
+      "desc": "Слухи о охотнике, который не оставляет врагов живыми. Докажите их.",
+      "discover": {
+        "event": "kill",
+        "count": 15
+      },
+      "objectives": [
+        {
+          "type": "kill",
+          "count": 20,
+          "label": "Победить врагов"
+        }
+      ],
+      "rewards": {
+        "xp": 500,
+        "gold": 400,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "kamish-dagger",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-ult",
+      "title": "Испытание Правителя",
+      "desc": "Система проверяет, достоин ли Игрок командовать армией теней.",
+      "discover": {
+        "event": "level",
+        "count": 8
+      },
+      "objectives": [
+        {
+          "type": "skill",
+          "target": "shadow-army",
+          "count": 5,
+          "label": "Призвать Армию Теней"
+        }
+      ],
+      "rewards": {
+        "xp": 700,
+        "gold": 500,
+        "talentPoints": 3,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-nohit",
+      "title": "Незапятнанный",
+      "desc": "Три босса, ни одного ранения. Охотники назовут это легендой.",
+      "discover": {
+        "event": "bossNoHit",
+        "count": 1
+      },
+      "objectives": [
+        {
+          "type": "noHitBoss",
+          "count": 3,
+          "label": "Победить боссов без урона"
+        }
+      ],
+      "rewards": {
+        "xp": 900,
+        "gold": 700,
+        "talentPoints": 2,
+        "items": [
+          {
+            "id": "monarch-cloak",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-puzzle",
+      "title": "Загадка Картенона",
+      "desc": "Древние механизмы подземелий откликаются на правильный порядок.",
+      "discover": {
+        "event": "puzzle",
+        "count": 1
+      },
+      "objectives": [
+        {
+          "type": "puzzle",
+          "count": 5,
+          "label": "Решить загадки подземелий"
+        }
+      ],
+      "rewards": {
+        "xp": 750,
+        "gold": 600,
+        "talentPoints": 2,
+        "items": [
+          {
+            "id": "temple-relic",
+            "qty": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-level",
+      "title": "Монарх без трона",
+      "desc": "Сила растёт, но трон пустует. Достигните восемнадцатого уровня.",
+      "discover": {
+        "event": "level",
+        "count": 10
+      },
+      "objectives": [
+        {
+          "type": "level",
+          "count": 18,
+          "label": "Достичь 18 уровня"
+        }
+      ],
+      "rewards": {
+        "xp": 800,
+        "gold": 650,
+        "talentPoints": 3,
+        "items": [
+          {
+            "id": "elixir",
+            "qty": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-chest",
+      "title": "Коллекционер",
+      "desc": "Каждый сундук — история. Откройте десять.",
+      "discover": {
+        "event": "chest",
+        "count": 3
+      },
+      "objectives": [
+        {
+          "type": "chest",
+          "count": 10,
+          "label": "Открыть сундуки"
+        }
+      ],
+      "rewards": {
+        "xp": 650,
+        "gold": 700,
+        "talentPoints": 1,
+        "items": [
+          {
+            "id": "monarch-seal",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hidden-bossrush",
+      "title": "Охота на королей",
+      "desc": "Каждый поверженный босс приближает вас к трону.",
+      "discover": {
+        "event": "boss",
+        "count": 3
+      },
+      "objectives": [
+        {
+          "type": "boss",
+          "count": 8,
+          "label": "Победить боссов"
+        }
+      ],
+      "rewards": {
+        "xp": 850,
+        "gold": 750,
+        "talentPoints": 2,
+        "items": [
+          {
+            "id": "demon-plate",
+            "qty": 1
+          }
+        ]
+      }
+    }
+  ]
+}

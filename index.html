@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0c14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Solo Leveling — Pixel RPG</title>
+  <link rel="icon" type="image/png" href="assets/sprites/portraits/sung-jin-woo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="stage">
+    <div class="game-wrap">
+      <canvas id="game-canvas" class="game-canvas" width="960" height="540"></canvas>
+      <div id="ui-root"></div>
+    </div>
+  </div>
+
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-rune">◆</div>
+    <div class="boot-title">SOLO LEVELING</div>
+    <div class="boot-sub" id="boot-sub">Загрузка подземелья…</div>
+    <div class="boot-bar"><span></span></div>
+  </div>
+
+  <div id="rotate-hint" class="rotate-hint">
+    <div class="rotate-icon">▭</div>
+    <div class="rotate-title">Лучше в горизонтальной ориентации</div>
+    <div class="rotate-sub">Поверните телефон, чтобы подземелье заняло весь экран.</div>
+    <button id="rotate-continue" class="pixel-btn">Продолжить всё равно</button>
+  </div>
+
+  <noscript>
+    <p style="color:#fff;font-family:monospace">Для игры нужен включённый JavaScript.</p>
+  </noscript>
+
+  <script>
+    window.addEventListener('error', function (e) {
+      var s = document.getElementById('boot-sub');
+      if (s && document.getElementById('boot-screen').style.display !== 'none') {
+        s.textContent = 'Ошибка загрузки: ' + (e.message || 'неизвестно');
+      }
+    });
+  </script>
+
+  <!-- Порядок важен: ядро → формулы → звук → эффекты → актёры → бой →
+       прогресс → лут → квесты → мир → диалоги → UI → сохранения → Telegram → логика -->
+  <script src="src/js/engine.js"></script>
+  <script src="src/js/formulas.js"></script>
+  <script src="src/js/audio.js"></script>
+  <script src="src/js/effects.js"></script>
+  <script src="src/js/player.js"></script>
+  <script src="src/js/boss.js"></script>
+  <script src="src/js/combat.js"></script>
+  <script src="src/js/progress.js"></script>
+  <script src="src/js/loot.js"></script>
+  <script src="src/js/quests.js"></script>
+  <script src="src/js/world.js"></script>
+  <script src="src/js/dialogue.js"></script>
+  <script src="src/js/shadows.js"></script>
+  <script src="src/js/ui.js"></script>
+  <script src="src/js/save.js"></script>
+  <script src="src/js/tg.js"></script>
+  <script src="src/js/main.js"></script>
+</body>
+</html>
