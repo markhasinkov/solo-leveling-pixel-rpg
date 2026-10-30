@@ -13,6 +13,7 @@
       this.muted = !!muted;
       const unlock = () => {
         this.ensure();
+        if (this._ambient && !this.muted) this.setAmbient(this._ambient);
         window.removeEventListener('pointerdown', unlock);
         window.removeEventListener('keydown', unlock);
       };
@@ -41,11 +42,92 @@
 
     setMuted(value) {
       this.muted = !!value;
+      if (this.muted) this.stopAmbient();
+      else if (this._ambient) this.setAmbient(this._ambient);
     },
 
     toggle() {
       this.muted = !this.muted;
+      if (this.muted) this.stopAmbient();
+      else if (this._ambient) this.setAmbient(this._ambient);
       return this.muted;
+    },
+
+    stopAmbient() {
+      const state = this._ambientNodes;
+      this._ambientNodes = null;
+      if (!state) return;
+      try {
+        state.gain.gain.setTargetAtTime(0.0001, state.ctx.currentTime, 0.12);
+        state.nodes.forEach((node) => {
+          try { node.stop(state.ctx.currentTime + 0.4); } catch (e) { /* already stopped */ }
+        });
+      } catch (e) { /* noop */ }
+    },
+
+    setAmbient(name) {
+      if (name === this._ambient && this._ambientNodes) return;
+      this._ambient = name || null;
+      if (this._ambientNodes) this.stopAmbient();
+      if (!name || this.muted) return;
+      const ac = this.ensure();
+      if (!ac) return;
+      const nodes = [];
+      const bus = ac.createGain();
+      bus.gain.value = 0.022;
+      bus.connect(master);
+      const drone = (freq, type, vol) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        gain.gain.value = vol;
+        osc.connect(gain); gain.connect(bus);
+        osc.start(); nodes.push(osc);
+      };
+      const air = (filterType, freq, q, vol) => {
+        const dur = 2.4;
+        const frames = Math.floor(ac.sampleRate * dur);
+        const buffer = ac.createBuffer(1, frames, ac.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < frames; i++) data[i] = (Math.random() * 2 - 1) * 0.6;
+        const src = ac.createBufferSource();
+        src.buffer = buffer;
+        src.loop = true;
+        const filter = ac.createBiquadFilter();
+        filter.type = filterType || 'lowpass';
+        filter.frequency.value = freq || 400;
+        filter.Q.value = q || 0.6;
+        const gain = ac.createGain();
+        gain.gain.value = vol;
+        src.connect(filter); filter.connect(gain); gain.connect(bus);
+        src.start(); nodes.push(src);
+      };
+      if (name === 'temple') {
+        drone(55, 'sine', 0.18); drone(82.5, 'triangle', 0.06);
+        air('lowpass', 260, 0.4, 0.09);
+      } else if (name === 'hospital') {
+        drone(118, 'sine', 0.08); drone(177, 'triangle', 0.025);
+        air('lowpass', 900, 0.5, 0.03);
+      } else if (name === 'ice') {
+        drone(73, 'sine', 0.12);
+        air('highpass', 1100, 0.5, 0.08);
+        air('bandpass', 420, 1.4, 0.035);
+      } else if (name === 'jungle') {
+        drone(98, 'sine', 0.08); drone(147, 'triangle', 0.03);
+        air('bandpass', 780, 2.2, 0.055);
+      } else if (name === 'guild') {
+        drone(110, 'sine', 0.1); drone(165, 'triangle', 0.035);
+        air('lowpass', 520, 0.5, 0.045);
+      } else if (name === 'castle' || name === 'throne') {
+        drone(name === 'castle' ? 48 : 42, 'sawtooth', 0.055);
+        drone(name === 'castle' ? 72 : 63, 'sine', 0.1);
+        air('lowpass', name === 'castle' ? 220 : 160, 0.6, 0.08);
+      } else {
+        drone(65, 'sine', 0.08);
+        air('lowpass', 340, 0.5, 0.06);
+      }
+      this._ambientNodes = { nodes, bus, gain: bus, ctx: ac };
     },
 
     tone(opts) {

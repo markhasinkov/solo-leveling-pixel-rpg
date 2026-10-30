@@ -21,6 +21,7 @@ class ClassList {
 
 function makeCtx() {
   const gradient = { addColorStop() {} };
+  let saveDepth = 0;
   const target = {
     canvas: { width: 960, height: 540 },
     createLinearGradient: () => gradient,
@@ -28,11 +29,13 @@ function makeCtx() {
     createPattern: () => ({}),
     measureText: () => ({ width: 10 }),
     getImageData: () => ({ data: new Uint8ClampedArray(4) }),
-    setTransform() {}, save() {}, restore() {}, translate() {}, scale() {}, rotate() {},
+    setTransform() {}, save() { saveDepth++; }, restore() { saveDepth--; },
+    translate() {}, scale() {}, rotate() {},
     drawImage() {}, fillRect() {}, strokeRect() {}, clearRect() {}, beginPath() {},
     closePath() {}, moveTo() {}, lineTo() {}, arc() {}, ellipse() {}, fill() {}, stroke() {},
     fillText() {}, strokeText() {}, setLineDash() {}, clip() {}, putImageData() {}
   };
+  Object.defineProperty(target, '__saveDepth', { get: () => saveDepth });
   return new Proxy(target, {
     get(t, k) {
       if (k in t) return t[k];
@@ -648,7 +651,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
       .filter((b) => String(b.className).indexOf('locked') < 0);
     assert(openChapters.length === 10, 'в хабе доступны открытые главы');
     assert(sandbox.UI.hub.querySelectorAll('.hub-shadow-card').length === 2, 'в хабе два слота отряда');
-    assert(sandbox.UI.hub.querySelectorAll('.hub-act').length === 4, 'снабжение хаба предлагает 4 раздела');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-act').length === 6, 'снабжение хаба предлагает 6 действий');
     assert(sandbox.UI.hub.querySelectorAll('.hub-contract').length === 3, 'в хабе три ежедневных контракта');
     assert(sandbox.UI.hub.querySelectorAll('.hub-contract-btn').length === 3, 'у контрактов есть кнопки действий');
     game.inventory.add('hp-potion-small', 1);
@@ -665,6 +668,18 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     assert(game.chapterIndex === 0 && sandbox.UI.hub.style.display === 'none',
       'контракт с доски возвращает в выбранную главу');
     sandbox.UI.closeAllPanels();
+
+    // ---------- Хроники ----------
+    sandbox.UI.toggleCodex();
+    assert(sandbox.UI.codex.style.display !== 'none', 'кодекс открывается');
+    assert(sandbox.UI.codexContent.children.length > 0, 'кодекс показывает людей');
+    const codexBossTab = Array.from(sandbox.UI.codex.querySelectorAll('.panel-tab'))
+      .find((b) => b.dataset.tab === 'bosses');
+    codexBossTab.click();
+    assert(sandbox.UI.codexContent.querySelectorAll('.codex-card').length > 3,
+      'в кодексе есть карточки боссов');
+    sandbox.UI.closeAllPanels();
+    assert(sandbox.UI.codex.style.display === 'none', 'кодекс закрывается');
   } catch (e) {
     failures++;
     console.log('  FAIL UI panels: ' + e.stack);
@@ -797,8 +812,10 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     storyChapters.get(5).characters.includes('igris'),
     'глава 5 — квест на смену класса с Игрисом');
   assert(storyChapters.get(6).title.includes('Красные ворота') &&
-    !storyChapters.get(6).characters.includes('lee-joo-hee'),
-    'глава 6 — Красные врата без Ли Джу-Хи');
+    ['park-hee-jin', 'han-song-yi', 'kim-chul'].every((id) => storyChapters.get(6).characters.includes(id)) &&
+    !storyChapters.get(6).characters.includes('lee-joo-hee') &&
+    !storyChapters.get(6).characters.includes('yoo-jinho'),
+    'глава 6 — Красные врата с Пак Хи-Джин, Хан Сон-И и Ким Чхолем');
   assert(storyChapters.get(7).title.includes('Демонический замок') &&
     storyChapters.get(7).characters.includes('baran') &&
     JSON.stringify(storyChapters.get(7)).includes('Святой источник жизни'),
@@ -806,7 +823,8 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(chapterReport.find((r) => r.id === 5).boss === 'Игрис', 'глава 5: босс — Игрис');
   assert(chapterReport.find((r) => r.id === 6).boss === 'Барука', 'глава 6: босс — Барука');
   assert(chapterReport.find((r) => r.id === 7).boss === 'Баран', 'глава 7: босс — Баран');
-  assert(chapterReport.find((r) => r.id === 11).boss === 'Эхо Осборна', 'глава 11: босс — эхо Осборна');
+  assert(chapterReport.find((r) => r.id === 10).boss === 'Ча Хэ-Ин', 'глава 10: босс — Ча Хэ-Ин');
+  assert(chapterReport.find((r) => r.id === 11).boss === 'Архитектор', 'глава 11: босс — Архитектор');
   const bossIdentities = {
     2: ['Тень испытания', 'architect', 'shadow-trial'],
     3: ['Древний страж шахты', 'statue-of-god', 'mine-guardian'],
@@ -814,8 +832,9 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     6: ['Барука', 'baruka', 'baruka'],
     7: ['Баран', 'baran', 'baran'],
     8: ['Измерительный голем', 'architect', 'measure-golem'],
-    10: ['Тень Ахджин', 'sung-jin-woo', 'ahjin-shadow'],
-    12: ['Герольд Монархов', 'ashborn', 'war-herald']
+    10: ['Ча Хэ-Ин', 'cha-hae-in', 'cha-hae-in'],
+    11: ['Архитектор', 'architect', 'architect'],
+    12: ['Хокхан, Монарх Холода', 'baruka', 'hokhan']
   };
   for (const cid of Object.keys(bossIdentities)) {
     const row = chapterReport.find((r) => r.id === Number(cid));
@@ -829,8 +848,10 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     'у камышового босса свой подзаголовок');
   assert(chapterReport.find((r) => r.id === 7).bossSubtitle.indexOf('Король демонов') >= 0,
     'у Барана свой подзаголовок');
-  assert(chapterReport.find((r) => r.id === 11).bossSubtitle.indexOf('Эхо') >= 0,
-    'у эха Осборна свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 10).bossSubtitle.indexOf('Охотники') >= 0,
+    'у Ча Хэ-Ин свой подзаголовок');
+  assert(chapterReport.find((r) => r.id === 11).bossSubtitle.indexOf('Храм') >= 0,
+    'у Архитектора свой подзаголовок');
   advance(100);
 
   // ---------- Враги глав 3–5 ----------
@@ -1070,6 +1091,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   try {
     game.render();
     assert(true, 'кадр отрисовывается без ошибок');
+    assert(sandbox.Engine.ctx.__saveDepth === 0, 'canvas save/restore сбалансирован после отрисовки');
   } catch (e) {
     failures++;
     console.log('  FAIL render: ' + e.stack);
@@ -1129,6 +1151,8 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
       'полный прогон: глава ' + cid + ' закрыта');
   }
   assert(game.finished, 'полный прогон: кампания завершена');
+  assert(game.hasShadow('iron') && !!sandbox.ShadowArmy.def('iron'),
+    'после Красных врат Ким Чхоль становится тенью Айроном');
 
   console.log(failures === 0 ? '\nSMOKE TEST: ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ' : '\nSMOKE TEST: ОШИБОК ' + failures);
   process.exit(failures === 0 ? 0 : 1);

@@ -132,6 +132,61 @@
     }
   },
   {
+    "id": "park-hee-jin",
+    "name": "Пак Хи-Джин",
+    "role": "Охотница B-ранга, гильдия «Белый Тигр»",
+    "sprite": "assets/sprites/park-hee-jin.png",
+    "stats": {
+      "hp": 420,
+      "atk": 55,
+      "def": 25
+    }
+  },
+  {
+    "id": "han-song-yi",
+    "name": "Хан Сон-И",
+    "role": "Охотница E-ранга, подруга Сон Джин-А",
+    "sprite": "assets/sprites/han-song-yi.png",
+    "stats": {
+      "hp": 240,
+      "atk": 22,
+      "def": 12
+    }
+  },
+  {
+    "id": "sung-jin-ah",
+    "name": "Сон Джин-А",
+    "role": "Младшая сестра Сон Джин-Ву, студентка",
+    "sprite": "assets/sprites/sung-jin-ah.png",
+    "stats": {
+      "hp": 180,
+      "atk": 8,
+      "def": 8
+    }
+  },
+  {
+    "id": "sung-il-hwan",
+    "name": "Сон Иль-Хван",
+    "role": "Отец Джин-Ву, пропавший охотник",
+    "sprite": "assets/sprites/sung-il-hwan.png",
+    "stats": {
+      "hp": 800,
+      "atk": 120,
+      "def": 60
+    }
+  },
+  {
+    "id": "esil-radiru",
+    "name": "Эсиль Радиру",
+    "role": "Демоническая дворянка, проводница Демонического замка",
+    "sprite": "assets/sprites/esil-radiru.png",
+    "stats": {
+      "hp": 500,
+      "atk": 60,
+      "def": 30
+    }
+  },
+  {
     "id": "ashborn",
     "name": "Осборн",
     "role": "Монарх Теней, предшественник Сон Джин-Ву",
@@ -338,6 +393,17 @@
       "hp": 220,
       "atk": 42,
       "def": 16
+    }
+  },
+  {
+    "id": "hokhan",
+    "name": "Хокхан, Монарх Холода",
+    "role": "Монарх Холода, Король Снежного народа",
+    "sprite": "assets/sprites/hokhan.png",
+    "stats": {
+      "hp": 1500,
+      "atk": 210,
+      "def": 110
     }
   },
   {

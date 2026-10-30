@@ -25,7 +25,8 @@ function isEnemy(id, c, chapter) {
   if (id === 'igris') return chapter === 5;
   if (id === 'baran') return chapter === 7;
   if (id === 'beru') return chapter === 9;
-  if (id === 'ashborn') return chapter === 11;
+  if (id === 'hokhan') return chapter === 12;
+  if (id === 'ashborn') return false;
   if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
   const role = (c.role || '').toLowerCase();
   return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
@@ -127,7 +128,8 @@ for (const ch of chapters) {
     if (c && isEnemy(ref, c, cid)) enemies.push(ref);
   });
   (lv.extra || []).forEach((ex) => { for (let i = 0; i < (ex.count || 1); i++) enemies.push(ex.id); });
-  const boss = bossId(enemies.map((id) => ({ id, c: byId[id] })), cid);
+  const customBoss = lv.boss && lv.boss.bossData ? lv.boss : null;
+  const boss = customBoss ? null : bossId(enemies.map((id) => ({ id, c: byId[id] })), cid);
   const bossStats = scaledBoss(boss, cid, lv);
 
   // Игрок к началу главы

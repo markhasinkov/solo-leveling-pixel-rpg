@@ -32,6 +32,19 @@
         { speaker: 'Система', text: 'Тень Баруки присоединилась к армии теней.' }
       ]
     },
+    iron: {
+      id: 'iron', name: 'Айрон', title: 'Тень Ким Чхоля',
+      portrait: 'assets/sprites/portraits/kim-chul.png', cutin: 'assets/sprites/cutins/cutin_shadow_duelist.jpg',
+      animId: 'kim-chul', drawW: 74, drawH: 74, color: '#8a8aa0', chapter: 6,
+      atkPct: 0.34, attackCd: 0.9, range: 56, moveSpeed: 220, style: 'slash',
+      passive: 'Айрон бьёт тяжёлым клинком и иногда оглушает.',
+      upgrade: '+12% урона и +4% скорости атаки за уровень.',
+      quote: 'Я был врагом. Теперь я — тень.',
+      lines: [
+        { speaker: 'Система', text: 'Тень павшего охотника отзывается на волю Монарха. Извлечение доступно.' },
+        { speaker: 'Система', text: 'Тень Ким Чхоля «Айрон» присоединилась к армии теней.' }
+      ]
+    },
     beru: {
       id: 'beru', name: 'Беру', title: 'Король муравьёв',
       portrait: 'assets/sprites/portraits/beru.png', cutin: 'assets/sprites/cutins/cutin_beru.jpg',

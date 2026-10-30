@@ -106,6 +106,7 @@
     quests: ['q'],
     shadows: ['y'],
     hub: ['g'],
+    codex: ['c'],
     pause: ['escape'],
     map: ['m']
   };

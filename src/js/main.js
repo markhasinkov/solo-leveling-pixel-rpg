@@ -426,6 +426,7 @@
       const levelData = this.levelsData[String(this.chapter.id)] || {};
       this.world = new window.World(this.chapter, levelData, this.chapter.id, this.savedWorld[this.chapter.id] || {});
       this.level = this.world.level;
+      if (window.AudioFX) AudioFX.setAmbient(this.world.themeId);
 
       window.Effects.reset();
       window.Combat.reset();
@@ -718,7 +719,7 @@
       if (id === 'igris') return chapterId === 5;
       if (id === 'baran') return chapterId === 7;
       if (id === 'beru') return chapterId === 9;
-      if (id === 'ashborn') return chapterId === 11;
+      if (id === 'ashborn') return false;
       if (['antares', 'baruka', 'statue-of-god', 'reed-boss'].includes(id)) return true;
       const role = ((c && c.role) || '').toLowerCase();
       return /монстр|босс|зверь|вождь|король|рыцарь кров/.test(role);
@@ -1257,6 +1258,7 @@
       if (I.actionHit('quests')) { AudioFX.play('ui'); UI.toggleQuests(); }
       if (I.actionHit('shadows')) { AudioFX.play('ui'); UI.toggleShadows(); }
       if (I.actionHit('hub')) UI.toggleHub();
+      if (I.actionHit('codex')) UI.toggleCodex();
       if (I.actionHit('pause')) { if (UI.isModalOpen()) UI.closeAllPanels(); else UI.toggleMenu(); AudioFX.play('ui'); }
 
       if (UI.isModalOpen()) {
@@ -1562,6 +1564,12 @@
         // История зоны не должна перебивать церемонию извлечения.
         this._pendingZoneStory = null;
       }
+      if (this.chapter && this.chapter.id === 6) {
+        this.npcs = this.npcs.filter((n) => n.charId !== 'kim-chul');
+      }
+      if (this.chapter && this.chapter.id === 9) {
+        this.npcs = this.npcs.filter((n) => n.charId !== 'min-byung-gu');
+      }
       if (this.activeContract) this.resolveContractBossKill();
       this.checkChapterClear();
     },
@@ -1609,6 +1617,12 @@
       this.state = 'chapterEnd';
       const ch = this.chapter;
       window.Quests.emit('chapter', { chapterId: ch.id, amount: 1 });
+      if (ch.id === 6 && !this.hasShadow('iron')) {
+        this.grantShadow('iron');
+        UI.toast('Теневая армия', 'Айрон, тень Ким Чхоля, присоединился к армии.', {
+          color: '#8a8aa0', duration: 4200
+        });
+      }
       this.persist();
       const nextIdx = this.chapterIndex + 1;
       const wasReplay = this.chapterIndex < this.unlocked;

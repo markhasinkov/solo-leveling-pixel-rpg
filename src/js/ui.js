@@ -110,6 +110,7 @@
       this.buildTalents();
       this.buildShadows();
       this.buildHub();
+      this.buildCodex();
       this.buildMenu();
       this.buildBanners();
       this.buildZoneBanner();
@@ -1322,7 +1323,10 @@
       if (open) {
         this.hub.style.display = '';
         this.renderHub();
+        if (window.AudioFX) AudioFX.setAmbient('guild');
         AudioFX.play('ui');
+      } else if (this.game && this.game.world && window.AudioFX) {
+        AudioFX.setAmbient(this.game.world.themeId);
       }
       this.syncBackdrop();
     },
@@ -1508,12 +1512,143 @@
       });
       action('ТАЛАНТЫ', () => { this.closeAllPanels(); this.toggleTalents(); });
       action('ЖУРНАЛ', () => { this.closeAllPanels(); this.toggleQuests(); });
+      action('ВЕЧЕР У КАМИНА', () => this.hubRest());
+      action('ХРОНИКИ', () => { this.closeAllPanels(); this.toggleCodex(); });
 
       const foot = el('div', 'hub-foot', body);
       el('div', 'hub-foot-left', foot).textContent =
         'Убито ' + (g.stats.kills || 0) + ' · Боссов ' + (g.stats.bosses || 0) +
         ' · Тайников ' + (g.stats.chests || 0) + ' · Секретов ' + (g.stats.secrets || 0);
       el('div', 'hub-foot-right', foot).textContent = 'Штаб · Сеул · G — закрыть';
+    },
+
+
+    buildCodex() {
+      const made = this.makePanel('ui-codex', 'ХРОНИКИ');
+      this.codex = made.panel;
+      this.codexBody = made.body;
+      const tabs = el('div', 'panel-tabs', this.codexBody);
+      const defs = [
+        { id: 'people', label: 'Люди' },
+        { id: 'bosses', label: 'Боссы' },
+        { id: 'places', label: 'Места' },
+        { id: 'records', label: 'Записи' }
+      ];
+      this.codexTab = 'people';
+      defs.forEach((d) => {
+        const b = el('button', 'panel-tab', tabs);
+        b.textContent = d.label;
+        b.dataset.tab = d.id;
+        b.addEventListener('click', () => {
+          AudioFX.play('ui');
+          this.codexTab = d.id;
+          this.renderCodex();
+        });
+      });
+      this.codexContent = el('div', 'codex-content', this.codexBody);
+      el('div', 'panel-tip', this.codexBody).textContent = 'C — закрыть · хроники открываются по мере прохождения';
+    },
+
+    toggleCodex() {
+      if (!this.codex) return;
+      const open = this.codex.style.display === 'none';
+      this.closeAllPanels();
+      if (open) {
+        this.codex.style.display = '';
+        this.renderCodex();
+        AudioFX.play('ui');
+      }
+      this.syncBackdrop();
+    },
+
+    renderCodex() {
+      if (!this.codexContent || !this.game) return;
+      const g = this.game;
+      const content = this.codexContent;
+      clear(content);
+      (this.codex.querySelectorAll('.panel-tab') || []).forEach((b) => {
+        b.classList.toggle('active', b.dataset.tab === this.codexTab);
+      });
+      const known = (id) => g.finished || id <= g.unlocked + 1;
+      const grid = el('div', 'codex-grid', content);
+      const card = (parent, title, subtitle, text, image) => {
+        const box = el('article', 'codex-card', parent);
+        if (image) {
+          const pic = img(image, 'codex-portrait', box);
+          pic.style.imageRendering = 'pixelated';
+        }
+        el('div', 'codex-name', box).textContent = title || '???';
+        if (subtitle) el('div', 'codex-role', box).textContent = subtitle;
+        if (text) el('div', 'codex-desc', box).textContent = text;
+        return box;
+      };
+      if (this.codexTab === 'people') {
+        const monsters = /монстр|босс|зверь|вождь|король|рыцарь кров|гоблин|орк|муравей|медведь|паук|волк|эльф|демонический|адская|камышовый|статуя|архитектор|антарес|баран|беру|игрис|барука|голем|страж|монарх|создатель/i;
+        (g.characters || []).filter((c) => !monsters.test(c.role || '')).forEach((c) => {
+          card(grid, c.name, c.role, null, 'assets/sprites/portraits/' + c.id + '.png');
+        });
+        if (!grid.children.length) card(grid, 'Пока никого', 'Хроники откроются после первых глав.');
+      } else if (this.codexTab === 'bosses') {
+        Object.keys(g.bossesData || {}).forEach((id) => {
+          const b = g.bossesData[id];
+          if (!b || !b.title) return;
+          const moves = (b.attacks || []).map((a) => a.name).join(' · ');
+          card(grid, b.title, b.subtitle || 'Босс', (b.intro || '') + (moves ? ' · ' + moves : ''));
+        });
+      } else if (this.codexTab === 'places') {
+        (g.chapters || []).filter((ch) => known(ch.id)).forEach((ch) => {
+          const lv = g.levelsData[String(ch.id)] || {};
+          const zones = (lv.zones || []).map((z) => z.name).join(' · ');
+          card(grid, ch.title.replace(/^Глава \d+\.\s*/, ''), 'Глава ' + ch.id,
+            (lv.arena ? lv.arena.name + ' · ' : '') + zones);
+        });
+      } else {
+        (g.chapters || []).filter((ch) => known(ch.id)).forEach((ch) => {
+          const lv = g.levelsData[String(ch.id)] || {};
+          (lv.lore || []).slice(0, 3).forEach((entry) => {
+            card(grid, entry.title || 'Запись', ch.title, entry.text || '');
+          });
+        });
+      }
+    },
+
+    hubRest() {
+      if (!this.game) return;
+      const g = this.game;
+      const scenes = [
+        [
+          ['Ю Джин-Хо', 'Хён, чай остынет. Ты снова смотришь в окно, будто ждёшь, что врата сами попросят прощения.'],
+          ['Сон Джин-Ву', 'Привычка. После подземелий тишина кажется слишком громкой.'],
+          ['Ю Джин-Хо', 'Тогда я включу радио. Или разбужу тени — они забавно ворчат, когда им не дают спать.'],
+          ['Сон Джин-Ву', 'Не надо. Пусть спят.']
+        ],
+        [
+          ['Ю Джин-Хо', 'Я купил печенье к чаю. Не спрашивай, сколько стоило — ты всё равно скажешь, что это нерационально.'],
+          ['Сон Джин-Ву', 'Это нерационально.'],
+          ['Ю Джин-Хо', 'Зато вкусно. И ты улыбнулся. Значит, уже не зря.']
+        ],
+        [
+          ['Сон Джин-Ву', 'Иногда я думаю: если бы не Система, я бы сейчас чинил чью-то крышу.'],
+          ['Ю Джин-Хо', 'А я бы всё равно нашёл тебя. И предложил бы охотиться вместе.'],
+          ['Сон Джин-Ву', 'Даже зная, кто я?'],
+          ['Ю Джин-Хо', 'Особенно зная.']
+        ]
+      ];
+      const lines = scenes[Math.floor(Math.random() * scenes.length)].map(([speaker, text]) => {
+        const byName = (g.characters || []).find((c) => c.name === speaker);
+        return { speaker, text, icon: byName ? 'assets/sprites/portraits/' + byName.id + '.png' : null };
+      });
+      this.closeAllPanels();
+      if (g.player) {
+        g.player.hp = Math.min(g.player.maxHp, g.player.hp + g.player.maxHp * 0.2);
+        g.player.mp = Math.min(g.player.maxMp, g.player.mp + g.player.maxMp * 0.2);
+      }
+      if (window.AudioFX) AudioFX.play('heal');
+      window.Dialogue.start(lines);
+      this.toast('Штаб Ахджин', 'Тихий вечер в кругу своих. HP и MP немного восстановлены.', {
+        color: '#e8c76a', duration: 3600
+      });
+      g.persist();
     },
 
     // ---------- Меню ----------
@@ -1551,14 +1686,15 @@
     },
 
     closeAllPanels() {
-      [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.menu].forEach((p) => { if (p) p.style.display = 'none'; });
+      [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.codex, this.menu].forEach((p) => { if (p) p.style.display = 'none'; });
       this._resetConfirm = false;
+      if (this.game && this.game.world && window.AudioFX) AudioFX.setAmbient(this.game.world.themeId);
       this.syncBackdrop();
     },
 
     syncBackdrop() {
       if (!this.panelBackdrop) return;
-      const open = [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.menu].some((p) => p && p.style.display !== 'none');
+      const open = [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.codex, this.menu].some((p) => p && p.style.display !== 'none');
       this.panelBackdrop.style.display = open ? '' : 'none';
       if (this.root) this.root.classList.toggle('panel-open', open);
     },
@@ -1573,7 +1709,7 @@
     },
 
     isModalOpen() {
-      return [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.menu].some((p) => p && p.style.display !== 'none');
+      return [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.codex, this.menu].some((p) => p && p.style.display !== 'none');
     },
 
     isTouch() { return !!this.touch; },

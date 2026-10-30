@@ -1916,6 +1916,32 @@
         ctx.fill();
       }
       ctx.restore();
+
+      // Погодная атмосфера: снег, пепел, светлячки или пыль.
+      const weather = this.themeId;
+      const palette = weather === 'ice' ? 'rgba(220,240,255,0.7)'
+        : (weather === 'castle' || weather === 'throne') ? 'rgba(255,150,80,0.8)'
+          : weather === 'jungle' ? 'rgba(140,255,200,0.7)'
+            : 'rgba(220,210,180,0.45)';
+      const count = weather === 'ice' ? 46 : (weather === 'jungle' ? 24 : 30);
+      const rising = weather === 'castle' || weather === 'throne';
+      const speed = weather === 'ice' ? 18 : (rising ? 26 : 9);
+      ctx.save();
+      ctx.fillStyle = palette;
+      ctx.globalCompositeOperation = (rising || weather === 'jungle') ? 'lighter' : 'source-over';
+      for (let i = 0; i < count; i++) {
+        const span = this.worldW + 240;
+        const x = ((i * 173 + this.time * (rising ? -speed : speed) * (0.4 + (i % 5) * 0.12)) % span + span) % span - 120;
+        if (x < Engine.Camera.x - 40 || x > Engine.Camera.x + Engine.CANVAS_W + 40) continue;
+        const baseY = rising ? floor : 80;
+        const travel = rising ? -260 : (floor - 80);
+        const y = baseY + ((i * 97 + this.time * speed * (0.6 + (i % 4) * 0.15)) % travel);
+        const drift = Math.sin(this.time * 0.7 + i) * (weather === 'ice' ? 8 : 3);
+        const size = weather === 'ice' ? 2 : (rising ? 2 : 1.4);
+        ctx.globalAlpha = 0.28 + ((i % 4) * 0.06);
+        ctx.fillRect(x + drift, y, size, size);
+      }
+      ctx.restore();
     }
 
     drawPillar(ctx, x, floor, theme) {

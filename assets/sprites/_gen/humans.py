@@ -781,6 +781,26 @@ HUMANS = {
         hair='#d8d8d4', skin='#ecc8a4', eye='#3c3a36', top='#e6e9ee', dark='#a8b2bd',
         legs='#7d8590', boots='#4c525a', accent='#5ac8e8', metal='#f0f4f8',
         weapon='staff', staffGem='#9fe6ff', outfit='healer', hairStyle='short', glasses=True, special='min'),
+    'park-hee-jin': dict(
+        hair='#2a1a2a', skin='#f0c8a8', eye='#3a2a3a', top='#e8ecf8', dark='#3a4a6a',
+        legs='#2a3040', boots='#1a2028', accent='#7ad7ff', metal='#c8d8f0',
+        weapon='staff', staffGem='#9fe6ff', outfit='mage', hairStyle='long'),
+    'han-song-yi': dict(
+        hair='#1a1a22', skin='#f2d0b0', eye='#3a2a20', top='#f0e8e0', dark='#4a3a3a',
+        legs='#2e2a32', boots='#1a161c', accent='#ff9ac8', metal='#b8b8c8',
+        weapon=None, outfit='hunter', hairStyle='short'),
+    'sung-jin-ah': dict(
+        hair='#17131f', skin='#f2d0b0', eye='#3a2a38', top='#e8e0f0', dark='#5a4a6a',
+        legs='#2a2a34', boots='#1a1a20', accent='#c08cff', metal='#b8b0c8',
+        weapon=None, outfit='hunter', hairStyle='ponytail'),
+    'sung-il-hwan': dict(
+        hair='#2a2a30', skin='#dcc0a0', eye='#3a3a44', top='#2a2e38', dark='#151820',
+        legs='#1a1e26', boots='#0d1016', accent='#8aa0c0', metal='#8a96a8',
+        weapon='sword', outfit='veteran', hairStyle='short', beard=True),
+    'esil-radiru': dict(
+        hair='#f0c8d8', skin='#f0c8b0', eye='#c84a6a', top='#5a1a2a', dark='#2a0a12',
+        legs='#3a0e18', boots='#1a060c', accent='#ff5a8a', metal='#d8b45a',
+        weapon=None, outfit='robe', hairStyle='long'),
 }
 
 
