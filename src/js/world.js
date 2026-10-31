@@ -968,10 +968,12 @@
       const theme = this.theme;
       for (const z of this.zones) {
         if (!this.visible(z.x, z.w)) continue;
-        const spots = Engine.lowQuality
-          ? [z.x + z.w * 0.28, z.x + z.w * 0.72]
-          : [z.x + z.w * 0.12, z.x + z.w * 0.32, z.x + z.w * 0.5,
-            z.x + z.w * 0.7, z.x + z.w * 0.88];
+        const spots = Engine.degradeLevel >= 3
+          ? [z.x + z.w * 0.5]
+          : (Engine.lowQuality
+            ? [z.x + z.w * 0.28, z.x + z.w * 0.72]
+            : [z.x + z.w * 0.12, z.x + z.w * 0.32, z.x + z.w * 0.5,
+              z.x + z.w * 0.7, z.x + z.w * 0.88]);
         spots.forEach((x, i) => {
           if (!this.visible(x - 90, 200)) return;
           const k = z.kind;
@@ -1900,7 +1902,7 @@
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       // косые лучи света
-      const rayCount = Engine.lowQuality ? 1 : 3;
+      const rayCount = Engine.lowQuality ? 1 : (Engine.degradeLevel >= 2 ? 2 : 3);
       for (let i = 0; i < rayCount; i++) {
         const baseX = this.worldW * (0.18 + i * 0.32) + Math.sin(this.time * 0.18 + i) * 14;
         const g = ctx.createLinearGradient(baseX, 0, baseX + 180, floor);
@@ -1951,9 +1953,11 @@
         : (weather === 'castle' || weather === 'throne') ? 'rgba(255,150,80,0.8)'
           : weather === 'jungle' ? 'rgba(140,255,200,0.7)'
             : 'rgba(220,210,180,0.45)';
+      const heavyDegrade = Engine.degradeLevel >= 2;
       const count = Engine.lowQuality
-        ? (weather === 'ice' ? 18 : weather === 'jungle' ? 12 : 16)
-        : (weather === 'ice' ? 46 : (weather === 'jungle' ? 24 : 30));
+        ? (heavyDegrade ? 6 : (weather === 'ice' ? 18 : weather === 'jungle' ? 12 : 16))
+        : (heavyDegrade ? (weather === 'ice' ? 26 : 16)
+          : (weather === 'ice' ? 46 : (weather === 'jungle' ? 24 : 30)));
       const rising = weather === 'castle' || weather === 'throne';
       const speed = weather === 'ice' ? 18 : (rising ? 26 : 9);
       ctx.save();

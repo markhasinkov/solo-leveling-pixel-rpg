@@ -441,7 +441,7 @@
   }
 
   window.Engine = {
-    CANVAS_W, CANVAS_H, canvas, ctx, lowQuality: false, setRenderScale,
+    CANVAS_W, CANVAS_H, canvas, ctx, lowQuality: false, degradeLevel: 0, setRenderScale,
     get renderScale() { return renderScale; },
     Input, getSprite, getSheet, drawSprite, drawFrame, preloadImages, Camera,
     mulberry32, startLoop, hitStop, clamp, lerp, easeOutCubic, clearHitStop,

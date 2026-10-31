@@ -233,6 +233,13 @@
     _newGame: false,
     _saveAccum: 0,
     _lastHint: '',
+    _baseRenderScale: 1,
+    _adaptiveStep: 0,
+    _frameTimes: [],
+    _perfAccum: 0,
+    _lastFrameAt: 0,
+    _lowStreak: 0,
+    _highStreak: 0,
 
     // ---------- Загрузка ----------
     async init() {
@@ -278,7 +285,12 @@
 
       if (typeof document !== 'undefined' && document.addEventListener) {
         document.addEventListener('visibilitychange', () => {
-          if (document.hidden) this.persist();
+          if (document.hidden) {
+            this.persist();
+            this._lastFrameAt = 0;
+            this._frameTimes = [];
+            this._perfAccum = 0;
+          }
         });
       }
       if (typeof window !== 'undefined' && window.addEventListener) {
@@ -552,6 +564,13 @@
       this._finishing = false;
       this._chapterDlgShown = false;
       this._pausedFrame = false;
+      this._adaptiveStep = 0;
+      this._frameTimes = [];
+      this._perfAccum = 0;
+      this._lastFrameAt = 0;
+      this._lowStreak = 0;
+      this._highStreak = 0;
+      if (this._baseRenderScale) this.applyAdaptiveScale();
       this.hintPuzzle = null;
       this.bossRun = { noHit: true, noPotion: true };
       this.bossIntroShown = false;
@@ -1354,6 +1373,9 @@
     // ---------- Ввод/обновление ----------
     update(dt) {
       if (this.loading || !this.player) return;
+      if (this.state === 'play' && !Dialogue.active && !UI.isModalOpen()) {
+        this.sampleFrame();
+      }
       const I = Engine.Input;
 
       if (Dialogue.active) {
@@ -2087,15 +2109,79 @@
     applyQuality() {
       const low = this.qualityMode() === 'low';
       Engine.lowQuality = low;
-      Engine.setRenderScale(low ? 0.65 : 1);
+      this._baseRenderScale = low ? 0.65 : 1;
+      this._adaptiveStep = 0;
+      this._frameTimes = [];
+      this._perfAccum = 0;
+      this._lastFrameAt = 0;
+      this._lowStreak = 0;
+      this._highStreak = 0;
       if (window.Effects) window.Effects.lowQuality = low;
       document.body.classList.toggle('perf-low', low);
+      this.applyAdaptiveScale();
+    },
+
+    applyAdaptiveScale() {
+      const factors = [1, 0.92, 0.84, 0.76];
+      const step = Math.max(0, Math.min(factors.length - 1, this._adaptiveStep | 0));
+      const base = this._baseRenderScale || 1;
+      const scale = Math.max(0.5, base * factors[step]);
+      Engine.setRenderScale(scale);
+      Engine.degradeLevel = step;
+      if (window.Effects) {
+        window.Effects.lowQuality = this.qualityMode() === 'low';
+        window.Effects.qualityFactor = [1, 0.8, 0.65, 0.5][step];
+      }
       if (this.world && this.world.level) {
         this.world.level._patterns = null;
         this.world.level._shadeGrad = null;
         this.world._arenaVignette = null;
       }
       this._vignette = null;
+    },
+
+    adaptQuality(fps) {
+      const step = this._adaptiveStep | 0;
+      if (fps < 29) {
+        this._lowStreak = (this._lowStreak || 0) + 1;
+        this._highStreak = 0;
+      } else if (fps > 52) {
+        this._highStreak = (this._highStreak || 0) + 1;
+        this._lowStreak = 0;
+      } else {
+        this._lowStreak = 0;
+        this._highStreak = 0;
+      }
+      if (this._lowStreak >= 2 && step < 3) {
+        this._adaptiveStep = step + 1;
+        this._lowStreak = 0;
+        this.applyAdaptiveScale();
+      } else if (this._highStreak >= 4 && step > 0) {
+        this._adaptiveStep = step - 1;
+        this._highStreak = 0;
+        this.applyAdaptiveScale();
+      }
+    },
+
+    sampleFrame() {
+      if (!window.performance || !performance.now) return;
+      const now = performance.now();
+      if (!this._lastFrameAt) { this._lastFrameAt = now; return; }
+      const ms = now - this._lastFrameAt;
+      this._lastFrameAt = now;
+      // Игнорируем возврат из фона и единичные выбросы.
+      if (ms <= 2 || ms > 200) return;
+      this._frameTimes.push(ms);
+      if (this._frameTimes.length > 90) this._frameTimes.shift();
+      this._perfAccum += ms;
+      if (this._perfAccum < 1800) return;
+      this._perfAccum = 0;
+      if (this._frameTimes.length < 24) return;
+      const sorted = this._frameTimes.slice().sort((a, b) => a - b);
+      const trim = Math.floor(sorted.length * 0.1);
+      const use = sorted.slice(trim, sorted.length - trim);
+      const avg = use.reduce((sum, value) => sum + value, 0) / Math.max(1, use.length);
+      this.adaptQuality(1000 / avg);
     },
 
     toggleQuality() {

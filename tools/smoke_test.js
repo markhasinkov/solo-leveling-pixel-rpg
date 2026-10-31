@@ -759,6 +759,19 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     game.applyQuality();
     assert(!sandbox.Engine.lowQuality && sandbox.Engine.renderScale === 1 &&
       sandbox.Engine.canvas.width === 960, 'высокий режим возвращает полное разрешение');
+    game.settings.quality = 'low';
+    game.applyQuality();
+    const baseScale = sandbox.Engine.renderScale;
+    game.adaptQuality(20);
+    game.adaptQuality(20);
+    assert(sandbox.Engine.degradeLevel === 1 && sandbox.Engine.renderScale < baseScale,
+      'при FPS ниже 30 включается первая ступень деградации');
+    game.adaptQuality(60);
+    game.adaptQuality(60);
+    game.adaptQuality(60);
+    game.adaptQuality(60);
+    assert(sandbox.Engine.degradeLevel === 0 && Math.abs(sandbox.Engine.renderScale - baseScale) < 0.001,
+      'при устойчивых 60 FPS качество плавно возвращается');
     game.settings.quality = 'auto';
     game.applyQuality();
     sandbox.UI.showDialog({ speaker: 'Тест', text: 'Проверка диалога', index: 0, total: 1 });
