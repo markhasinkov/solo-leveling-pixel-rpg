@@ -86,7 +86,7 @@ if len(chapters) != 13:
 
 by_id = {c['id']: c for c in chapters}
 ch1, ch4, ch5, ch6, ch7 = by_id.get(1, {}), by_id.get(4, {}), by_id.get(5, {}), by_id.get(6, {}), by_id.get(7, {})
-ch8, ch10, ch11, ch12, ch13 = by_id.get(8, {}), by_id.get(10, {}), by_id.get(11, {}), by_id.get(12, {}), by_id.get(13, {})
+ch8, ch9, ch10, ch11, ch12, ch13 = by_id.get(8, {}), by_id.get(9, {}), by_id.get(10, {}), by_id.get(11, {}), by_id.get(12, {}), by_id.get(13, {})
 
 if 'architect' in (ch1.get('characters') or []):
     failures.append('глава 1: Архитектор не должен присутствовать в двойном подземелье')
@@ -126,6 +126,26 @@ if 'hokhan' in bosses:
     failures.append('bosses.json: остался неканонический Хокхан')
 if not isinstance((levels.get('12', {}) or {}).get('bossSequence'), list) or len(levels['12']['bossSequence']) != 3:
     failures.append('глава 12: нужна последовательность трёх Монархов')
+if 'Чеджу' not in (ch9.get('title') or ''):
+    failures.append('глава 9: потерян остров Чеджу')
+if 'beru' in (ch9.get('characters') or []):
+    failures.append('глава 9: Беру должен появляться через bossSequence, а не как персонаж')
+seq9 = (levels.get('9', {}) or {}).get('bossSequence')
+if not isinstance(seq9, list) or len(seq9) != 2:
+    failures.append('глава 9: нужна последовательность «королева → Беру»')
+else:
+    if seq9[0].get('bossData') != 'ant-queen' or seq9[1].get('bossData') != 'beru':
+        failures.append('глава 9: стадии должны быть Королевой муравьёв и Беру')
+    if 'cutin_ant_queen' not in json.dumps(seq9[0], ensure_ascii=False) or 'cutin_beru' not in json.dumps(seq9[1], ensure_ascii=False):
+        failures.append('глава 9: у стадий нет своих cut-in')
+    if seq9[1].get('lootId') != 'beru':
+        failures.append('глава 9: финальный Беру должен давать тень')
+if 'goto-ryuji' not in [c.get('id') for c in characters]:
+    failures.append('characters.json: нет Гото Рюдзи')
+if 'Мин Бён-Гю' not in json.dumps(ch9.get('storyOutro') or [], ensure_ascii=False):
+    failures.append('глава 9: гибель Мин Бён-Гю должна быть в эпилоге')
+if 'Гото Рюдзи' not in json.dumps(ch9.get('storyOutro') or [], ensure_ascii=False):
+    failures.append('глава 9: гибель Гото Рюдзи должна быть в эпилоге')
 if 'куб времени' in json.dumps(ch13, ensure_ascii=False).lower():
     failures.append('глава 13: неканонический «куб времени»')
 

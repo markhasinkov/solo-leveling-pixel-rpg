@@ -736,70 +736,114 @@ ch["bossBarks"] = boss_barks(
 CHAPTERS.append(ch)
 
 # =====================================================================
-# 9. Остров Чеджу
+# 9. Остров Чеджу: королева улья
 # =====================================================================
 z9 = [
-    zone("beach", "Берег Чеджу", "Рейд S-ранга начинается", "camp", 0, 1700,
+    zone("beach", "Берег Чеджу", "Совместный рейд начинается", "camp", 0, 1700,
          ["helicopter", "tent", "crate", "barrel", "banner", "bones"],
-         [{"speaker": "choi-jong-in", "text": "Рейд на остров Чеджу. Магические звери истребили прошлую партию S-рангов."}]),
-    zone("jungle", "Джунгли Чеджу", "Муравьи перестраивают остров", "jungle", 0, 2100,
+         [{"speaker": "choi-jong-in", "text": "Совместный рейд Кореи и Японии. Остров четыре года принадлежит муравьям."}]),
+    zone("jungle", "Пепел джунглей", "Улей перестраивает остров", "jungle", 0, 2100,
          ["palm", "fern", "ant_mound", "egg", "bones", "vine"],
-         [{"speaker": "baek-yoon-ho", "text": "Король муравьёв поглотил силы погибших охотников. Это будет ад."}]),
-    zone("hive", "Улей", "Здесь нет неба", "hive", 0, 2100,
+         [{"speaker": "baek-yoon-ho", "text": "Король муравьёв поглотил силы погибших S-рангов. Каждая смерть делает его умнее."}]),
+    zone("hive", "Тоннели улья", "Здесь нет неба", "hive", 0, 2100,
          ["ant_mound", "egg", "egg", "bones", "vine", "rubble"],
          [{"speaker": "cha-hae-in", "text": "От тебя не пахнет магией. Кто ты, Сон Джин-Ву?"}]),
-    zone("queen", "Королевская камера", "Беру ждёт", "arena", 0, 2300,
+    zone("queen", "Королевская камера", "Королева откладывает армию", "hive", 0, 2000,
          ["egg", "ant_mound", "bones", "vine", "brazier", "rubble"],
-         [{"speaker": "beru", "text": "Хо. Хо-хо. Люди... вкусно. Я — Беру, король этого улья."}]),
+         [{"speaker": "goto-ryuji", "text": "Королева муравьёв. Я срублю её корону до того, как корейцы успеют моргнуть."}]),
+    zone("king", "Логово короля", "Беру ждёт в глубине", "arena", 0, 2300,
+         ["egg", "ant_mound", "bones", "chain", "brazier", "rubble"],
+         [{"speaker": "beru", "text": "Мать... кто-то идёт к тебе. Я уже чувствую их запах."}]),
 ]
-ch = base_chapter(9, "jungle", z9, 7580, 808, [
-    npc("baek-yoon-ho", 1420,
+ch = base_chapter(9, "jungle", z9, 9500, 808, [
+    npc("choi-jong-in", 1050,
+        [{"speaker": "choi-jong-in", "text": "Совместный рейд. Корея и Япония впервые работают вместе."},
+         {"speaker": "choi-jong-in", "text": "Прошлый отряд S-рангов не вернулся. Сегодня мы не отступим."}],
+        ["Держите связь. Улей глушит магию."]),
+    npc("goto-ryuji", 1500,
+        [{"speaker": "goto-ryuji", "text": "Я — Гото Рюдзи, сильнейший охотник Японии."},
+         {"speaker": "goto-ryuji", "text": "Королева будет моей. Корейские охотники могут смотреть."}],
+        ["Не путайтесь под ногами."]),
+    npc("baek-yoon-ho", 2350,
         [{"speaker": "baek-yoon-ho", "text": "Сон Джин-Ву. На Чеджу нам нужен каждый сильный охотник."},
          {"speaker": "baek-yoon-ho", "text": "Если увидишь короля муравьёв — не геройствуй в одиночку."}],
         ["Моя трансформация зверя ещё не восстановилась."]),
-    npc("cha-hae-in", 3050,
+    npc("cha-hae-in", 4250,
         [{"speaker": "cha-hae-in", "text": "Вы... Сон Джин-Ву? Обычно я чувствую запах магической силы охотников."},
          {"speaker": "cha-hae-in", "text": "Но от тебя... ничем не пахнет. Кто ты?"}],
         ["Не отходи далеко. Здесь повсюду улей."]),
-    npc("min-byung-gu", 6250,
+    npc("min-byung-gu", 6100,
         [{"speaker": "min-byung-gu", "text": "Я Мин Бён-Гю, целитель гильдии «Охотники». Держитесь рядом — я подлечу."},
-         {"speaker": "min-byung-gu", "text": "Этот остров... он не для обычных охотников."}],
+         {"speaker": "min-byung-gu", "text": "Если что-то случится... передайте матери, что я был её сыном."}],
         ["Раненые — ко мне. Я ещё держусь."]),
 ], [
-    enc("knight-ant", 3050, 2), enc("knight-ant", 4800, 2),
-    enc("knight-ant", 6400, 1, True, "Королевский муравей"),
+    enc("knight-ant", 2550, 2), enc("knight-ant", 3600, 2),
+    enc("knight-ant", 5050, 1, True, "Королевский муравей"),
+    enc("knight-ant", 5600, 2),
+    enc("knight-ant", 8550, 1, True, "Страж логова"),
 ], [
-    lore(850, "План рейда", "«Чеджу. Четыре S-ранга. Цель — король муравьёв. Потери прошлого рейда: неизвестны».", "terminal", 24),
-    lore(2850, "Записка Мин Бён-Гю", "«Если я не вернусь, передайте матери, что я был не только целителем. Я был её сыном».", "corpse", 26),
-    lore(4800, "Хитиновая стена", "Стены улья покрыты янтарём. Внутри — снаряжение охотников, которых Беру не переварил.", "tablet", 28),
-    lore(6500, "Королевская тропа", "«Король муравьёв поглощает сильнейших. Каждая смерть делает его умнее».", "corpse", 30),
+    lore(500, "Приказ о совместном рейде", "«Корея и Япония. Пять S-рангов. Цель — королева муравьёв. Потери прошлого рейда: 100%».", "terminal", 24),
+    lore(2450, "Пепел джунглей", "«Муравьи не просто строят улей. Они учатся. Каждый съеденный охотник делает короля умнее».", "corpse", 26),
+    lore(4700, "Янтарная стена", "Стены улья покрыты янтарём. Внутри — снаряжение охотников, которых улей не переварил.", "tablet", 28),
+    lore(6050, "Записка Мин Бён-Гю", "«Если я не вернусь, передайте матери, что я был не только целителем. Я был её сыном».", "corpse", 30),
+    lore(8300, "Королевская тропа", "«Король муравьёв поглощает сильнейших. Каждая смерть делает его умнее. Не дайте ему учиться».", "tablet", 32),
 ], [
-    hazard(3350, 130, "acid", 20), hazard(5050, 140, "acid", 22),
+    hazard(3000, 130, "acid", 20), hazard(5200, 140, "acid", 22),
+    hazard(8200, 120, "acid", 24),
 ], {}, {}, [], [
     {"type": "helicopter", "x": 420}, {"type": "tent", "x": 1100},
-    {"type": "ant_mound", "x": 4350}, {"type": "egg", "x": 6550},
+    {"type": "ant_mound", "x": 2600}, {"type": "egg", "x": 4700},
+    {"type": "egg", "x": 6600}, {"type": "ant_mound", "x": 8500},
 ])
-finish(ch, 2920, 6100, [1600, 3600, 6400], [
-    shrine(2650, "Алтарь рейда"), shrine(5950, "Алтарь перед ульем")
-], ["epic", "epic", "legendary"],
+finish(ch, 4300, 6500, [1600, 3600, 6200, 9100], [
+    shrine(3000, "Алтарь рейда"), shrine(6450, "Алтарь перед камерой"),
+    shrine(8300, "Алтарь у логова")
+], ["epic", "epic", "epic", "legendary"],
     {"type": "illusory", "name": "Камера улья", "chest": "epic",
-     "lore": "Стены улья покрыты янтарём. Внутри — снаряжение охотников, которых Беру не переварил."},
-    {"type": "levers", "name": "Тоннели улья", "sequence": [2, 0, 1], "hint": "III · I · II",
+     "lore": "Стены улья покрыты янтарём. Внутри — снаряжение охотников, которых улей не переварил."},
+    {"type": "levers", "name": "Ходы улья", "sequence": [2, 0, 1], "hint": "III · I · II",
      "chest": "epic", "lore": "Три хода улья перекрыты хитиновыми заслонками. Откройте их в верном порядке."})
-cinematic(ch, "assets/sprites/arenas/arena_beru.jpg", "Королевская камера", 6300,
-    "assets/sprites/cutins/cutin_beru.jpg",
+cinematic(ch, "assets/sprites/arenas/arena_beru.jpg", "Королевская камера", 6600,
+    "assets/sprites/cutins/cutin_ant_queen.jpg",
     [
-        scene("ch9-scent", 4260, "Охотник без запаха", "Улей Чеджу",
+        scene("ch9-landing", 1000, "Совместный рейд", "Берег Чеджу",
+              [{"speaker": "choi-jong-in", "text": "Корея и Япония впервые идут в один рейд. Остров Чеджу четыре года принадлежит муравьям."},
+               {"speaker": "goto-ryuji", "text": "Японская команда идёт первой. Королева — моя добыча."},
+               {"speaker": "min-byung-gu", "text": "Я подлечу каждого. Обещаю: сегодня никто не умрёт."}],
+              "assets/sprites/cutins/cutin_jinwoo.jpg"),
+        scene("ch9-scent", 4300, "Охотник без запаха", "Тоннели улья",
               [{"speaker": "cha-hae-in", "text": "От тебя не пахнет магией. Так не бывает... Кто ты, Сон Джин-Ву?"},
                {"speaker": "sung-jin-woo", "text": "Тот, кто придёт за королём этого улья."},
                {"speaker": "baek-yoon-ho", "text": "Не отрывайся. Мы прикроем."}],
               "assets/sprites/cutins/cutin_jinwoo.jpg"),
-        scene("ch9-king", 6700, "Король улья", "Королевская камера",
-              [{"speaker": "beru", "text": "Хо-хо. Люди пришли сами. Как вкусно."},
-               {"speaker": "min-byung-gu", "text": "Это не муравей... Это король. Он поглотил S-рангов!"},
-               {"speaker": "beru", "text": "Я — Беру. И я съем тебя последним, охотник."}],
-              "assets/sprites/cutins/cutin_beru.jpg")
+        scene("ch9-queen", 6700, "Мать улья", "Королевская камера",
+              [{"speaker": "goto-ryuji", "text": "Вот она. Королева. Я срублю её корону и заберу славу себе."},
+               {"speaker": "ant-queen", "text": "Мои дети... Моя плоть... Вы вошли в мой дом. Останьтесь навсегда."},
+               {"speaker": "min-byung-gu", "text": "Она призывает выводок! Джин-Ву, прикрой Ча Хэ-Ин!"}],
+              "assets/sprites/cutins/cutin_ant_queen.jpg")
     ])
+ch["bossSequence"] = [
+    {"name": "Королева муравьёв", "animId": "ant-queen", "size": 124, "bossData": "ant-queen",
+     "hp": 7500, "atk": 360, "def": 140, "lootId": "ant-queen", "x": 7300,
+     "cutin": "assets/sprites/cutins/cutin_ant_queen.jpg"},
+    {"name": "Беру, король муравьёв", "animId": "beru", "size": 112, "bossData": "beru",
+     "hp": 13500, "atk": 500, "def": 170, "lootId": "beru", "x": 9500,
+     "cutin": "assets/sprites/cutins/cutin_beru.jpg",
+     "transition": {"title": "Королева пала",
+                    "text": "Беру, король улья, поднимается из глубин. Рейд превращается в бойню."},
+     "interlude": {
+         "removeNpcs": ["goto-ryuji", "min-byung-gu"],
+         "lines": [
+             {"speaker": "goto-ryuji", "text": "Королева пала... Мы сделали это... Что это за звук?"},
+             {"speaker": "min-byung-gu", "text": "Ча Хэ-Ин, ты ранена. Не двигайся, я... Я не успеваю!"},
+             {"speaker": "beru", "text": "Мать... вы убили мать. Я съем вас всех. Начну с целителя."},
+             {"speaker": "min-byung-gu", "text": "Сон Джин-Ву... защити их. И передай матери, что я... был хорошим сыном."},
+             {"speaker": "sung-jin-woo", "text": "Мин Бён-Гю!"},
+             {"speaker": "beru", "text": "Люди... вкусно."}
+         ]
+     }},
+]
+ch["bossSequenceName"] = "Королева и Беру"
 CHAPTERS.append(ch)
 
 # =====================================================================
@@ -994,9 +1038,12 @@ finish(ch, 2850, 6150, [1400, 3550, 6950], [
 ch["boss"] = boss_override("Силлад, Монарх Холода", "sillad", 118, "sillad")
 ch["bossSequence"] = [
     {"name": "Силлад, Монарх Холода", "animId": "sillad", "size": 118, "bossData": "sillad", "hp": 7000, "atk": 430, "def": 170, "cutin": "assets/sprites/cutins/cutin_sillad.jpg"},
-    {"name": "Ракан, Монарх Звериных Клыков", "animId": "rakan", "size": 126, "bossData": "rakan", "hp": 8500, "atk": 460, "def": 180, "cutin": "assets/sprites/cutins/cutin_rakan.jpg"},
-    {"name": "Керехша, Монарх Чумы", "animId": "kerehsha", "size": 120, "bossData": "kerehsha", "hp": 9000, "atk": 480, "def": 190, "cutin": "assets/sprites/cutins/cutin_kerehsha.jpg"}
+    {"name": "Ракан, Монарх Звериных Клыков", "animId": "rakan", "size": 126, "bossData": "rakan", "hp": 8500, "atk": 460, "def": 180, "cutin": "assets/sprites/cutins/cutin_rakan.jpg",
+     "transition": {"title": "Монарх Холода пал", "text": "Ракан, Монарх Звериных Клыков, вступает в бой. Сеул ещё держится."}},
+    {"name": "Керехша, Монарх Чумы", "animId": "kerehsha", "size": 120, "bossData": "kerehsha", "hp": 9000, "atk": 480, "def": 190, "cutin": "assets/sprites/cutins/cutin_kerehsha.jpg",
+     "transition": {"title": "Ракан пал", "text": "Керехша, Монарх Чумы, вступает в бой. Сеул ещё держится."}}
 ]
+ch["bossSequenceName"] = "Три Монарха"
 cinematic(ch, "assets/sprites/arenas/arena_war_monarchs.jpg", "Трон Монархов", 6450,
     "assets/sprites/cutins/cutin_sillad.jpg",
     [

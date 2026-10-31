@@ -362,6 +362,26 @@ for cid in chapter_ids:
                   "levels.%s: неизвестный bossData стадии %r" % (cid, cfg.get("bossData")))
             check(exists(cfg.get("cutin", "")),
                   "levels.%s: нет cut-in стадии %r" % (cid, cfg.get("cutin")))
+            anim_id = cfg.get("animId")
+            check(anim_id in char_by_id or os.path.exists(os.path.join(ROOT, "assets", "sprites", str(anim_id) + ".png")),
+                  "levels.%s: неизвестный animId стадии %r" % (cid, anim_id))
+            check(60 <= int(cfg.get("size", 0)) <= 180, "levels.%s: размер стадии босса" % cid)
+            if "x" in cfg:
+                check(in_world(cfg.get("x", 0)), "levels.%s: x стадии босса вне мира" % cid)
+            if cfg.get("lootId"):
+                check(cfg["lootId"] in char_by_id, "levels.%s: неизвестный lootId стадии %r" % (cid, cfg["lootId"]))
+            interlude = cfg.get("interlude")
+            if interlude is not None:
+                check(isinstance(interlude, dict), "levels.%s: interlude должен быть объектом" % cid)
+                for line in interlude.get("lines", []):
+                    sp = line.get("speaker")
+                    check(sp in NARRATORS or sp in char_by_id,
+                          "levels.%s: спикер интерлюдии %r" % (cid, sp))
+                    check(bool(line.get("text")), "levels.%s: пустая реплика интерлюдии" % cid)
+                for ref in interlude.get("removeNpcs", []):
+                    check(ref in char_by_id, "levels.%s: неизвестный NPC в removeNpcs %r" % (cid, ref))
+        if sequence:
+            check(bool(lv.get("bossSequenceName")), "levels.%s: нет bossSequenceName" % cid)
     scene_ids = set()
     for sc in lv.get("scenes", []):
         sid = sc.get("id")
@@ -383,7 +403,7 @@ for cid in chapter_ids:
 def is_enemy(cid, c, chapter_id):
     humans = {"yoo-jinho", "cha-hae-in", "go-gun-hee", "song-chi-yul", "lee-joo-hee",
               "ahn-sang-min", "woo-jin-chul", "baek-yoon-ho", "kim-chul", "choi-jong-in",
-              "min-byung-gu", "architect"}
+              "min-byung-gu", "goto-ryuji", "architect"}
     if cid in humans:
         return False
     if cid == "igris":

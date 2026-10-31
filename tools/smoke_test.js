@@ -686,9 +686,14 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   }
 
   // ---------- Ежедневные контракты Ахджин ----------
+  const dayKeyOf = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+    '-' + String(d.getDate()).padStart(2, '0');
+  const today = new Date();
+  const todayKey = dayKeyOf(today);
+  const tomorrowKey = dayKeyOf(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
   game.unlocked = 9;
   game.contracts = { day: null, list: [] };
-  game.ensureContracts('2026-10-30');
+  game.ensureContracts(todayKey);
   const daily = game.contracts.list;
   assert(daily.length === 3, 'ежедневная доска выдаёт три контракта');
   assert(new Set(daily.map((c) => c.chapter)).size === 3, 'контракты ведут в разные главы');
@@ -744,10 +749,10 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   sandbox.UI.closeAllPanels();
   game.persist();
   const savedContracts = JSON.parse(storage.get('solo-leveling-save')).contracts;
-  assert(savedContracts && savedContracts.day === '2026-10-30' && savedContracts.list.length === 3,
+  assert(savedContracts && savedContracts.day === todayKey && savedContracts.list.length === 3,
     'ежедневные контракты сохраняются в v5');
-  game.ensureContracts('2026-10-31');
-  assert(game.contracts.day === '2026-10-31' &&
+  game.ensureContracts(tomorrowKey);
+  assert(game.contracts.day === tomorrowKey &&
     game.contracts.list.every((c) => c.status === 'available'),
     'на следующий день контракты обновляются');
 
@@ -833,6 +838,7 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     6: ['Баран', 'baran', 'baran'],
     7: ['Каргалган', 'kargalgan', 'kargalgan'],
     8: ['Магический измеритель', 'measurement-device', 'measurement-device'],
+    9: ['Королева муравьёв', 'ant-queen', 'ant-queen'],
     10: ['Ча Хэ-Ин', 'cha-hae-in', 'cha-hae-in'],
     11: ['Архитектор', 'architect', 'architect'],
     12: ['Силлад, Монарх Холода', 'sillad', 'sillad']
@@ -1038,6 +1044,20 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   game.player.invulnTimer = 999;
   game.player.hp = game.player.maxHp = 999999;
   game.monsters.filter((m) => !m.isBoss).forEach((m) => game.damageMonster(m, 999999, { source: 'basic' }));
+  assert(game.boss && game.boss.name.indexOf('Королева') >= 0 && game.boss.animId === 'ant-queen' &&
+    game.boss.cutinPath.indexOf('cutin_ant_queen') >= 0, 'глава Чеджу начинается с королевы муравьёв');
+  assert(game.npcs.some((n) => n.charId === 'min-byung-gu') &&
+    game.npcs.some((n) => n.charId === 'goto-ryuji'), 'на Чеджу присутствуют Мин Бён-Гю и Гото Рюдзи');
+  game.damageMonster(game.boss, 99999999, { source: 'basic' });
+  advance(200);
+  assert(game._bossStage === 1 && game.boss && !game.boss.dead && game.boss.animId === 'beru' &&
+    game.boss.name.indexOf('Беру') >= 0, 'после королевы из глубин появляется Беру');
+  assert(game.boss.cutinPath.indexOf('cutin_beru') >= 0, 'у Беру свой cut-in');
+  assert(game.npcs.every((n) => n.charId !== 'min-byung-gu' && n.charId !== 'goto-ryuji'),
+    'Мин Бён-Гю и Гото Рюдзи погибают при появлении Беру');
+  assert(sandbox.Dialogue.active, 'переход к Беру сопровождается сценой гибели союзников');
+  while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+  advance(200);
   game.damageMonster(game.boss, 99999999, { source: 'basic' });
   advance(200);
   assert(game._shadowExtractionId === 'beru', 'после победы над Беру доступна его тень');

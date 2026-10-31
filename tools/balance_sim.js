@@ -18,7 +18,8 @@ const itemsById = Object.fromEntries(loot.items.map((i) => [i.id, i]));
 const nodesById = Object.fromEntries(talentsData.nodes.map((n) => [n.id, n]));
 
 const HUMANS = new Set(['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul', 'lee-joo-hee',
-  'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in', 'min-byung-gu', 'architect']);
+  'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in', 'min-byung-gu',
+  'goto-ryuji', 'architect']);
 
 function isEnemy(id, c, chapter) {
   if (HUMANS.has(id)) return false;
@@ -145,7 +146,7 @@ for (const ch of chapters) {
       hp: parts.reduce((sum, p) => sum + p.hp, 0),
       atk: Math.max.apply(null, parts.map((p) => p.atk)),
       def: Math.max.apply(null, parts.map((p) => p.def)),
-      name: 'Три Монарха'
+      name: lv.bossSequenceName || 'Боссы главы'
     };
   } else {
     bossStats = scaledBoss(boss, cid, lv);
@@ -177,13 +178,23 @@ for (const ch of chapters) {
   const potionHeal = 150 + 380;
   const survive = (stats.maxHp + potionHeal) / bossDps;
 
-  // XP за главу: враги + основная награда + 60% побочных + секрет/загадка
+  // XP за главу: враги + стадии боссов + основная награда + 60% побочных + секрет/загадка
   let enemyXp = 0;
   enemies.forEach((id) => {
     const c = byId[id];
     if (!c) return;
     enemyXp += F.enemyXp(c.stats, id === boss, cid);
   });
+  if (seq) {
+    // Боссы последовательности дают опыт как обычные боссы; игра ограничивает вклад HP.
+    seq.forEach((cfg) => {
+      const bd = bosses[cfg.bossData] || {};
+      enemyXp += F.enemyXp({
+        hp: Math.min(cfg.hp || bd.hpBase || 1000, 2200),
+        atk: cfg.atk || bd.atkBase || 0
+      }, true, cid);
+    });
+  }
   const main = (require('../src/data/quests.json').main.find((q) => q.chapter === cid) || { rewards: {} });
   const side = require('../src/data/quests.json').side.filter((q) => q.chapter === cid);
   const sideXp = side.reduce((s, q) => s + ((q.rewards && q.rewards.xp) || 0), 0) * 0.6;

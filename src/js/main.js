@@ -111,7 +111,7 @@
 
   const BOSS_SIZE = {
     'statue-of-god': 108, 'kargalgan': 118, 'giant-centipede': 118, 'kasaka': 118, 'measurement-device': 112, 'baruka': 100, 'igris': 104,
-    'baran': 124, 'beru': 112, 'ashborn': 108, 'antares': 140, 'architect': 110,
+    'baran': 124, 'beru': 112, 'ant-queen': 124, 'ashborn': 108, 'antares': 140, 'architect': 110,
     'sillad': 118, 'rakan': 126, 'kerehsha': 120,
     'guardian': 100
   };
@@ -715,7 +715,10 @@
       const hp = Math.round(cfg.hp || bossData.hpBase || 3500 + this.chapter.id * 1200);
       const atk = Math.round(cfg.atk || bossData.atkBase || 58 + this.chapter.id * 20);
       const def = Math.round(cfg.def || bossData.defBase || 18 + this.chapter.id * 7);
-      const boss = new window.Boss(this.world.bossX, floor - size, {
+      const bossX = Number.isFinite(cfg.x)
+        ? Math.max(220, Math.min(this.world.worldW - 220, Math.round(cfg.x)))
+        : this.world.bossX;
+      const boss = new window.Boss(bossX, floor - size, {
         w: size, h: size, hp, atk, def,
         drawW: size, drawH: size,
         name: cfg.name || bossData.title || 'Страж главы',
@@ -736,7 +739,7 @@
     isEnemy(id, c, chapterId) {
       const HUMANS = ['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul', 'lee-joo-hee',
         'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in',
-        'min-byung-gu', 'architect'];
+        'min-byung-gu', 'goto-ryuji', 'architect'];
       if (HUMANS.includes(id)) return false;
       if (id === 'igris') return chapterId === 4;
       if (id === 'baran') return chapterId === 6;
@@ -1154,10 +1157,12 @@
       this.player.hp = this.player.maxHp;
       this.player.mp = this.player.maxMp;
       this.player.invulnTimer = Math.max(this.player.invulnTimer || 0, 0.8);
-      const zone = this.world.zones[this.world.zones.length - 1];
-      if (zone) {
-        this.world.seenZones[zone.id] = true;
-        this.world.activeZoneId = zone.id;
+      const bossCenter = boss.x + boss.w / 2;
+      const bossZone = this.world.zones.find((z) => bossCenter >= z.x && bossCenter < z.x + z.w) ||
+        this.world.zones[this.world.zones.length - 1];
+      if (bossZone) {
+        this.world.seenZones[bossZone.id] = true;
+        this.world.activeZoneId = bossZone.id;
       }
       this._pendingZoneStory = null;
       window.Engine.Camera.snap(this.player, this.level.worldW, this.level.worldH);
@@ -1588,9 +1593,6 @@
       }
       if (this.chapter && this.chapter.id === 5) {
         this.npcs = this.npcs.filter((n) => n.charId !== 'kim-chul');
-      }
-      if (this.chapter && this.chapter.id === 9) {
-        this.npcs = this.npcs.filter((n) => n.charId !== 'min-byung-gu');
       }
       if (this.chapter && this.chapter.id === 12 && this._bossStage === 0) {
         this.npcs = this.npcs.filter((n) => n.charId !== 'go-gun-hee');
@@ -2122,13 +2124,36 @@
       this._bossStage++;
       this._bossTransition = false;
       const cfg = this._bossSequence[this._bossStage];
-      this.spawnBossConfig(cfg);
+      const boss = this.spawnBossConfig(cfg);
       this.bossIntroShown = false;
       this._bossDlgPlayed = true;
-      this.onBossIntro(this.boss);
-      UI.toast('Монарх пал', cfg.name + ' вступает в бой. Сеул ещё держится.', {
-        color: '#ffd24a', duration: 3600
-      });
+      const showIntro = () => {
+        if (this.boss === boss && !boss.dead) this.onBossIntro(boss);
+      };
+      const interlude = cfg.interlude && Array.isArray(cfg.interlude.lines) ? cfg.interlude : null;
+      if (interlude) {
+        if (Array.isArray(interlude.removeNpcs)) {
+          const gone = interlude.removeNpcs;
+          this.npcs = this.npcs.filter((n) => gone.indexOf(n.charId) < 0);
+        }
+        const lines = this.makeStoryLines(interlude.lines);
+        if (lines.length) {
+          // Смерть союзников и появление нового босса проигрываются до cut-in.
+          Dialogue.start(lines, () => {
+            showIntro();
+            this.persist();
+          });
+        } else {
+          showIntro();
+        }
+      } else {
+        showIntro();
+      }
+      const toast = cfg.transition || {
+        title: 'Новая стадия',
+        text: (cfg.name || 'Босс') + ' вступает в бой.'
+      };
+      UI.toast(toast.title, toast.text, { color: '#ffd24a', duration: 3600 });
       return true;
     },
 

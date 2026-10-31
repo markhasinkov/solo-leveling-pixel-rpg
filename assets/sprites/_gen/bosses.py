@@ -110,6 +110,113 @@ def beru():
     return r
 
 
+def ant_queen():
+    """Королева улья: янтарный панцирь, яйцевой мешок, корона из шипов."""
+    body, car, carl = hx('#241a12'), hx('#5a3a1e'), hx('#b47a36')
+    dark = hx('#0e0a08')
+    amber, amber_l = hx('#ffb347'), hx('#ffe2a0')
+    acid, acid_l = hx('#a8ff5a'), hx('#e8ffc0')
+    r = png.blank(64, 64)
+
+    # яйцевой мешок за спиной
+    ellipse(r, 32, 49, 14, 11, dark)
+    ellipse(r, 32, 48, 12, 9, car)
+    ellipse(r, 32, 47, 9, 7, hx('#6a3e16'))
+    for (ex, ey) in ((27, 44), (35, 43), (23, 49), (32, 50), (40, 49), (28, 56), (37, 55)):
+        ellipse(r, ex, ey, 2, 2, hx('#4a2a10'))
+        put(r, ex, ey - 1, amber)
+        put(r, ex - 1, ey, hx('#c87a2a'))
+    for (x, y) in ((22, 51), (42, 51), (32, 58)):
+        line(r, x, y, x, y + 2, carl)
+
+    # ноги: три пары, когти уходят в пол
+    for side in (-1, 1):
+        hip = 32 + side * 9
+        for (dy, out) in ((0, 10), (4, 13), (8, 11)):
+            knee_x = hip + side * out
+            line(r, hip, 42 + dy, knee_x, 52 + dy, dark)
+            line(r, knee_x, 52 + dy, knee_x + side * 3, 62, car)
+            put(r, knee_x + side * 3, 62, amber)
+            put(r, knee_x + side * 4, 62, amber_l)
+
+    # брюшко и торс: сегментированный хитин
+    poly(r, [(20, 27), (44, 27), (43, 37), (39, 45), (25, 45), (21, 37)], body)
+    poly(r, [(21, 28), (31, 28), (29, 44), (22, 37)], car)
+    poly(r, [(33, 28), (43, 28), (42, 37), (33, 44)], shade(car, -0.16))
+    for y in (32, 37, 42):
+        line(r, 23, y, 41, y, hx('#3a2412'))
+        put(r, 24, y, carl)
+        put(r, 40, y, carl)
+    # янтарное ядро в груди
+    poly(r, [(30, 31), (35, 34), (35, 39), (30, 42), (28, 38)], dark)
+    put(r, 31, 33, amber)
+    put(r, 32, 34, amber_l)
+    put(r, 31, 37, hx('#c87a2a'))
+    put(r, 33, 36, acid)
+
+    # шипы на плечах
+    for (x, y) in ((21, 28), (43, 28)):
+        line(r, x, y, x + (-4 if x < 32 else 4), y - 5, carl)
+        put(r, x + (-4 if x < 32 else 4), y - 5, amber)
+
+    # четыре руки: верхняя пара с серпами, нижняя — с когтями
+    poly(r, [(21, 28), (14, 31), (10, 40), (16, 43), (22, 36)], body)
+    poly(r, [(43, 28), (50, 31), (54, 40), (48, 43), (42, 36)], body)
+    rect(r, 9, 39, 15, 44, car)
+    rect(r, 49, 39, 55, 44, car)
+    for i in range(3):
+        line(r, 10 + i * 2, 43, 6 + i * 2, 49, amber)
+        line(r, 54 - i * 2, 43, 58 - i * 2, 49, amber)
+        put(r, 6 + i * 2, 49, amber_l)
+        put(r, 58 - i * 2, 49, amber_l)
+    poly(r, [(22, 37), (16, 42), (13, 49), (19, 51), (24, 43)], shade(car, 0.1))
+    poly(r, [(42, 37), (48, 42), (51, 49), (45, 51), (40, 43)], shade(car, -0.1))
+    for i in range(2):
+        line(r, 14 + i * 2, 49, 12 + i * 2, 55, carl)
+        line(r, 50 - i * 2, 49, 52 - i * 2, 55, carl)
+        put(r, 12 + i * 2, 55, acid)
+        put(r, 52 - i * 2, 55, acid)
+
+    # голова
+    ellipse(r, 32, 17, 10, 9, body)
+    ellipse(r, 32, 17, 8, 7, car)
+    poly(r, [(23, 13), (32, 8), (41, 13), (40, 20), (32, 24), (24, 20)], body)
+    # фасеточные глаза
+    poly(r, [(23, 14), (29, 12), (30, 19), (24, 20)], acid)
+    poly(r, [(41, 14), (35, 12), (34, 19), (40, 20)], acid)
+    for (x, y) in ((25, 15), (27, 17), (37, 17), (39, 15)):
+        put(r, x, y, dark)
+    put(r, 26, 14, acid_l)
+    put(r, 38, 14, acid_l)
+    # мандибулы
+    poly(r, [(23, 21), (28, 21), (29, 27), (25, 31), (21, 28)], dark)
+    poly(r, [(41, 21), (36, 21), (35, 27), (39, 31), (43, 28)], dark)
+    line(r, 24, 25, 27, 29, carl)
+    line(r, 40, 25, 37, 29, carl)
+    put(r, 24, 30, acid)
+    put(r, 40, 30, acid)
+
+    # корона матери улья
+    for x in (24, 28, 32, 36, 40):
+        top = 3 if x == 32 else (5 if x in (28, 36) else 7)
+        line(r, x, 10, x, top, carl)
+        put(r, x, top - 1, amber)
+        put(r, x, top, amber_l)
+    line(r, 24, 8, 40, 8, hx('#3a2412'))
+    for x in (26, 31, 34, 39):
+        put(r, x, 8, acid)
+    # усики
+    line(r, 26, 8, 21, 3, carl)
+    line(r, 38, 8, 43, 3, carl)
+    put(r, 20, 2, amber)
+    put(r, 44, 2, amber)
+
+    # блики панциря
+    for (x, y) in ((24, 11), (40, 11), (23, 32), (41, 34), (30, 25)):
+        put(r, x, y, carl)
+    return r
+
+
 def antares():
     """Монарх Разрушения: драконьи крылья, рога, золотые глаза, чешуя и хвост."""
     body, dark, scale = hx('#8a1c26'), hx('#360a10'), hx('#c03a34')
@@ -693,6 +800,7 @@ def measurement_device():
 
 BOSSES1 = {
     'beru': beru,
+    'ant-queen': ant_queen,
     'antares': antares,
     'igris': igris,
     'baruka': baruka,

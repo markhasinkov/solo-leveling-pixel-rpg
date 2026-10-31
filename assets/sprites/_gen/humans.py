@@ -781,6 +781,10 @@ HUMANS = {
         hair='#d8d8d4', skin='#ecc8a4', eye='#3c3a36', top='#e6e9ee', dark='#a8b2bd',
         legs='#7d8590', boots='#4c525a', accent='#5ac8e8', metal='#f0f4f8',
         weapon='staff', staffGem='#9fe6ff', outfit='healer', hairStyle='short', glasses=True, special='min'),
+    'goto-ryuji': dict(
+        hair='#141018', skin='#e8c4a0', eye='#2a2018', top='#20242c', dark='#0e1014',
+        legs='#181c24', boots='#0a0c10', accent='#b83a3a', metal='#a8b0c0',
+        weapon='sword', outfit='hunter', hairStyle='slick', aura='#ff7a7a'),
     'park-hee-jin': dict(
         hair='#2a1a2a', skin='#f0c8a8', eye='#3a2a3a', top='#e8ecf8', dark='#3a4a6a',
         legs='#2a3040', boots='#1a2028', accent='#7ad7ff', metal='#c8d8f0',
