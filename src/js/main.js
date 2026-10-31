@@ -1626,7 +1626,7 @@
         this.player.mp = Math.min(this.player.maxMp, this.player.mp + 4);
         const gained = Math.round(this.player.mp - mpBefore);
         const cx = this.player.x + this.player.w / 2;
-        const cy = this.player.y + this.player.h * 0.45;
+        const cy = this.player.getVisualY();
         window.Effects.text(cx, cy - 26, 'УКЛОНЕНИЕ', { color: '#7ad7ff', size: 12, life: 0.7 });
         if (gained > 0) {
           window.Effects.text(cx, cy - 42, '+' + gained + ' MP', { color: '#8ae6ff', size: 10, life: 0.55 });
@@ -1636,8 +1636,8 @@
         if (window.TG) window.TG.haptic('light');
       }
       if (real > 0) {
-        window.Effects.damageText(this.player.x + this.player.w / 2, this.player.y - 10, real, { color: '#ff6a6a', size: 15 });
-        window.Effects.spawnParticles(this.player.x + this.player.w / 2, this.player.y + this.player.h / 2, '#ff5a5a', 8, { speed: 150, life: 0.4 });
+        window.Effects.damageText(this.player.x + this.player.w / 2, this.player.getDrawY() - 10, real, { color: '#ff6a6a', size: 15 });
+        window.Effects.spawnParticles(this.player.x + this.player.w / 2, this.player.getVisualY(), '#ff5a5a', 8, { speed: 150, life: 0.4 });
         Camera.addTrauma(0.32);
         Engine.hitStop(0.04);
         window.Effects.flash('#ff2a2a', 0.10, 0.1);
@@ -2649,7 +2649,7 @@
         const mw = I.mouseWorld();
         const target = this.monsterAtWorld(mw.x, mw.y);
         const cx = this.player.x + this.player.w / 2 - Engine.Camera.x;
-        const cy = this.player.y + this.player.h * 0.45 - Engine.Camera.y;
+        const cy = this.player.getVisualY() - Engine.Camera.y;
         if (skill && (skill.type === 'projectile' || skill.type === 'dash')) {
           ctx.save();
           ctx.globalAlpha = 0.16;

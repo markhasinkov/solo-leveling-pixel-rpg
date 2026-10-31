@@ -70,7 +70,8 @@ for c in characters:
     check(exists(anim), "Нет анимационного листа %s" % anim)
     if exists(anim):
         size = png_size(anim)
-        check(size == (256, 384), "Лист %s должен быть 256x384, а не %s" % (anim, size))
+        expected = (384, 576) if c["id"] == "sung-jin-woo" else (256, 384)
+        check(size == expected, "Лист %s должен быть %sx%s, а не %s" % (anim, expected[0], expected[1], size))
     for key in ("hp", "atk", "def"):
         check(isinstance(c.get("stats", {}).get(key), int), "stats.%s у %s не int" % (key, c["id"]))
 

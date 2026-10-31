@@ -12,6 +12,7 @@
 Затем проверяет каждый файл: подпись PNG, CRC, размеры из IHDR.
 """
 import os
+import shutil
 import struct
 import sys
 import zlib
@@ -56,6 +57,18 @@ def main():
     made += icons.generate()
     made += textures.generate(OUT)
 
+    # Новый арт Сон Джин-Ву импортируется отдельно и перекрывает
+    # сгенерированный лист 64x64: 4x6 кадров по 96x96.
+    custom_dir = os.path.join(HERE, 'custom')
+    custom = [
+        ('sung-jin-woo-sheet.png', os.path.join(OUT, 'anim', 'sung-jin-woo.png')),
+        ('sung-jin-woo.png', os.path.join(OUT, 'sung-jin-woo.png')),
+        ('sung-jin-woo-portrait.png', os.path.join(OUT, 'portraits', 'sung-jin-woo.png')),
+    ]
+    for src, dst in custom:
+        shutil.copyfile(os.path.join(custom_dir, src), dst)
+        made.append(dst)
+
     ok = 0
     for p in made:
         name = os.path.basename(p)
@@ -65,7 +78,7 @@ def main():
         elif name.startswith('tile_'):
             w, h = 16, 16
         elif parent == 'anim':
-            w, h = anims.SHEET_W, anims.SHEET_H
+            w, h = (384, 576) if name == 'sung-jin-woo.png' else (anims.SHEET_W, anims.SHEET_H)
         elif parent == 'portraits':
             w, h = 64, 64
         elif parent in ('icons', 'tex'):

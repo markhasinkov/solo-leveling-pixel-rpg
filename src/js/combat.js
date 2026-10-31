@@ -61,7 +61,7 @@
     aimVector(game) {
       const p = game.player;
       const cx = p.x + p.w / 2;
-      const cy = p.y + p.h * 0.45;
+      const cy = p.getVisualY();
       const I = Engine.Input;
       if (I.mouse.overCanvas) {
         const m = I.mouseWorld();
@@ -111,7 +111,7 @@
         source: 'basic', color: combo.color, knockback: combo.knockback
       });
       const cx = p.x + p.w / 2;
-      const cy = p.y + p.h * 0.45;
+      const cy = p.getVisualY();
       Effects.slash({
         x: cx, y: cy,
         r: combo.r, face: p.face, life: finisher ? 0.22 : 0.17, color: combo.color, width: combo.width
@@ -128,7 +128,7 @@
           life: 0.24, color: '#fff0b8', width: 3
         });
         Effects.ring({ x: cx, y: cy, r0: 12, maxR: 92, life: 0.3, color: '#ffd24a', width: 3 });
-        Effects.text(cx, p.y - 18, 'ФИНИШЕР', { color: '#ffd24a', size: 12, life: 0.6 });
+        Effects.text(cx, p.getDrawY() - 10, 'ФИНИШЕР', { color: '#ffd24a', size: 12, life: 0.6 });
         p.attackTimer *= 0.88;
       } else if (step === 2) {
         p.attackTimer *= 0.94;
@@ -180,9 +180,9 @@
         p.face = aim.x > 0 ? 1 : -1;
       }
       const cx = p.x + p.w / 2;
-      const cy = p.y + p.h * 0.45;
+      const cy = p.getVisualY();
       const floorY = game.level ? game.level.floorY : p.y + p.h;
-      Effects.skillName(cx, p.y - 14, skill.name, skill.color);
+      Effects.skillName(cx, p.getDrawY() - 12, skill.name, skill.color);
       Effects.shadowBurst(cx, cy, 'rgba(55,28,90,0.55)', 5, { speed: 90, up: 70, life: 0.7, size: 6 });
 
       p.mp -= check.cost;

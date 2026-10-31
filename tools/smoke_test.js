@@ -263,6 +263,10 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.loading === false, 'игра загружена');
   assert(game.chapter && game.chapter.id === 1, 'старт с главы 1');
   assert(game.player && game.player.hp > 0, 'игрок создан');
+  assert(game.player.animFrameW === 96 && game.player.animFrameH === 96,
+    'лист Джин-Ву использует кадр 96×96');
+  assert(game.player.drawW === 80 && game.player.drawH === 80,
+    'Джин-Ву выводится в 80 px и стоит на общем полу');
   assert(game.boss && game.boss.name === 'Статуя Бога', 'босс главы 1 — Статуя Бога');
   assert(game.monsters.length >= 3, 'враги главы 1 созданы: ' + game.monsters.length);
   assert(game.npcs.length >= 2, 'NPC главы 1 созданы: ' + game.npcs.length);

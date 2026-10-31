@@ -42,8 +42,14 @@
       this.elite = !!opts.elite;
       this.isBoss = false;
       this.animId = opts.animId || null;
+      const heroSheet = this.animId === 'sung-jin-woo';
+      this.animFrameW = opts.animFrameW || (heroSheet ? 96 : 64);
+      this.animFrameH = opts.animFrameH || (heroSheet ? 96 : 64);
+      this.animCols = opts.animCols || 4;
+      this.animRows = opts.animRows || 6;
       this.sheet = opts.animId
-        ? Engine.getSheet('assets/sprites/anim/' + opts.animId + '.png', 64, 64, 4, 6, this.color)
+        ? Engine.getSheet('assets/sprites/anim/' + opts.animId + '.png',
+          this.animFrameW, this.animFrameH, this.animCols, this.animRows, this.color)
         : null;
       this.staticSprite = opts.sprite || null;
       this.blinkSeed = Math.random() * 10;
@@ -51,6 +57,10 @@
 
     getDrawX() { return this.x + this.w / 2 - this.drawW / 2; }
     getDrawY() { return this.y + this.h - this.drawH; }
+    getVisualY(ratio) {
+      const r = ratio == null ? 0.45 : ratio;
+      return this.y + this.h - this.drawH * (1 - r);
+    }
 
     setAnim(state) {
       if (this.animState !== state) {
@@ -140,11 +150,12 @@
     }
 
     drawShadow(ctx) {
+      const shadowW = this.kind === 'player' ? this.drawW * 0.62 : this.w;
       ctx.save();
       ctx.globalAlpha = 0.3;
       ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.ellipse(this.x + this.w / 2, this.y + this.h - 2, this.w * 0.42, Math.max(3, this.h * 0.09), 0, 0, Math.PI * 2);
+      ctx.ellipse(this.x + this.w / 2, this.y + this.h - 2, shadowW * 0.42, Math.max(3, this.h * 0.09), 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -206,7 +217,7 @@
 
   class Player extends Fighter {
     constructor(x, y, opts) {
-      super(x, y, 36, 64, Object.assign({ kind: 'player', hp: 850, atk: 120, def: 70, animId: 'sung-jin-woo', drawW: 64, drawH: 64 }, opts));
+      super(x, y, 36, 64, Object.assign({ kind: 'player', hp: 850, atk: 120, def: 70, animId: 'sung-jin-woo', drawW: 80, drawH: 80 }, opts));
       this.maxMp = opts && opts.maxMp != null ? opts.maxMp : 100;
       this.mp = this.maxMp;
       this.stats = null;
@@ -267,7 +278,7 @@
       this.dodgeInvuln = 0.36;
       this.attackAnimTimer = 0;
       const cx = this.x + this.w / 2;
-      const cy = this.y + this.h * 0.45;
+      const cy = this.getVisualY();
       Effects.ring({ x: cx, y: cy, r0: 7, maxR: 58, life: 0.28, color: '#7ad7ff', width: 3 });
       Effects.spawnParticles(cx, cy + 14, '#7ad7ff', 7, { speed: 110, life: 0.3, size: 2, glow: true });
       AudioFX.play('dash');
@@ -397,7 +408,7 @@
         ctx.save();
         ctx.globalAlpha = 0.25;
         ctx.fillStyle = '#9a6cff';
-        ctx.fillRect(this.face > 0 ? this.x + this.w : this.x - 6, this.y + this.h * 0.45, 6, 4);
+        ctx.fillRect(this.face > 0 ? this.x + this.w : this.x - 6, this.getVisualY(), 6, 4);
         ctx.restore();
       }
     }
@@ -673,7 +684,7 @@
                   source: 'ally', color: this.allyColor, stun
                 });
                 Effects.slash({
-                  x: this.x + this.w / 2, y: this.y + this.h * 0.45,
+                  x: this.x + this.w / 2, y: this.getVisualY(),
                   r: this.attackStyle === 'multi' ? 54 : 44, face: this.face,
                   life: 0.16, color: this.allyColor, width: this.attackStyle === 'multi' ? 4 : 3
                 });
