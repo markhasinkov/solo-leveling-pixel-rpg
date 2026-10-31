@@ -117,8 +117,18 @@ img { image-rendering: pixelated; }
 #ui-root > .ui-codex,
 #ui-root > .ui-menu,
 #ui-root > .death-screen,
-#ui-root > .victory-screen { pointer-events: auto; }
-#ui-root > .panel-backdrop { pointer-events: auto; }
+#ui-root > .victory-screen,
+#ui-root > .fatal-error,
+.panel-host > .ui-inventory,
+.panel-host > .ui-quest,
+.panel-host > .ui-talents,
+.panel-host > .ui-shadows,
+.panel-host > .ui-hub,
+.panel-host > .ui-codex,
+.panel-host > .ui-menu,
+.panel-host > .fatal-error { pointer-events: auto; }
+#ui-root > .panel-backdrop,
+.panel-host > .panel-backdrop { pointer-events: auto; }
 .touch-controls,
 .toast-stack,
 .ui-hint,
@@ -568,6 +578,12 @@ img { image-rendering: pixelated; }
 }
 
 /* ============ Общие панели ============ */
+.panel-host {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
 .panel-backdrop {
   position: absolute;
   inset: 0;
@@ -1618,6 +1634,24 @@ img { image-rendering: pixelated; }
 .death-screen .panel-title { font-size: 24px; color: var(--sl-red); text-shadow: 3px 3px 0 #000; }
 .death-stats { font-size: 9px; color: var(--sl-dim); }
 
+.fatal-error {
+  position: absolute;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 28px;
+  text-align: center;
+  background: rgba(18, 6, 12, 0.94);
+  box-shadow: inset 0 0 120px #000;
+}
+.fatal-title { font-size: 22px; color: var(--sl-red-lt); text-shadow: 3px 3px 0 #000; }
+.fatal-text { max-width: 520px; font-size: 9px; line-height: 1.8; color: var(--sl-text); }
+.fatal-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
 .victory-screen {
   position: absolute;
   inset: 0;
@@ -1966,3 +2000,129 @@ body.left-handed .potion-btn-touch { right: auto; left: 72px; }
   .boot-title { font-size: 18px; letter-spacing: 2px; }
   .rotate-title { font-size: 11px; }
 }
+
+/* ============ Мобильная эргономика (touch) ============ */
+/* Лента умений в две строки: восемь умений остаются крупными и не
+   наезжают на джойстик/кнопки даже на узких телефонах. */
+.touch .skill-bar {
+  gap: 5px;
+  padding: 5px 7px;
+  bottom: 8px;
+}
+.touch .skill-slot { width: 60px; height: 60px; }
+.touch .skill-icon { width: 42px; height: 42px; margin-top: 6px; }
+.touch .skill-key { font-size: 10px; }
+.touch .skill-cd { font-size: 18px; }
+.touch .skill-cost { font-size: 8px; }
+/* Зелье уже есть отдельной кнопкой H справа: не дублируем его в ленте,
+   чтобы восемь умений помещались в один ряд и не закрывали героя. */
+.touch .skill-bar .potion-slot { display: none; }
+
+/* Крупнее HUD и боковые кнопки: на 6–7" экранах пальцем проще попасть. */
+.touch .ui-hud { width: 380px; }
+.touch .hud-level, .touch .hud-gold { font-size: 13px; }
+.touch .bar { height: 19px; }
+.touch .bar-text { font-size: 11px; }
+.touch .chapter-name { font-size: 11px; }
+.touch .ui-side { width: 280px; }
+.touch .side-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.touch .side-btn { min-height: 54px; font-size: 11px; padding: 7px 3px; }
+.touch .quest-tracker { max-height: 100px; }
+.touch .tracker-title { font-size: 11px; }
+.touch .tracker-obj { font-size: 10px; }
+.touch .ui-hint { font-size: 13px; max-width: 480px; }
+.touch .boss-bar { top: 160px; width: 380px; }
+.touch .boss-cast { top: 126px; width: 380px; }
+.touch .boss-name { font-size: 13px; }
+.touch .boss-phase { font-size: 11px; }
+.touch .toast-title { font-size: 12px; }
+.touch .toast-text { font-size: 10px; }
+
+/* Диалог: крупнее, ниже и с подсказкой «ТАП». Управление на время
+   разговора убирается, чтобы не перекрывать текст. */
+.touch .ui-dialog { width: 900px; bottom: 12px; padding-left: 96px; }
+.touch .dlg-text { font-size: 18px; line-height: 1.7; min-height: 58px; }
+.touch .dlg-speaker { font-size: 15px; }
+.touch .dlg-paging { font-size: 12px; }
+.touch .dlg-portrait { width: 72px; height: 72px; }
+body.dialog-open.touch .touch-controls,
+body.dialog-open.touch .skill-bar,
+body.panel-open.touch .touch-controls,
+body.panel-open.touch .skill-bar { display: none; }
+
+/* Панели: чуть крупнее текст и выше кнопки, содержимое прокручивается. */
+.touch .panel-body { font-size: 11px; }
+.touch .hub-sec-sub { font-size: 9px; }
+.touch .hub-contract-title { font-size: 11px; }
+.touch .hub-contract-desc { font-size: 9px; }
+.touch .hub-contract-reward { font-size: 8px; }
+.touch .hub-contract-btn { font-size: 9px; min-height: 32px; }
+.touch .hub-ch-title { font-size: 9px; }
+.touch .hub-ch-status { font-size: 8px; }
+.touch .hub-bond-name { font-size: 11px; }
+.touch .hub-bond-title { font-size: 9px; }
+.touch .hub-bond-hint, .touch .hub-bond-bonus { font-size: 8px; }
+.touch .hub-bond-btn { font-size: 9px; min-height: 30px; }
+.touch .quest-title { font-size: 12px; }
+.touch .quest-desc { font-size: 10px; }
+.touch .quest-obj { font-size: 10px; }
+.touch .quest-rewards { font-size: 9px; }
+.touch .item-name { font-size: 14px; }
+.touch .item-sub { font-size: 10px; }
+
+/* Панели вынесены из масштабируемого канваса: на телефоне это реальные
+   CSS-пиксели, поэтому размеры и отступы можно держать удобными. */
+.touch .ui-inventory, .touch .ui-quest, .touch .ui-talents,
+.touch .ui-shadows, .touch .ui-hub, .touch .ui-codex {
+  width: min(96vw, 920px);
+  max-width: 96vw;
+  max-height: 92vh;
+}
+.touch .ui-menu { width: min(92vw, 540px); max-height: 92vh; }
+.touch .panel-title { font-size: 19px; }
+.touch .panel-tab { font-size: 14px; min-height: 38px; padding: 8px 14px; }
+.touch .panel-tip { font-size: 11px; }
+.touch .panel-body { font-size: 13px; }
+.touch .hub-sec-sub { font-size: 11px; }
+.touch .hub-contract-title { font-size: 13px; }
+.touch .hub-contract-desc { font-size: 11px; }
+.touch .hub-contract-reward { font-size: 10px; }
+.touch .hub-contract-status { font-size: 9px; }
+.touch .hub-contract-btn { font-size: 11px; min-height: 36px; padding: 6px 10px; }
+.touch .hub-ch-title { font-size: 11px; }
+.touch .hub-ch-status { font-size: 9px; }
+.touch .hub-bond-name { font-size: 14px; }
+.touch .hub-bond-role { font-size: 10px; }
+.touch .hub-bond-title { font-size: 12px; }
+.touch .hub-bond-hint, .touch .hub-bond-bonus { font-size: 10px; }
+.touch .hub-bond-btn { font-size: 11px; min-height: 36px; padding: 6px 10px; }
+.touch .quest-title { font-size: 14px; }
+.touch .quest-desc { font-size: 12px; }
+.touch .quest-obj { font-size: 11px; }
+.touch .quest-rewards { font-size: 10px; }
+.touch .item-name { font-size: 15px; }
+.touch .item-sub { font-size: 11px; }
+
+/* На touch управления и диалог важнее декоративного cut-in: держим их
+   выше карточки, чтобы кнопки оставались доступны во время боя. */
+.touch .touch-controls, .touch .skill-bar { z-index: 55; }
+.touch .ui-dialog { z-index: 56; }
+.touch .ui-side { z-index: 46; }
+
+/* На телефоне cut-in уходит под HUD в левую колонку: не закрывает
+   героя, quest tracker и кнопки управления. */
+.touch .cutin-layer,
+.touch .cutin-layer.boss {
+  left: 8px;
+  right: auto;
+  top: 90px;
+  bottom: auto;
+  width: 170px;
+}
+.touch .cutin-layer.boss .cutin-name { font-size: 12px; }
+.touch .cutin-layer.boss .cutin-sub { font-size: 7px; }
+.touch .cutin-layer.boss .cutin-quote { font-size: 7px; }
+
+/* На мобильных полноэкранный backdrop-filter дорог; оставляем затемнение. */
+.touch .panel-backdrop { backdrop-filter: none; }
+.touch .cutin-layer { filter: none; }

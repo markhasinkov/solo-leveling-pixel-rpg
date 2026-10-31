@@ -91,8 +91,16 @@
       this.game = game;
       this.root = document.getElementById('ui-root');
       clear(this.root);
+      // Панели живут вне масштабируемого game-wrap: на телефоне они
+      // остаются в реальных пикселях и не сжимаются вместе с канвасом.
+      this.panelHost = document.getElementById('panel-host');
+      if (!this.panelHost) {
+        const stage = document.querySelector('.stage');
+        this.panelHost = el('div', 'panel-host', stage || this.root);
+        this.panelHost.id = 'panel-host';
+      }
 
-      this.panelBackdrop = el('div', 'panel-backdrop', this.root);
+      this.panelBackdrop = el('div', 'panel-backdrop', this.panelHost);
       this.panelBackdrop.style.display = 'none';
       this.panelBackdrop.addEventListener('click', () => this.closeAllPanels());
 
@@ -113,6 +121,7 @@
       this.buildCodex();
       this.buildMenu();
       this.buildBanners();
+      this.buildFatalError();
       this.buildZoneBanner();
       this.buildCinematics();
       this.buildToastStack();
@@ -312,11 +321,18 @@
       this.dlgSpeaker = el('div', 'dlg-speaker', this.dialogBox);
       this.dlgText = el('div', 'dlg-text', this.dialogBox);
       this.dlgPaging = el('div', 'dlg-paging', this.dialogBox);
+      this.dialogBox.addEventListener('pointerdown', (e) => {
+        if (e.target && e.target.closest && e.target.closest('button')) return;
+        if (window.Dialogue && window.Dialogue.active) {
+          e.preventDefault();
+          window.Dialogue.advance();
+        }
+      });
     },
 
     // ---------- Панели ----------
     makePanel(cls, title) {
-      const panel = el('div', cls, this.root);
+      const panel = el('div', cls, this.panelHost || this.root);
       panel.style.display = 'none';
       const head = el('div', 'panel-header', panel);
       el('div', 'panel-title', head).textContent = title;
@@ -406,6 +422,14 @@
         AudioFX.play('ui');
       });
 
+      const quality = el('button', 'menu-row', list);
+      this.menuQuality = quality;
+      quality.addEventListener('click', () => {
+        this.game.toggleQuality();
+        this.refreshMenu();
+        AudioFX.play('ui');
+      });
+
       const shadow = el('button', 'menu-row', list);
       this.menuShadow = shadow;
       shadow.addEventListener('click', () => {
@@ -456,7 +480,7 @@
         'A/D — движение, W — прыжок, S — быстрое падение<br>' +
         'Мышь — прицел, ЛКМ — удар (комбо из 3), ПКМ — умение<br>' +
         'Shift/K — рывок с неуязвимостью<br>' +
-        'Колесо мыши — выбрать умение, 1–5 — применить напрямую<br>' +
+        'Колесо мыши — выбрать умение, 1–8 — применить напрямую<br>' +
         'E — взаимодействие, H — зелье, I — инвентарь<br>' +
         'T — таланты, Q — квесты, Y — теневые воины<br>' +
         'G — гильдия Ахджин, Esc — меню<br><br>' +
@@ -467,6 +491,36 @@
       this.menuContinue = el('button', 'pixel-btn menu-continue', body);
       this.menuContinue.textContent = 'Продолжить';
       this.menuContinue.addEventListener('click', () => this.closeAllPanels());
+    },
+
+    buildFatalError() {
+      const screen = el('div', 'fatal-error', this.panelHost || this.root);
+      screen.style.display = 'none';
+      this.fatalScreen = screen;
+      el('div', 'fatal-title', screen).textContent = 'СИСТЕМА СБОИЛА';
+      this.fatalText = el('div', 'fatal-text', screen);
+      this.fatalText.textContent = 'Игра столкнулась с ошибкой. Прогресс сохранён локально.';
+      const actions = el('div', 'fatal-actions', screen);
+      const reload = el('button', 'pixel-btn', actions);
+      reload.textContent = 'Перезагрузить';
+      reload.addEventListener('click', () => { try { location.reload(); } catch (e) { /* noop */ } });
+      const close = el('button', 'pixel-btn ghost', actions);
+      close.textContent = 'Продолжить';
+      close.addEventListener('click', () => this.hideFatalError());
+    },
+
+    showFatalError(error) {
+      if (!this.fatalScreen) return;
+      this.fatalScreen.style.display = '';
+      if (error) {
+        const message = String(error.message || error).slice(0, 220);
+        this.fatalText.textContent = 'Система сообщает: ' + message + ' Прогресс сохранён локально.';
+      }
+      AudioFX.play('error');
+    },
+
+    hideFatalError() {
+      if (this.fatalScreen) this.fatalScreen.style.display = 'none';
     },
 
     buildZoneBanner() {
@@ -723,12 +777,19 @@
         Engine.Input.clear();
       }
       this.applyHandedness();
+      if (this.game && this.game.applyQuality) this.game.applyQuality();
     },
 
     // ---------- Обновление HUD ----------
-    update(game) {
+    update(game, force) {
       const p = game.player;
       if (!p) return;
+      // DOM-обновления HUD не нужны на каждом кадре: 18 Гц достаточно для
+      // текста/полос, а во время замаха босса обновляем каждый кадр.
+      const now = (window.performance && performance.now) ? performance.now() : Date.now();
+      const bossCastVisible = this.bossCast && this.bossCast.style.display !== 'none';
+      if (!force && !bossCastVisible && now - (this._hudAt || 0) < 55) return;
+      this._hudAt = now;
       const st = game.progress.stats || {};
       const hpPct = Math.max(0, Math.min(100, (p.hp / p.maxHp) * 100));
       this.hpFill.style.width = hpPct + '%';
@@ -842,7 +903,10 @@
         if (ratio <= 0) this.hideBossCast();
       }
 
-      this.drawMinimap(game);
+      if (!document.body.classList.contains('touch') && now - (this._minimapAt || 0) > 120) {
+        this._minimapAt = now;
+        this.drawMinimap(game);
+      }
     },
 
     setHint(text) {
@@ -878,17 +942,20 @@
     // ---------- Диалог ----------
     showDialog(line) {
       if (!line || !this.dialogBox) return;
+      document.body.classList.add('dialog-open');
       this.dialogBox.style.display = '';
       this.dialogPortrait.style.display = line.icon ? '' : 'none';
       this.dialogBox.classList.toggle('no-portrait', !line.icon);
       if (line.icon) this.dialogPortrait.src = line.icon;
       this.dlgSpeaker.textContent = line.speaker;
       this.dlgText.textContent = line.text;
-      this.dlgPaging.textContent = (line.index + 1) + ' / ' + line.total + '   [E]';
+      const touch = document.body.classList.contains('touch');
+      this.dlgPaging.textContent = (line.index + 1) + ' / ' + line.total + (touch ? '   ТАП' : '   [E]');
     },
 
     hideDialog() {
       if (this.dialogBox) this.dialogBox.style.display = 'none';
+      document.body.classList.remove('dialog-open');
     },
 
     // ---------- Инвентарь ----------
@@ -1738,6 +1805,7 @@
       const open = [this.inventory, this.quest, this.talents, this.shadowPanel, this.hub, this.codex, this.menu].some((p) => p && p.style.display !== 'none');
       this.panelBackdrop.style.display = open ? '' : 'none';
       if (this.root) this.root.classList.toggle('panel-open', open);
+      document.body.classList.toggle('panel-open', open);
     },
 
     togglePanel(name) {

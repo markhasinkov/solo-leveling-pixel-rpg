@@ -319,13 +319,13 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     sandbox.Combat.playerDamage = originalPlayerDamage;
     game.monsters = game.monsters.filter((m) => m !== dummy);
   }
-  sandbox.UI.update(game);
+  sandbox.UI.update(game, true);
   assert(sandbox.UI.comboBadge.style.display !== 'none' &&
     sandbox.UI.comboCount.textContent === '×3' &&
     sandbox.UI.comboWord.textContent === 'ФИНИШЕР', 'HUD показывает финишер комбо');
   advance(1100);
   assert(game.player.comboStep === 0, 'комбо сбрасывается по таймеру');
-  sandbox.UI.update(game);
+  sandbox.UI.update(game, true);
   assert(sandbox.UI.comboBadge.style.display === 'none', 'HUD скрывает завершённое комбо');
 
   // ---------- Рывок с i-frames ----------
@@ -746,6 +746,29 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
       'в кодексе есть карточки боссов');
     sandbox.UI.closeAllPanels();
     assert(sandbox.UI.codex.style.display === 'none', 'кодекс закрывается');
+
+    // ---------- Качество, панели и отказоустойчивость ----------
+    assert(!!sandbox.UI.panelHost && sandbox.UI.hub.parentNode === sandbox.UI.panelHost,
+      'панели вынесены в отдельный слой вне масштабируемого канваса');
+    game.settings.quality = 'low';
+    game.applyQuality();
+    assert(sandbox.Engine.lowQuality && Math.abs(sandbox.Engine.renderScale - 0.65) < 0.001 &&
+      sandbox.Engine.canvas.width === Math.round(960 * sandbox.Engine.renderScale),
+      'экономный режим снижает разрешение рендера');
+    game.settings.quality = 'high';
+    game.applyQuality();
+    assert(!sandbox.Engine.lowQuality && sandbox.Engine.renderScale === 1 &&
+      sandbox.Engine.canvas.width === 960, 'высокий режим возвращает полное разрешение');
+    game.settings.quality = 'auto';
+    game.applyQuality();
+    sandbox.UI.showDialog({ speaker: 'Тест', text: 'Проверка диалога', index: 0, total: 1 });
+    assert(sandbox.document.body.classList.contains('dialog-open'), 'диалог включает мобильный режим');
+    sandbox.UI.hideDialog();
+    assert(!sandbox.document.body.classList.contains('dialog-open'), 'после диалога управление возвращается');
+    sandbox.UI.showFatalError(new Error('тестовая ошибка'));
+    assert(sandbox.UI.fatalScreen.style.display !== 'none', 'экран ошибки не оставляет белый экран');
+    sandbox.UI.hideFatalError();
+    assert(sandbox.UI.fatalScreen.style.display === 'none', 'экран ошибки закрывается');
   } catch (e) {
     failures++;
     console.log('  FAIL UI panels: ' + e.stack);

@@ -26,6 +26,7 @@
     timers: [],
     flashes: [],
     time: 0,
+    lowQuality: false,
 
     reset() {
       this.particles.length = 0;
@@ -47,8 +48,8 @@
     // ---------- Создание ----------
     spawnParticles(x, y, color, count, opts) {
       opts = opts || {};
-      count = count || 6;
-      if (this.particles.length > 420) return;
+      count = Math.max(1, Math.round((count || 6) * (this.lowQuality ? 0.55 : 1)));
+      if (this.particles.length > (this.lowQuality ? 220 : 420)) return;
       for (let i = 0; i < count; i++) {
         const a = opts.angle != null ? opts.angle + (Math.random() - 0.5) * (opts.spread || 1.2) : Math.random() * Math.PI * 2;
         const sp = (opts.speed || 150) * (0.35 + Math.random());
@@ -171,7 +172,9 @@
 
     shadowBurst(x, y, color, count, opts) {
       opts = opts || {};
-      for (let i = 0; i < (count || 10); i++) {
+      count = Math.max(1, Math.round((count || 10) * (this.lowQuality ? 0.5 : 1)));
+      if (this.particles.length > (this.lowQuality ? 220 : 420)) return;
+      for (let i = 0; i < count; i++) {
         this.particles.push({
           x: x + (Math.random() - 0.5) * (opts.spread || 18),
           y: y + (Math.random() - 0.5) * (opts.spreadY || 20),

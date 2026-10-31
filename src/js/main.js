@@ -133,10 +133,13 @@
   };
 
   function fetchJson(url) {
-    return fetch(url).then((r) => {
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 8000) : null;
+    const options = controller ? { signal: controller.signal } : undefined;
+    return fetch(url, options).then((r) => {
       if (!r.ok) throw new Error(url + ' -> HTTP ' + r.status);
       return r.json();
-    });
+    }).finally(() => { if (timer) clearTimeout(timer); });
   }
 
   function distToActor(actor, x, y) {
@@ -207,7 +210,7 @@
     bossRun: { noHit: true, noPotion: true },
     state: 'play',
     selectedSkill: 0,
-    settings: { muted: false, shake: true, touch: false, touchUser: false, leftHanded: false, seenTutorial: false },
+    settings: { muted: false, shake: true, touch: false, touchUser: false, leftHanded: false, seenTutorial: false, quality: 'auto' },
     stats: { kills: 0, deaths: 0, bosses: 0, chests: 0, secrets: 0 },
     progress: null,
     inventory: null,
@@ -260,6 +263,10 @@
       if (this.settings.touch && !UI.touch) UI.enableTouch(true);
       if (this.settings.touchUser && !this.settings.touch && UI.touch) UI.enableTouch(false);
       UI.applyHandedness();
+      this.applyQuality();
+      if (window.Bonds && Engine.preloadImages) {
+        Engine.preloadImages(window.Bonds.BONDS.map((bond) => bond.portrait));
+      }
       AudioFX.setMuted(this.settings.muted);
       Engine.Camera.enabled = this.settings.shake;
       this.loading = false;
@@ -268,6 +275,21 @@
       this.startChapter(this.chapterIndex, { fromSave: !!save });
 
       Engine.startLoop((dt) => this.update(dt), () => this.render());
+
+      if (typeof document !== 'undefined' && document.addEventListener) {
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) this.persist();
+        });
+      }
+      if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('pagehide', () => this.persist());
+        window.addEventListener('error', (event) => {
+          if (event && event.error && !this.loading && window.UI) UI.showFatalError(event.error);
+        });
+        window.addEventListener('unhandledrejection', (event) => {
+          if (event && event.reason && !this.loading && window.UI) UI.showFatalError(event.reason);
+        });
+      }
 
       if (this._newGame) {
         setTimeout(() => this.showIntro(), 900);
@@ -474,6 +496,33 @@
     },
 
     // ---------- Главы ----------
+    preloadChapterAssets(levelData) {
+      if (!window.Engine || !Engine.preloadImages || !this.chapter) return;
+      levelData = levelData || {};
+      const ids = new Set(this.chapter.characters || []);
+      (levelData.npcs || []).forEach((n) => ids.add(n.id));
+      (levelData.encounters || []).forEach((e) => ids.add(e.id));
+      (levelData.extra || []).forEach((e) => ids.add(e.id));
+      (levelData.bossSequence || []).forEach((s) => { if (s.animId) ids.add(s.animId); });
+      const urls = [];
+      ids.forEach((id) => {
+        if (!this.charById || !this.charById[id]) return;
+        urls.push('assets/sprites/' + id + '.png',
+          'assets/sprites/anim/' + id + '.png',
+          'assets/sprites/portraits/' + id + '.png');
+      });
+      if (levelData.arena && levelData.arena.bg) urls.push(levelData.arena.bg);
+      if (levelData.cutin) urls.push(levelData.cutin);
+      (levelData.bossSequence || []).forEach((s) => { if (s.cutin) urls.push(s.cutin); });
+      (levelData.scenes || []).forEach((s) => { if (s.cutin) urls.push(s.cutin); });
+      if (levelData.theme === 'castle' || levelData.theme === 'throne') {
+        urls.push('assets/sprites/bg_theme_' + levelData.theme + '.png');
+      } else if (this.chapter.location) {
+        urls.push('assets/sprites/bg_' + this.chapter.location + '.png');
+      }
+      Engine.preloadImages(urls);
+    },
+
     startChapter(index, opts) {
       opts = opts || {};
       if (!opts.contract && this.activeContract) this.failContract('контракт прерван');
@@ -488,6 +537,7 @@
       this.chapter = this.chapters[index];
 
       const levelData = this.levelsData[String(this.chapter.id)] || {};
+      this.preloadChapterAssets(levelData);
       this.world = new window.World(this.chapter, levelData, this.chapter.id, this.savedWorld[this.chapter.id] || {});
       this.level = this.world.level;
       if (window.AudioFX) AudioFX.setAmbient(this.world.themeId);
@@ -501,6 +551,7 @@
       this.state = 'play';
       this._finishing = false;
       this._chapterDlgShown = false;
+      this._pausedFrame = false;
       this.hintPuzzle = null;
       this.bossRun = { noHit: true, noPotion: true };
       this.bossIntroShown = false;
@@ -1307,7 +1358,7 @@
 
       if (Dialogue.active) {
         if (I.actionHit('interact')) Dialogue.advance();
-        UI.setHint('[E] Далее');
+        UI.setHint(document.body.classList.contains('touch') ? 'ТАП — далее' : '[E] Далее');
         UI.update(this);
         return;
       }
@@ -1350,7 +1401,7 @@
       if (I.actionHit('pause')) { if (UI.isModalOpen()) UI.closeAllPanels(); else UI.toggleMenu(); AudioFX.play('ui'); }
 
       if (UI.isModalOpen()) {
-        UI.update(this);
+        // Панель полностью перекрывает HUD; не тратим кадры на его DOM.
         return;
       }
 
@@ -1364,7 +1415,7 @@
 
       if (I.actionHit('interact')) this.tryInteract();
       if (I.actionHit('potion')) this.usePotion();
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < window.Combat.skills.length; i++) {
         if (I.actionHit('skill' + (i + 1))) this.castSkillSlot(i);
       }
 
@@ -2020,6 +2071,38 @@
       this.settings.touchUser = true;
       UI.enableTouch(this.settings.touch);
       UI.applyHandedness();
+      this.applyQuality();
+      this.persist();
+    },
+
+    qualityMode() {
+      const q = this.settings.quality || 'auto';
+      if (q === 'high' || q === 'low') return q;
+      const touch = !!this.settings.touch || !!(Engine.Input && Engine.Input.touchMode) ||
+        !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+        (navigator.maxTouchPoints | 0) > 0 || !!(window.TG && window.TG.isTelegram);
+      return touch ? 'low' : 'high';
+    },
+
+    applyQuality() {
+      const low = this.qualityMode() === 'low';
+      Engine.lowQuality = low;
+      Engine.setRenderScale(low ? 0.65 : 1);
+      if (window.Effects) window.Effects.lowQuality = low;
+      document.body.classList.toggle('perf-low', low);
+      if (this.world && this.world.level) {
+        this.world.level._patterns = null;
+        this.world.level._shadeGrad = null;
+        this.world._arenaVignette = null;
+      }
+      this._vignette = null;
+    },
+
+    toggleQuality() {
+      const order = ['auto', 'high', 'low'];
+      const i = order.indexOf(this.settings.quality || 'auto');
+      this.settings.quality = order[(i + 1) % order.length];
+      this.applyQuality();
       this.persist();
     },
 
@@ -2396,6 +2479,12 @@
     // ---------- Отрисовка ----------
     render() {
       if (this.loading || !this.world || !this.player) return;
+      // В диалоге и панелях мир не обновляется — достаточно одного кадра,
+      // дальше рисуют только DOM-слои. Это заметно экономит батарею
+      // и убирает лаги при чтении/меню в Telegram.
+      const paused = !!(Dialogue.active || UI.isModalOpen());
+      if (paused && this._pausedFrame) return;
+      this._pausedFrame = paused;
       const ctx = Engine.ctx;
       const cam = Engine.Camera;
       ctx.clearRect(0, 0, Engine.CANVAS_W, Engine.CANVAS_H);

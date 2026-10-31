@@ -9,6 +9,19 @@
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
+  let renderScale = 1;
+
+  function setRenderScale(scale) {
+    renderScale = Math.max(0.5, Math.min(1, Number(scale) || 1));
+    const w = Math.round(CANVAS_W * renderScale);
+    const h = Math.round(CANVAS_H * renderScale);
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    ctx.setTransform(w / CANVAS_W, 0, 0, h / CANVAS_H, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+  }
 
   // ---------- Кэш изображений ----------
   const spriteCache = new Map();
@@ -21,6 +34,40 @@
     image.onerror = () => { handle.ok = false; };
     image.src = src;
     return handle;
+  }
+
+  const preloaded = new Set();
+  function preloadImages(urls) {
+    if (!Array.isArray(urls) || !urls.length) return Promise.resolve();
+    const list = [];
+    urls.forEach((url) => {
+      if (url && !preloaded.has(url)) { preloaded.add(url); list.push(url); }
+    });
+    if (!list.length) return Promise.resolve();
+    let index = 0;
+    const worker = () => {
+      if (index >= list.length) return Promise.resolve();
+      const url = list[index++];
+      return new Promise((resolve) => {
+        let done = false;
+        let timer = null;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          if (timer) clearTimeout(timer);
+          resolve();
+        };
+        const image = new Image();
+        image.onload = () => {
+          if (image.decode) image.decode().then(finish, finish);
+          else finish();
+        };
+        image.onerror = finish;
+        image.src = url;
+        timer = setTimeout(finish, 4000);
+      }).then(worker);
+    };
+    return Promise.all([worker(), worker(), worker(), worker()]);
   }
 
   // Анимационный лист: frameW x frameH, cols x rows
@@ -364,8 +411,18 @@
         hitStopLeft = Math.max(0, hitStopLeft - raw);
         dt = 0;
       }
-      update(dt, raw);
-      render(raw);
+      try {
+        update(dt, raw);
+      } catch (e) {
+        console.error('game update', e);
+        if (window.UI && window.UI.showFatalError) window.UI.showFatalError(e);
+      }
+      try {
+        render(raw);
+      } catch (e) {
+        console.error('game render', e);
+        if (window.UI && window.UI.showFatalError) window.UI.showFatalError(e);
+      }
       Input.endFrame();
       requestAnimationFrame(frame);
     }
@@ -384,8 +441,9 @@
   }
 
   window.Engine = {
-    CANVAS_W, CANVAS_H, canvas, ctx,
-    Input, getSprite, getSheet, drawSprite, drawFrame, Camera,
+    CANVAS_W, CANVAS_H, canvas, ctx, lowQuality: false, setRenderScale,
+    get renderScale() { return renderScale; },
+    Input, getSprite, getSheet, drawSprite, drawFrame, preloadImages, Camera,
     mulberry32, startLoop, hitStop, clamp, lerp, easeOutCubic, clearHitStop,
     get hitStopLeft() { return hitStopLeft; }
   };

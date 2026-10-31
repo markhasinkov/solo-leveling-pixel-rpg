@@ -19,6 +19,20 @@
       };
       window.addEventListener('pointerdown', unlock);
       window.addEventListener('keydown', unlock);
+      if (typeof document !== 'undefined' && document.addEventListener) {
+        document.addEventListener('visibilitychange', () => {
+          if (!ctx) return;
+          if (document.hidden) {
+            if (ctx.state === 'running') {
+              const p = ctx.suspend();
+              if (p && p.catch) p.catch(() => {});
+            }
+          } else if (ctx.state === 'suspended') {
+            const p = ctx.resume();
+            if (p && p.catch) p.catch(() => {});
+          }
+        });
+      }
     },
 
     ensure() {

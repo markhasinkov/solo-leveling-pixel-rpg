@@ -46,6 +46,7 @@
       this.tileWall = Engine.getSprite('assets/sprites/tex/' + themeId + '_wall.png', '#1d2436', 32, 32);
       this.tileStairs = Engine.getSprite('assets/sprites/tile_stairs.png', '#39405c', 16, 16);
       this._patterns = null;
+      this._shadeGrad = null;
     }
 
     addSolid(x, y, w, h, kind) { this.solids.push({ x, y, w, h, kind: kind || 'stone' }); }
@@ -84,12 +85,16 @@
     drawBackground(ctx) {
       const cam = Engine.Camera;
       if (this.bg && this.bg.img) {
-        const px = ((-cam.x * 0.25) % 960 + 960) % 960 - 960;
-        const py = ((-cam.y * 0.25) % 540 + 540) % 540 - 540;
-        for (let ix = 0; ix < 3; ix++) {
-          for (let iy = 0; iy < 3; iy++) {
-            ctx.drawImage(this.bg.img, px + ix * 960, py + iy * 540, 960, 540);
-          }
+        if (Engine.lowQuality) {
+          // Экономный режим: одна копия без параллакса вместо двух
+          // полноэкранных отрисовок. На мобильном это заметно дешевле.
+          ctx.drawImage(this.bg.img, 0, 0, 960, 540);
+        } else {
+          const px = ((-cam.x * 0.25) % 960 + 960) % 960 - 960;
+          // Две горизонтальные копии покрывают экран; вертикальный параллакс
+          // стоил вторую пару полноэкранных копий, а заметен почти не был.
+          ctx.drawImage(this.bg.img, px, 0, 960, 540);
+          ctx.drawImage(this.bg.img, px + 960, 0, 960, 540);
         }
       } else {
         const g = ctx.createLinearGradient(0, 0, 0, Engine.CANVAS_H);
@@ -97,11 +102,13 @@
         ctx.fillStyle = g;
         ctx.fillRect(0, 0, Engine.CANVAS_W, Engine.CANVAS_H);
       }
-      const shade = ctx.createLinearGradient(0, 0, 0, Engine.CANVAS_H);
-      shade.addColorStop(0, 'rgba(5,7,15,0.28)');
-      shade.addColorStop(0.6, 'rgba(5,7,15,0.12)');
-      shade.addColorStop(1, 'rgba(5,7,15,0.62)');
-      ctx.fillStyle = shade;
+      if (!this._shadeGrad) {
+        this._shadeGrad = ctx.createLinearGradient(0, 0, 0, Engine.CANVAS_H);
+        this._shadeGrad.addColorStop(0, 'rgba(5,7,15,0.28)');
+        this._shadeGrad.addColorStop(0.6, 'rgba(5,7,15,0.12)');
+        this._shadeGrad.addColorStop(1, 'rgba(5,7,15,0.62)');
+      }
+      ctx.fillStyle = this._shadeGrad;
       ctx.fillRect(0, 0, Engine.CANVAS_W, Engine.CANVAS_H);
     }
 
@@ -111,44 +118,55 @@
       for (const s of this.solids) {
         const sx = s.x - cam.x, sy = s.y - cam.y;
         if (sx > Engine.CANVAS_W + 40 || sx + s.w < -40 || sy > Engine.CANVAS_H + 40 || sy + s.h < -40) continue;
+        // Ограничиваем заливку видимой областью: пол тянется на весь мир,
+        // и pattern fill по 10 000 px был лишней работой каждый кадр.
+        const drawX = Math.max(s.x, cam.x - 60);
+        const drawRight = Math.min(s.x + s.w, cam.x + Engine.CANVAS_W + 60);
+        const drawW = Math.max(0, drawRight - drawX);
+        if (drawW <= 0) continue;
         ctx.fillStyle = '#121722';
-        ctx.fillRect(s.x, s.y, s.w, s.h);
-        if (pat) {
+        ctx.fillRect(drawX, s.y, drawW, s.h);
+        if (pat && (!Engine.lowQuality || s.w <= 420)) {
           ctx.save();
           ctx.globalAlpha = 0.98;
           ctx.fillStyle = pat.wall;
-          ctx.fillRect(s.x, s.y, s.w, s.h);
+          ctx.fillRect(drawX, s.y, drawW, s.h);
           ctx.fillStyle = pat.floor;
           const topH = Math.min(s.h, 28);
-          ctx.fillRect(s.x, s.y, s.w, topH);
+          ctx.fillRect(drawX, s.y, drawW, topH);
           ctx.restore();
+        } else {
+          ctx.fillStyle = theme ? theme.wall : '#2a3350';
+          ctx.fillRect(drawX, s.y, drawW, Math.min(s.h, 28));
         }
         // Затемняем твёрдые поверхности, чтобы персонажи и эффекты читались
         // даже на светлых фонах (больница, лёд).
         ctx.fillStyle = 'rgba(3,5,12,0.18)';
-        ctx.fillRect(s.x, s.y, s.w, s.h);
+        ctx.fillRect(drawX, s.y, drawW, s.h);
         if (theme) {
           ctx.save();
           ctx.globalAlpha = 0.34;
           ctx.fillStyle = theme.accent;
-          ctx.fillRect(s.x, s.y, s.w, 2);
+          ctx.fillRect(drawX, s.y, drawW, 2);
           ctx.restore();
         }
         ctx.fillStyle = 'rgba(255,255,255,0.12)';
-        ctx.fillRect(s.x, s.y, s.w, 1);
+        ctx.fillRect(drawX, s.y, drawW, 1);
         ctx.fillStyle = 'rgba(0,0,0,0.5)';
-        ctx.fillRect(s.x, s.y + s.h - 4, s.w, 4);
+        ctx.fillRect(drawX, s.y + s.h - 4, drawW, 4);
         // трещины
-        ctx.strokeStyle = 'rgba(0,0,0,0.25)';
-        ctx.lineWidth = 1;
-        for (let x = s.x + 40; x < s.x + s.w; x += 130) {
-          ctx.beginPath();
-          ctx.moveTo(x, s.y + 6);
-          ctx.lineTo(x + 7, s.y + 14);
-          ctx.lineTo(x + 3, s.y + 22);
-          ctx.stroke();
+        if (!Engine.lowQuality) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+          ctx.lineWidth = 1;
+          for (let x = drawX + 40; x < drawRight; x += 130) {
+            ctx.beginPath();
+            ctx.moveTo(x, s.y + 6);
+            ctx.lineTo(x + 7, s.y + 14);
+            ctx.lineTo(x + 3, s.y + 22);
+            ctx.stroke();
+          }
         }
-        if (theme) {
+        if (theme && !Engine.lowQuality) {
           ctx.save();
           ctx.globalAlpha = 0.10;
           ctx.fillStyle = theme.accent;
@@ -207,6 +225,7 @@
       this.arenaBg = this.arena
         ? Engine.getSprite(this.arena.bg, '#0d0a16', Engine.CANVAS_W, Engine.CANVAS_H)
         : null;
+      this._arenaVignette = null;
       this.cutinPath = this.data.cutin || null;
       this.scenes = (Array.isArray(this.data.scenes) ? this.data.scenes : []).map((s, i) => ({
         id: s.id || ('scene-' + this.chapterId + '-' + i),
@@ -874,10 +893,12 @@
           ctx.globalAlpha = p;
           ctx.drawImage(this.arenaBg.img, 0, 0, Engine.CANVAS_W, Engine.CANVAS_H);
           ctx.globalAlpha = 1;
-          const vg = ctx.createRadialGradient(480, 250, 140, 480, 250, 580);
-          vg.addColorStop(0, 'rgba(0,0,0,0)');
-          vg.addColorStop(1, 'rgba(0,0,0,0.58)');
-          ctx.fillStyle = vg;
+          if (!this._arenaVignette) {
+            this._arenaVignette = ctx.createRadialGradient(480, 250, 140, 480, 250, 580);
+            this._arenaVignette.addColorStop(0, 'rgba(0,0,0,0)');
+            this._arenaVignette.addColorStop(1, 'rgba(0,0,0,0.58)');
+          }
+          ctx.fillStyle = this._arenaVignette;
           ctx.fillRect(0, 0, Engine.CANVAS_W, Engine.CANVAS_H);
           ctx.restore();
         }
@@ -947,8 +968,10 @@
       const theme = this.theme;
       for (const z of this.zones) {
         if (!this.visible(z.x, z.w)) continue;
-        const spots = [z.x + z.w * 0.12, z.x + z.w * 0.32, z.x + z.w * 0.5,
-          z.x + z.w * 0.7, z.x + z.w * 0.88];
+        const spots = Engine.lowQuality
+          ? [z.x + z.w * 0.28, z.x + z.w * 0.72]
+          : [z.x + z.w * 0.12, z.x + z.w * 0.32, z.x + z.w * 0.5,
+            z.x + z.w * 0.7, z.x + z.w * 0.88];
         spots.forEach((x, i) => {
           if (!this.visible(x - 90, 200)) return;
           const k = z.kind;
@@ -1137,7 +1160,7 @@
       const themeId = this.themeId;
       for (const z of this.zones) {
         if (!this.visible(z.x, z.w)) continue;
-        const count = Math.max(8, Math.floor(z.w / 150));
+        const count = Engine.lowQuality ? Math.max(4, Math.floor(z.w / 260)) : Math.max(8, Math.floor(z.w / 150));
         for (let i = 0; i < count; i++) {
           const x = z.x + 80 + ((i + 0.5) / count) * (z.w - 160);
           const r = pseudo(x, i + this.chapterId);
@@ -1877,7 +1900,8 @@
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       // косые лучи света
-      for (let i = 0; i < 3; i++) {
+      const rayCount = Engine.lowQuality ? 1 : 3;
+      for (let i = 0; i < rayCount; i++) {
         const baseX = this.worldW * (0.18 + i * 0.32) + Math.sin(this.time * 0.18 + i) * 14;
         const g = ctx.createLinearGradient(baseX, 0, baseX + 180, floor);
         g.addColorStop(0, rgba(accent, 0.085));
@@ -1892,8 +1916,11 @@
         ctx.closePath();
         ctx.fill();
       }
-      // световые пятна от факелов
+      // световые пятна от факелов (только видимые)
+      const cam = Engine.Camera;
       for (const tx of this.torches) {
+        if (Engine.lowQuality) break;
+        if (tx < cam.x - 140 || tx > cam.x + Engine.CANVAS_W + 140) continue;
         const g = ctx.createRadialGradient(tx, floor - 10, 2, tx, floor - 10, 100);
         g.addColorStop(0, rgba(flame, 0.13));
         g.addColorStop(0.5, rgba(flame, 0.05));
@@ -1909,7 +1936,8 @@
       ctx.save();
       ctx.globalAlpha = 0.5;
       ctx.fillStyle = this.theme.fog;
-      for (let i = 0; i < 3; i++) {
+      const fogCount = Engine.lowQuality ? 1 : 3;
+      for (let i = 0; i < fogCount; i++) {
         const x = ((this.time * (6 + i * 3) + i * 780) % (this.worldW + 500)) - 250;
         ctx.beginPath();
         ctx.ellipse(x, floor - 14, 230, 26, 0, 0, Math.PI * 2);
@@ -1923,7 +1951,9 @@
         : (weather === 'castle' || weather === 'throne') ? 'rgba(255,150,80,0.8)'
           : weather === 'jungle' ? 'rgba(140,255,200,0.7)'
             : 'rgba(220,210,180,0.45)';
-      const count = weather === 'ice' ? 46 : (weather === 'jungle' ? 24 : 30);
+      const count = Engine.lowQuality
+        ? (weather === 'ice' ? 18 : weather === 'jungle' ? 12 : 16)
+        : (weather === 'ice' ? 46 : (weather === 'jungle' ? 24 : 30));
       const rising = weather === 'castle' || weather === 'throne';
       const speed = weather === 'ice' ? 18 : (rising ? 26 : 9);
       ctx.save();
