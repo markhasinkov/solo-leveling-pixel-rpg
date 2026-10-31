@@ -215,7 +215,7 @@ vm.createContext(sandbox);
 const scripts = [
   'engine.js', 'formulas.js', 'audio.js', 'effects.js', 'player.js', 'boss.js',
   'combat.js', 'progress.js', 'loot.js', 'quests.js', 'world.js', 'dialogue.js',
-  'shadows.js', 'ui.js', 'save.js', 'tg.js', 'main.js'
+  'shadows.js', 'bonds.js', 'ui.js', 'save.js', 'tg.js', 'main.js'
 ];
 for (const f of scripts) {
   const code = fs.readFileSync(path.join(ROOT, 'src', 'js', f), 'utf8');
@@ -370,6 +370,38 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.player.mp < mpBefore, 'умение тратит ману (' + mpBefore + ' → ' + game.player.mp + ')');
   assert(sandbox.Combat.cooldownLeft('shadow-slash') > 0, 'умение уходит в перезарядку');
   advance(120);
+
+  // ---------- Новые умения ----------
+  assert(sandbox.Combat.skills.length === 8, 'в игре восемь активных умений');
+  assert(['6', '7', '8'].every((key) => sandbox.Combat.skills.some((s) => s.key === key)),
+    'новые умения назначены на клавиши 6–8');
+  game.progress.level = Math.max(14, game.progress.level);
+  game.progress.recalc();
+  game.player.syncStats(game.progress.stats, false);
+  game.player.mp = game.player.maxMp;
+  const testDummy = game.spawnEnemy('goblin', 300, {});
+  testDummy.x = game.player.x + 90;
+  testDummy.y = game.world.floorY - testDummy.h;
+  testDummy.hp = testDummy.maxHp = 99999;
+  testDummy.def = 0;
+  testDummy.stunTimer = 0;
+  game.player.face = 1;
+  const hpBeforeBlood = game.player.hp = 50;
+  game.castSkillSlot(5);
+  advance(40);
+  assert(game.player.hp > hpBeforeBlood, 'Кровавый клинок лечит от нанесённого урона');
+  sandbox.Effects.projectiles.length = 0;
+  game.player.mp = game.player.maxMp;
+  game.castSkillSlot(6);
+  assert(sandbox.Effects.projectiles.filter((p) => p.owner === 'player').length === 5,
+    'Веер теней выпускает пять клинков');
+  sandbox.Effects.projectiles.length = 0;
+  game.player.mp = game.player.maxMp;
+  game.castSkillSlot(7);
+  assert(testDummy.stunTimer > 0, 'Теневая клетка оглушает врагов');
+  testDummy.dead = true;
+  game.monsters = game.monsters.filter((m) => m !== testDummy);
+  advance(80);
 
   // ---------- Опыт и таланты ----------
   const lvlBefore = game.progress.level;
@@ -669,7 +701,41 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
       'контракт с доски возвращает в выбранную главу');
     sandbox.UI.closeAllPanels();
 
-    // ---------- Хроники ----------
+    // ---------- Связи в хабе ----------
+    game.unlocked = 9;
+    game.bonds = {};
+    press('g');
+    advance(60);
+    release('g');
+    assert(sandbox.UI.hub.querySelectorAll('.hub-bond').length === 3,
+      'в хабе доступны три линии связей');
+    const bondCard = (name) => Array.from(sandbox.UI.hub.querySelectorAll('.hub-bond'))
+      .find((c) => c.querySelector('.hub-bond-name').textContent === name);
+    assert(bondCard('Ча Хэ-Ин').querySelector('.hub-bond-btn').disabled,
+      'линия Ча Хэ-Ин закрыта до главы 10');
+    assert(!bondCard('Семья').querySelector('.hub-bond-btn').disabled,
+      'семейная линия открыта после пробуждения мамы');
+    const hpBeforeBond = game.player.maxHp;
+    bondCard('Семья').querySelector('.hub-bond-btn').click();
+    advance(40);
+    assert(sandbox.Dialogue.active, 'сцена связи запускается');
+    while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
+    advance(60);
+    assert(game.bonds.family === 1, 'уровень семейной связи повышается');
+    assert(game.player.maxHp === hpBeforeBond + 20, 'связь даёт постоянный бонус HP');
+    const saveWithBonds = JSON.parse(storage.get('solo-leveling-save'));
+    assert(saveWithBonds.bonds && saveWithBonds.bonds.family === 1,
+      'уровни связей сохраняются');
+    const normalizedBonds = game.normalizeBonds({ family: 1, unknown: 2 });
+    assert(normalizedBonds.family === 1 && !normalizedBonds.unknown,
+      'связи нормализуются при загрузке');
+    press('g');
+    advance(60);
+    release('g');
+    const litPips = Array.from(bondCard('Семья').querySelectorAll('.hub-bond-pip'))
+      .filter((p) => String(p.className).indexOf(' on') >= 0);
+    assert(litPips.length === 1, 'хаб показывает прогресс связи');
+    sandbox.UI.closeAllPanels();
     sandbox.UI.toggleCodex();
     assert(sandbox.UI.codex.style.display !== 'none', 'кодекс открывается');
     assert(sandbox.UI.codexContent.children.length > 0, 'кодекс показывает людей');
@@ -1047,14 +1113,18 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.boss && game.boss.name.indexOf('Королева') >= 0 && game.boss.animId === 'ant-queen' &&
     game.boss.cutinPath.indexOf('cutin_ant_queen') >= 0, 'глава Чеджу начинается с королевы муравьёв');
   assert(game.npcs.some((n) => n.charId === 'min-byung-gu') &&
-    game.npcs.some((n) => n.charId === 'goto-ryuji'), 'на Чеджу присутствуют Мин Бён-Гю и Гото Рюдзи');
+    game.npcs.some((n) => n.charId === 'goto-ryuji') &&
+    game.npcs.some((n) => n.charId === 'kenzo-tanaka') &&
+    game.npcs.some((n) => n.charId === 'kanae-tawata') &&
+    game.npcs.some((n) => n.charId === 'kei'),
+    'на Чеджу присутствуют Мин Бён-Гю, Гото и японская команда Draw Sword');
   game.damageMonster(game.boss, 99999999, { source: 'basic' });
   advance(200);
   assert(game._bossStage === 1 && game.boss && !game.boss.dead && game.boss.animId === 'beru' &&
     game.boss.name.indexOf('Беру') >= 0, 'после королевы из глубин появляется Беру');
   assert(game.boss.cutinPath.indexOf('cutin_beru') >= 0, 'у Беру свой cut-in');
-  assert(game.npcs.every((n) => n.charId !== 'min-byung-gu' && n.charId !== 'goto-ryuji'),
-    'Мин Бён-Гю и Гото Рюдзи погибают при появлении Беру');
+  assert(game.npcs.every((n) => ['min-byung-gu', 'goto-ryuji', 'kenzo-tanaka', 'kanae-tawata', 'kei'].indexOf(n.charId) < 0),
+    'Мин Бён-Гю, Гото и японская команда погибают при появлении Беру');
   assert(sandbox.Dialogue.active, 'переход к Беру сопровождается сценой гибели союзников');
   while (sandbox.Dialogue.active) sandbox.Dialogue.advance();
   advance(200);
@@ -1076,15 +1146,27 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
     'Барука атакует ледяными снарядами');
   assert(game.allies.some((a) => a.shadowId === 'beru' && a.attackStyle === 'multi'),
     'Беру использует быстрые множественные удары');
+  assert(sandbox.ShadowArmy.maxFor(game) === 2, 'до таланта доступно два слота теней');
+  game.progress.level = Math.max(game.progress.level, 14);
+  game.progress.talents['shd-5'] = 1;
+  game.progress.recalc();
+  assert(sandbox.ShadowArmy.maxFor(game) === 3, 'талант «Третий клинок» открывает третий слот');
+  game.toggleShadow('igris');
+  assert(game.shadows.equipped.length === 3 && game.shadows.equipped.indexOf('igris') >= 0,
+    'третья тень встаёт в строй');
+  assert(game.allies.some((a) => a.shadowId === 'igris'), 'третья тень выходит в бой');
 
   sandbox.UI.toggleShadows();
   assert(sandbox.UI.shadowPanel.style.display !== 'none', 'панель теневой армии открывается');
   assert(sandbox.UI.shadowBody.children.length > 0, 'панель показывает теней и слоты');
+  assert(sandbox.UI.shadowBody.querySelectorAll('.shadow-slot').length === 3,
+    'панель показывает три слота после таланта');
   sandbox.UI.closeAllPanels();
   game.persist();
   const shadowSave = JSON.parse(storage.get('solo-leveling-save'));
   assert(shadowSave.shadows.levels.igris === 2 && shadowSave.shadows.owned.baruka &&
-    shadowSave.shadows.owned.beru, 'уровни и состав теней сохраняются');
+    shadowSave.shadows.owned.beru && shadowSave.shadows.equipped.length === 3,
+    'уровни, состав и три слота теней сохраняются');
 
   // ---------- Миграция сохранения v1 ----------
   const currentSave = storage.get('solo-leveling-save');

@@ -1209,7 +1209,7 @@
       const body = this.shadowBody;
       clear(body);
       const defs = window.ShadowArmy ? window.ShadowArmy.DEFS : {};
-      const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
+      const max = window.ShadowArmy ? window.ShadowArmy.maxFor(g) : 2;
       const essence = g.inventory.count('shadow-essence');
 
       const top = el('div', 'shadow-top', body);
@@ -1218,7 +1218,7 @@
       el('span', 'shadow-essence', stats).textContent = 'Эссенция тени: ' + essence;
       el('span', 'shadow-slots-count', stats).textContent = 'В строю: ' + g.shadows.equipped.length + ' / ' + max;
 
-      const slots = el('div', 'shadow-slots', body);
+      const slots = el('div', 'shadow-slots shadow-slots-' + max, body);
       for (let i = 0; i < max; i++) {
         const id = g.shadows.equipped[i];
         const slot = el('div', 'shadow-slot' + (id ? ' filled' : ' empty'), slots);
@@ -1340,7 +1340,7 @@
       (g.contracts.list || []).forEach((c) => {
         if (c.status === 'active' && (!g.activeContract || g.activeContract.id !== c.id)) c.status = 'failed';
       });
-      const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
+      const max = window.ShadowArmy ? window.ShadowArmy.maxFor(g) : 2;
       const done = (type) => (window.Quests.data[type] || [])
         .filter((q) => ((window.Quests.stateOf(q.id) || {}).status === 'completed')).length;
       const total = (type) => (window.Quests.data[type] || []).length;
@@ -1417,6 +1417,47 @@
           }
           g.startContract(contract.id);
         });
+      });
+
+      const bonds = el('section', 'hub-section hub-bonds', body);
+      const bhead = el('div', 'hub-sec-head', bonds);
+      el('div', 'hub-sec-title', bhead).textContent = 'СВЯЗИ';
+      el('div', 'hub-sec-sub', bhead).textContent =
+        'Тихие вечера и разговоры дают небольшие постоянные бонусы.';
+      const bondGrid = el('div', 'hub-bond-grid', bonds);
+      const bondDefs = window.Bonds ? window.Bonds.BONDS : [];
+      bondDefs.forEach((bond) => {
+        const level = window.Bonds.level(g, bond.id);
+        const next = window.Bonds.nextStage(g, bond);
+        const open = !!(next && window.Bonds.unlocked(g, next));
+        const card = el('article', 'hub-bond' + (!next ? ' complete' : open ? '' : ' locked'), bondGrid);
+        const top = el('div', 'hub-bond-top', card);
+        const portrait = img(bond.portrait, 'hub-bond-portrait', top);
+        portrait.style.imageRendering = 'pixelated';
+        const info = el('div', 'hub-bond-info', top);
+        el('div', 'hub-bond-name', info).textContent = bond.name;
+        el('div', 'hub-bond-role', info).textContent = bond.role;
+        const pips = el('div', 'hub-bond-pips', info);
+        for (let i = 0; i < bond.stages.length; i++) {
+          el('span', 'hub-bond-pip' + (i < level ? ' on' : ''), pips);
+        }
+        el('div', 'hub-bond-title', card).textContent =
+          next ? next.title : 'Все истории рассказаны';
+        el('div', 'hub-bond-hint', card).textContent =
+          next ? (open ? next.hint : 'Откроется после главы ' + next.chapter)
+            : 'Тихие вечера остаются в памяти.';
+        if (next && open) {
+          el('div', 'hub-bond-bonus', card).textContent =
+            'Бонус: ' + window.Bonds.bonusText(next.bonus);
+        }
+        const btn = el('button', 'hub-bond-btn', card);
+        btn.textContent = next ? (open ? 'ПОГОВОРИТЬ' : 'ГЛАВА ' + next.chapter) : 'ЗАВЕРШЕНО';
+        btn.disabled = !open;
+        if (open) {
+          btn.addEventListener('click', () => {
+            g.startBond(bond.id);
+          });
+        }
       });
 
       const grid = el('div', 'hub-grid', body);
@@ -1669,7 +1710,7 @@
       this.menuTouch.textContent = 'Экранные кнопки: ' + (this.touch ? 'вкл' : 'выкл');
       if (this.menuHanded) this.menuHanded.textContent = 'Раскладка: ' + (settings.leftHanded ? 'левша' : 'правша');
       if (this.menuShadow) {
-        const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
+        const max = window.ShadowArmy ? window.ShadowArmy.maxFor(this.game) : 2;
         const count = this.game.shadows.equipped.length;
         const owned = Object.keys(this.game.shadows.owned || {}).length;
         this.menuShadow.textContent = 'Теневая армия: ' + count + '/' + max + ' в строю' +

@@ -19,7 +19,7 @@ const nodesById = Object.fromEntries(talentsData.nodes.map((n) => [n.id, n]));
 
 const HUMANS = new Set(['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul', 'lee-joo-hee',
   'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in', 'min-byung-gu',
-  'goto-ryuji', 'architect']);
+  'goto-ryuji', 'kenzo-tanaka', 'kanae-tawata', 'kei', 'architect']);
 
 function isEnemy(id, c, chapter) {
   if (HUMANS.has(id)) return false;
@@ -168,6 +168,9 @@ for (const ch of chapters) {
     { mult: 1.7, cd: 4 }, { mult: 1.35, cd: 3 }, { mult: 1.2, cd: 7 },
     { mult: 2.2, cd: 14 }, { mult: 0.6, cd: 28 }
   ];
+  if (level >= 10) skills.push({ mult: 2.35, cd: 9 });
+  if (level >= 12) skills.push({ mult: 2.7, cd: 11 });
+  if (level >= 14) skills.push({ mult: 1.15, cd: 20 });
   const skillDps = skills.reduce((sum, s) => sum + F.damage(stats.atk, bossStats.def, s.mult) * crit / s.cd, 0) * 0.7;
   const dps = basicDps + skillDps;
   const bossTtk = bossStats.hp / dps;

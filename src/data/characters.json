@@ -143,6 +143,39 @@
     }
   },
   {
+    "id": "kenzo-tanaka",
+    "name": "Кэндзо Танака",
+    "role": "Охотник S-ранга гильдии Draw Sword, японская ударная группа",
+    "sprite": "assets/sprites/kenzo-tanaka.png",
+    "stats": {
+      "hp": 950,
+      "atk": 150,
+      "def": 80
+    }
+  },
+  {
+    "id": "kanae-tawata",
+    "name": "Канаэ Тавата",
+    "role": "Охотница S-ранга гильдии Draw Sword, мастер клинка",
+    "sprite": "assets/sprites/kanae-tawata.png",
+    "stats": {
+      "hp": 700,
+      "atk": 135,
+      "def": 60
+    }
+  },
+  {
+    "id": "kei",
+    "name": "Кэй",
+    "role": "Маг S-ранга гильдии Draw Sword, ледяная магия",
+    "sprite": "assets/sprites/kei.png",
+    "stats": {
+      "hp": 600,
+      "atk": 160,
+      "def": 45
+    }
+  },
+  {
     "id": "park-hee-jin",
     "name": "Пак Хи-Джин",
     "role": "Охотница B-ранга, гильдия «Белый Тигр»",

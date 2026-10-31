@@ -154,6 +154,7 @@
           knockback: opts.knockback || 0,
           stun: opts.stun || 0
         });
+        if (opts.onHit) opts.onHit(m, roll.dmg);
         hits++;
       }
       if (game.world && game.world.hitOrbsRect) game.world.hitOrbsRect(rect, game);
@@ -206,8 +207,10 @@
             w: range,
             h: p.h + 12
           };
+          let stolen = 0;
           const hits = this.hitMonstersInRect(game, rect, skill.damage || 1.6, {
-            isSkill: true, source: 'skill', color: skill.color, knockback: 220
+            isSkill: true, source: 'skill', color: skill.color, knockback: 220,
+            onHit: (target, dmg) => { stolen += dmg; }
           });
           // три слоя теневых дуг и дымные росчерки
           for (let i = 0; i < 3; i++) {
@@ -230,6 +233,12 @@
           Effects.spawnParticles(cx + p.face * 54, cy, '#f4eaff', 14, { speed: 260, life: 0.4, glow: true, shape: 'circle' });
           Effects.afterimage({ sheet: p.sheet, col: p.animFrame, row: 1, x: p.getDrawX() - p.face * 12, y: p.getDrawY(), w: p.drawW, h: p.drawH, face: p.face, life: 0.22, color: skill.color });
           if (hits > 0) { Engine.hitStop(0.07); Camera.addTrauma(0.28); AudioFX.play('crit'); }
+          if (skill.lifesteal && stolen > 0) {
+            const heal = Math.max(1, Math.round(stolen * skill.lifesteal));
+            p.hp = Math.min(p.maxHp, p.hp + heal);
+            Effects.text(cx, p.y - 28, '+' + heal + ' HP', { color: '#6aff9a', size: 12, life: 0.8 });
+            Effects.spawnParticles(cx, cy, '#6aff9a', 12, { speed: 120, up: 90, life: 0.6, glow: true });
+          }
           break;
         }
 
@@ -237,23 +246,29 @@
           const speed = skill.speed || 720;
           const hx0 = p.x + p.w / 2 + aim.x * 18;
           const hy0 = p.y + p.h * 0.42 + aim.y * 18;
+          const count = Math.max(1, skill.count || 1);
+          const spread = skill.spread || 0;
           Effects.sigil({ x: hx0, y: hy0, r: 26, life: 0.32, color: skill.color, mode: 'rune' });
-          Effects.projectile({
-            x: hx0, y: hy0,
-            vx: aim.x * speed,
-            vy: aim.y * speed,
-            angle: aim.angle,
-            r: 8,
-            damage: p.atk,
-            mult: skill.damage || 1.3,
-            isSkill: true,
-            owner: 'player',
-            color: skill.color,
-            pierce: skill.pierce || 2,
-            knockback: 160,
-            shape: 'dagger',
-            scale: 1.5
-          });
+          for (let i = 0; i < count; i++) {
+            const offset = count > 1 ? (i - (count - 1) / 2) * spread : 0;
+            const angle = aim.angle + offset;
+            Effects.projectile({
+              x: hx0, y: hy0,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              angle,
+              r: 8,
+              damage: p.atk,
+              mult: skill.damage || 1.3,
+              isSkill: true,
+              owner: 'player',
+              color: skill.color,
+              pierce: skill.pierce || 2,
+              knockback: 160,
+              shape: 'dagger',
+              scale: skill.count ? 1.15 : 1.5
+            });
+          }
           Effects.shadowBurst(hx0, hy0, 'rgba(45,30,80,0.6)', 8, { spread: 10, speed: 120, up: 60, life: 0.5, size: 5 });
           Effects.spawnParticles(hx0, hy0, skill.color, 10, { speed: 170, life: 0.35, glow: true, shape: 'circle' });
           Effects.ring({ x: hx0, y: hy0, r0: 4, maxR: 38, life: 0.22, color: '#d8f4ff', width: 2 });

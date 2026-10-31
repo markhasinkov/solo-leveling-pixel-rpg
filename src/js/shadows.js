@@ -66,7 +66,11 @@
 
   window.ShadowArmy = {
     DEFS: DEFS,
-    MAX: 2,
+    maxFor(game) {
+      const extra = game && game.progress && game.progress.stats
+        ? game.progress.stats.shadowSlots | 0 : 0;
+      return 2 + Math.max(0, extra);
+    },
     ids() { return Object.keys(DEFS); },
     def(id) { return DEFS[id] || null; },
     upgradeCost(level) {

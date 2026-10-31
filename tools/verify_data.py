@@ -403,7 +403,7 @@ for cid in chapter_ids:
 def is_enemy(cid, c, chapter_id):
     humans = {"yoo-jinho", "cha-hae-in", "go-gun-hee", "song-chi-yul", "lee-joo-hee",
               "ahn-sang-min", "woo-jin-chul", "baek-yoon-ho", "kim-chul", "choi-jong-in",
-              "min-byung-gu", "goto-ryuji", "architect"}
+              "min-byung-gu", "goto-ryuji", "kenzo-tanaka", "kanae-tawata", "kei", "architect"}
     if cid in humans:
         return False
     if cid == "igris":

@@ -51,7 +51,8 @@
       maxMpPct: 0,
       mpRegen: 0,
       mpCostPct: 0,
-      allyCount: 0
+      allyCount: 0,
+      shadowSlots: 0
     };
   }
 
@@ -122,7 +123,8 @@
       doubleJump: mods.doubleJump > 0,
       hpRegen: mods.hpRegen,
       mpRegen: 1.5 + mods.mpRegen + (gear.mpRegen || 0),
-      allyCount: Math.floor(mods.allyCount)
+      allyCount: Math.floor(mods.allyCount),
+      shadowSlots: Math.max(0, Math.floor(mods.shadowSlots || 0))
     };
   }
 

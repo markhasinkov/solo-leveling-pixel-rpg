@@ -151,6 +151,10 @@
     return { day: null, list: [] };
   }
 
+  function emptyBonds() {
+    return {};
+  }
+
   function dayKey(date) {
     const d = date || new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
@@ -211,6 +215,7 @@
     storySeen: {},
     shadows: emptyShadows(),
     contracts: emptyContracts(),
+    bonds: emptyBonds(),
     activeContract: null,
     contractRun: false,
     contractOutcome: null,
@@ -325,6 +330,7 @@
       this.storySeen = {};
       this.shadows = emptyShadows();
       this.contracts = emptyContracts();
+      this.bonds = emptyBonds();
       this.activeContract = null;
       this.contractRun = false;
       this.contractOutcome = null;
@@ -355,6 +361,7 @@
       this.storySeen = save.storySeen || {};
       this.shadows = this.normalizeShadows(save.shadows);
       this.contracts = this.normalizeContracts(save.contracts);
+      this.bonds = this.normalizeBonds(save.bonds);
       this.activeContract = null;
       this.contractRun = false;
       this.contractOutcome = null;
@@ -375,7 +382,7 @@
         out.levels[id] = Math.max(1, Math.min(5, level));
       });
       const eq = raw && Array.isArray(raw.equipped) ? raw.equipped : [];
-      const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
+      const max = window.ShadowArmy ? window.ShadowArmy.maxFor(this) : 2;
       out.equipped = eq.filter((id, i) => out.owned[id] && eq.indexOf(id) === i).slice(0, max);
       return out;
     },
@@ -394,6 +401,58 @@
       return { day: raw.day, list };
     },
 
+    normalizeBonds(raw) {
+      const out = emptyBonds();
+      const defs = window.Bonds ? window.Bonds.BONDS : [];
+      defs.forEach((bond) => {
+        const level = Math.max(0, Math.min(bond.stages.length, (raw && raw[bond.id]) | 0 || 0));
+        if (level > 0) out[bond.id] = level;
+      });
+      return out;
+    },
+
+    startBond(id) {
+      const bond = window.Bonds && window.Bonds.byId(id);
+      if (!bond) return false;
+      const stage = window.Bonds.nextStage(this, bond);
+      if (!stage) return false;
+      if (!window.Bonds.unlocked(this, stage)) {
+        UI.toast('Связь', 'История откроется после главы ' + stage.chapter, {
+          color: '#9aa0c0', duration: 3000
+        });
+        return false;
+      }
+      UI.closeAllPanels();
+      if (stage.cutin) {
+        UI.showCutin({
+          image: stage.cutin,
+          eyebrow: 'СВЯЗЬ',
+          name: bond.name,
+          subtitle: stage.title,
+          duration: 5200
+        });
+      }
+      const lines = this.makeStoryLines(stage.lines);
+      Dialogue.start(lines, () => {
+        this.bonds[id] = window.Bonds.level(this, id) + 1;
+        this.applyBondBonus(stage.bonus);
+        if (stage.cutin) UI.hideCutin();
+        const gain = window.Bonds.bonusText(stage.bonus);
+        UI.toast('Связь', bond.name + ' · ' + stage.title + (gain ? ' · ' + gain : ''), {
+          color: '#e8c76a', duration: 4200
+        });
+        this.persist();
+      });
+      return true;
+    },
+
+    applyBondBonus(bonus) {
+      if (!bonus) return;
+      this.progress.applyPermanent(bonus);
+      if (this.player) this.player.syncStats(this.progress.stats, false);
+      this.persist();
+    },
+
     persist() {
       if (!window.SaveSystem || !this.progress) return;
       if (this.world && this.chapter) this.savedWorld[this.chapter.id] = this.world.serialize();
@@ -409,6 +468,7 @@
         settings: this.settings,
         shadows: this.shadows,
         contracts: this.contracts,
+        bonds: this.bonds,
         finished: this.finished
       });
     },
@@ -739,7 +799,7 @@
     isEnemy(id, c, chapterId) {
       const HUMANS = ['yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul', 'lee-joo-hee',
         'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul', 'choi-jong-in',
-        'min-byung-gu', 'goto-ryuji', 'architect'];
+        'min-byung-gu', 'goto-ryuji', 'kenzo-tanaka', 'kanae-tawata', 'kei', 'architect'];
       if (HUMANS.includes(id)) return false;
       if (id === 'igris') return chapterId === 4;
       if (id === 'baran') return chapterId === 6;
@@ -829,7 +889,7 @@
       if (!id || !window.ShadowArmy || !window.ShadowArmy.def(id)) return;
       this.shadows.owned[id] = true;
       if (!this.shadows.levels[id]) this.shadows.levels[id] = 1;
-      const max = window.ShadowArmy.MAX;
+      const max = window.ShadowArmy.maxFor(this);
       if (this.shadows.equipped.indexOf(id) < 0 && this.shadows.equipped.length < max) {
         this.shadows.equipped.push(id);
       }
@@ -884,8 +944,9 @@
         this.shadows.equipped.splice(idx, 1);
         UI.toast('Теневая армия', def.name + ' отправлен в резерв.', { color: '#a06cff', duration: 2400 });
       } else {
-        if (this.shadows.equipped.length >= window.ShadowArmy.MAX) {
-          UI.toast('Теневая армия', 'Оба слота заняты. Сначала отправьте одну тень в резерв.', {
+        const max = window.ShadowArmy.maxFor(this);
+        if (this.shadows.equipped.length >= max) {
+          UI.toast('Теневая армия', 'Все слоты заняты (' + max + '). Сначала отправьте одну тень в резерв.', {
             color: '#ffd24a', duration: 3000
           });
           return;
@@ -910,7 +971,7 @@
 
     syncShadowAllies() {
       if (!this.player || !this.world) return;
-      const max = window.ShadowArmy ? window.ShadowArmy.MAX : 2;
+      const max = window.ShadowArmy ? window.ShadowArmy.maxFor(this) : 2;
       const active = this.shadows.equipped.slice(0, max);
       this.allies = this.allies.filter((a) => !a.shadowId || active.indexOf(a.shadowId) >= 0);
       active.forEach((id) => {
@@ -1983,6 +2044,7 @@
       this.storySeen = {};
       this.shadows = emptyShadows();
       this.contracts = emptyContracts();
+      this.bonds = emptyBonds();
       this.activeContract = null;
       this.contractRun = false;
       this.contractOutcome = null;

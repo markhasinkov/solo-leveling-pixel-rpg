@@ -81,6 +81,11 @@
       "id": "shd-4", "branch": "shadow", "name": "Воля Монарха", "desc": "+15% урона умений и -10% их стоимости",
       "maxRank": 1, "cost": 2, "levelReq": 10, "requires": ["shd-3"], "x": 3, "y": 3,
       "effect": { "skillDamagePct": 0.15, "mpCostPct": -0.1 }
+    },
+    {
+      "id": "shd-5", "branch": "shadow", "name": "Третий клинок", "desc": "Открывает третий слот теневой армии",
+      "maxRank": 1, "cost": 2, "levelReq": 14, "requires": ["shd-4"], "x": 3, "y": 4,
+      "effect": { "shadowSlots": 1 }
     }
   ]
 }

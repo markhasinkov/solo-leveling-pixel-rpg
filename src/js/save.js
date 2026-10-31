@@ -1,4 +1,4 @@
-// save.js — сохранение v5: миграция v1–v4, теневой легион, настройки, квесты, мир.
+// save.js — сохранение v5: миграция v1–v4, тени, связи, настройки, квесты, мир.
 (function () {
   'use strict';
 
@@ -193,6 +193,7 @@
         settings: state.settings || {},
         shadows: state.shadows || { owned: {}, equipped: [] },
         contracts: state.contracts || { day: null, list: [] },
+        bonds: state.bonds || {},
         finished: !!state.finished
       };
       this.write(obj);

@@ -14,7 +14,8 @@ OUT = os.path.dirname(HERE)
 CHARACTERS = [
     'sung-jin-woo', 'yoo-jinho', 'cha-hae-in', 'go-gun-hee', 'song-chi-yul',
     'lee-joo-hee', 'ahn-sang-min', 'woo-jin-chul', 'baek-yoon-ho', 'kim-chul',
-    'choi-jong-in', 'min-byung-gu', 'goto-ryuji', 'park-hee-jin', 'han-song-yi',
+    'choi-jong-in', 'min-byung-gu', 'goto-ryuji', 'kenzo-tanaka', 'kanae-tawata', 'kei',
+    'park-hee-jin', 'han-song-yi',
     'sung-jin-ah', 'sung-il-hwan', 'esil-radiru',
     'ashborn', 'architect', 'antares', 'beru', 'ant-queen', 'sillad',
     'baran', 'igris', 'baruka', 'statue-of-god', 'kargalgan', 'goblin', 'orc',

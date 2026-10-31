@@ -100,6 +100,7 @@
     dodge: ['shift', 'k'],
     interact: ['e'],
     skill1: ['1'], skill2: ['2'], skill3: ['3'], skill4: ['4'], skill5: ['5'],
+    skill6: ['6'], skill7: ['7'], skill8: ['8'],
     potion: ['h'],
     inventory: ['i'],
     talents: ['t'],

@@ -369,6 +369,34 @@ def skill_icon(sid, rarity="epic"):
             line(rows, ox, 24, ox - 1, 27, c)
             line(rows, ox + 6, 24, ox + 7, 27, c)
         put(rows, 15, 7, hx("#d6bcff")); put(rows, 14, 8, hx("#d6bcff"))
+    elif sid == "blood-blade":
+        for i in range(16):
+            put(rows, 8 + i, 24 - i, hx("#ff4a5a"))
+            put(rows, 9 + i, 24 - i, hx("#ffd0d0"))
+            if 4 < i < 13:
+                put(rows, 8 + i, 25 - i, hx("#8a1a28"))
+        rect(rows, 6, 24, 10, 26, hx("#5b4322"))
+        circle(rows, 23, 21, 2, hx("#ff4a5a"))
+        circle(rows, 20, 25, 1, hx("#ff8a9a"))
+        put(rows, 24, 20, hx("#ffd0d0"))
+    elif sid == "shadow-volley":
+        for k in range(5):
+            dx = (k - 2) * 4
+            for i in range(10):
+                x = 16 + dx * (i / 10) + dx
+                y = 24 - i
+                put(rows, int(round(x)), y, hx(["#5d3bff", "#8fdcff", "#d8f4ff"][k % 3]))
+        line(rows, 12, 25, 20, 25, hx("#3a2a5e"))
+        put(rows, 16, 22, hx("#ffffff"))
+    elif sid == "shadow-cage":
+        for x in (8, 12, 16, 20, 24):
+            line(rows, x, 8, x, 25, hx("#6a4aae"))
+            put(rows, x, 9, hx("#c8a6ff"))
+        for y in (9, 16, 23):
+            line(rows, 7, y, 25, y, hx("#4a2a9e"))
+        circle(rows, 16, 17, 5, hx("#2a1640"))
+        circle(rows, 16, 17, 3, hx("#a06cff"))
+        put(rows, 16, 17, hx("#f0e8ff"))
     else:
         circle(rows, 16, 16, 8, hx("#a06cff"))
     return rows

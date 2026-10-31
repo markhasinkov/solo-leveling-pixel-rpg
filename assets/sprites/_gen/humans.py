@@ -785,6 +785,19 @@ HUMANS = {
         hair='#141018', skin='#e8c4a0', eye='#2a2018', top='#20242c', dark='#0e1014',
         legs='#181c24', boots='#0a0c10', accent='#b83a3a', metal='#a8b0c0',
         weapon='sword', outfit='hunter', hairStyle='slick', aura='#ff7a7a'),
+    'kenzo-tanaka': dict(
+        hair='#1c1412', skin='#d8ac84', eye='#2a1a14', top='#3a2a22', dark='#1a1210',
+        legs='#2a201c', boots='#120d0b', accent='#d06a3a', metal='#b0a090',
+        weapon='sword', outfit='plate', hairStyle='buzz', aura='#ff8a4a'),
+    'kanae-tawata': dict(
+        hair='#3a2448', skin='#f2d4b8', eye='#5a3a68', top='#2a2038', dark='#14101c',
+        legs='#241c30', boots='#100c18', accent='#a06cff', metal='#c8b8e0',
+        weapon='rapier', outfit='hunter', hairStyle='long', aura='#b88cff'),
+    'kei': dict(
+        hair='#1a2230', skin='#e8ccb0', eye='#7ad7ff', top='#203040', dark='#101820',
+        legs='#1a2634', boots='#0a1018', accent='#7ad7ff', metal='#c0e8ff',
+        weapon='staff', staffGem='#bfe6f7', outfit='mage', hairStyle='short',
+        glasses=True, aura='#8fdcff'),
     'park-hee-jin': dict(
         hair='#2a1a2a', skin='#f0c8a8', eye='#3a2a3a', top='#e8ecf8', dark='#3a4a6a',
         legs='#2a3040', boots='#1a2028', accent='#7ad7ff', metal='#c8d8f0',

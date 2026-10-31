@@ -43,6 +43,7 @@ REQUIRED = [
     'Бэк Юн-Хо', 'Чхве Чон-Ин', 'Мин Бён-Гю', 'гильдии «Охотники»',
     'Святой источник жизни', 'Баран', 'Пак Хи-Джин', 'Хан Сон-И', 'Айрон',
     'Касака', 'Каргалган', 'Гигантская многоножка', 'Магический измеритель',
+    'Кэндзо Танака', 'Канаэ Тавата',
 ]
 REQUIRED_FILES = [
     (ROOT / 'src' / 'data' / 'chapters.json', 'Сон Джин-Ву'),
@@ -142,6 +143,11 @@ else:
         failures.append('глава 9: финальный Беру должен давать тень')
 if 'goto-ryuji' not in [c.get('id') for c in characters]:
     failures.append('characters.json: нет Гото Рюдзи')
+if any(x not in (ch9.get('characters') or []) for x in ('goto-ryuji', 'kenzo-tanaka', 'kanae-tawata', 'kei')):
+    failures.append('глава 9: не хватает японской команды Draw Sword')
+if any(x not in json.dumps(ch9.get('storyOutro') or [], ensure_ascii=False)
+       for x in ('Гото Рюдзи', 'Кэндзо Танака', 'Канаэ Тавата', 'Кэй')):
+    failures.append('глава 9: гибель японской команды должна быть в эпилоге')
 if 'Мин Бён-Гю' not in json.dumps(ch9.get('storyOutro') or [], ensure_ascii=False):
     failures.append('глава 9: гибель Мин Бён-Гю должна быть в эпилоге')
 if 'Гото Рюдзи' not in json.dumps(ch9.get('storyOutro') or [], ensure_ascii=False):
