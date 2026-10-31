@@ -1338,6 +1338,27 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.hasShadow('iron') && !!sandbox.ShadowArmy.def('iron'),
     'после Красных врат Ким Чхоль становится тенью Айроном');
 
+  // ---------- FX Lab и мини-стайлгайд ----------
+  const labJs = fs.readFileSync(path.join(ROOT, 'tools', 'fx_lab.js'), 'utf8');
+  const labHtml = fs.readFileSync(path.join(ROOT, 'tools', 'fx_lab.html'), 'utf8');
+  const styleGuide = fs.readFileSync(path.join(ROOT, 'docs', 'vfx-style-guide.md'), 'utf8');
+  const variants = [...labJs.matchAll(/\{ id: '([^']+)', name: '[^']+', play: (play\w+) \}/g)];
+  assert(variants.length === 18, 'FX Lab: 18 вариантов эффектов (6 семейств × 3)');
+  for (const [, id, fn] of variants) {
+    assert(labJs.includes('function ' + fn + '('), 'FX Lab: у варианта ' + id + ' есть реализация ' + fn);
+  }
+  const paletteAnchors = {
+    shadow: '#5d3a9e', blood: '#6a1018', ice: '#3c7188',
+    acid: '#3a6424', gold: '#7a5a1e', fire: '#8a2414'
+  };
+  for (const [family, color] of Object.entries(paletteAnchors)) {
+    assert(labJs.includes(color), 'FX Lab: цвет ' + family + ' ' + color);
+    assert(styleGuide.toLowerCase().includes(color), 'стайлгайд: цвет ' + family + ' ' + color);
+  }
+  assert(labHtml.includes('fx_lab.js') && labHtml.includes('game-canvas'), 'FX Lab: страница подключает полигон');
+  assert(styleGuide.includes('tools/fx_lab.html') && styleGuide.includes('renderUnder'),
+    'стайлгайд: ссылается на FX Lab и слои Effects');
+
   console.log(failures === 0 ? '\nSMOKE TEST: ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ' : '\nSMOKE TEST: ОШИБОК ' + failures);
   process.exit(failures === 0 ? 0 : 1);
 })().catch((e) => {

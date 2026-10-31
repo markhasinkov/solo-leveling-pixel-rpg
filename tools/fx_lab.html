@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FX Lab — Solo Leveling Pixel RPG</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="fx_lab.css">
+</head>
+<body>
+  <header class="lab-head">
+    <div>
+      <div class="lab-kicker">DEV TOOL · НЕ ВХОДИТ В ИГРУ</div>
+      <h1>FX LAB</h1>
+      <p>Изолированный полигон процедурных эффектов: варианты, тайминг, палитра и экономный режим.</p>
+    </div>
+    <a class="lab-link" href="https://github.com/markhasinkov/solo-leveling-pixel-rpg/blob/main/docs/vfx-style-guide.md" target="_blank" rel="noopener">Стайлгайд VFX →</a>
+  </header>
+
+  <main class="lab-main">
+    <section class="toolbar" aria-label="Управление эффектом">
+      <label class="control">
+        <span>Эффект</span>
+        <select id="effect"></select>
+      </label>
+      <div class="variants" id="variants" aria-label="Варианты"></div>
+      <button id="replay" class="btn primary">REPLAY</button>
+      <label class="control check"><input type="checkbox" id="loop" checked> LOOP</label>
+      <label class="control">
+        <span>Скорость</span>
+        <select id="speed">
+          <option value="1">1×</option>
+          <option value="0.5">0.5×</option>
+          <option value="0.25">0.25×</option>
+        </select>
+      </label>
+      <button id="quality" class="btn">ГРАФИКА: ВЫСОКАЯ</button>
+      <label class="control">
+        <span>Фон</span>
+        <select id="bg">
+          <option value="cave">Пещера</option>
+          <option value="ice">Лёд</option>
+          <option value="throne">Трон</option>
+        </select>
+      </label>
+      <button id="grid" class="btn">СЕТКА</button>
+      <button id="record" class="btn">REC 3 С</button>
+      <button id="png" class="btn">PNG</button>
+    </section>
+
+    <div class="stage-wrap" id="stage">
+      <canvas id="game-canvas" width="960" height="540" aria-label="Превью эффекта"></canvas>
+      <div class="lab-stats" id="stats"></div>
+      <div class="lab-status" id="status"></div>
+    </div>
+
+    <section class="palette" id="palette" aria-label="Палитра"></section>
+    <p class="lab-help">Space — replay · 1–9 — вариант · Q — качество · G — сетка · S — PNG · R — запись. Для записи видео сохраняйте файлы в <code>docs/qa/fx/</code>.</p>
+  </main>
+
+  <script src="../src/js/engine.js"></script>
+  <script src="../src/js/effects.js"></script>
+  <script src="fx_lab.js"></script>
+</body>
+</html>
