@@ -675,7 +675,7 @@ http://localhost:8000. Телефоны/Telegram — только по HTTPS.
 - `docs/qa/screens/92-mobile-hub-ahjin.png` — мобильный хаб в landscape.
 - `docs/qa/screens/93-mobile-hub-bottom.png` — прокрутка мобильного хаба до статистики.
 - `docs/qa/screens/94-mobile-side-buttons.png` — шесть боковых кнопок на мобильном.
-- `docs/qa/screens/95-github-pages-live.png` — опубликованная сборка GitHub Pages.
+- `docs/qa/screens/95-github-pages-live.png` — опубликованная сборка GitHub Pages с аркой Чеджу.
 - `docs/qa/screens/96-combo-finisher.png` — финишер комбо и HUD `×3`.
 - `docs/qa/screens/97-dodge-iframes.png` — идеальный рывок с i-frames и +4 MP.
 - `docs/qa/screens/98-mobile-combo.png` — мобильное комбо и кнопка «РЫВОК».
