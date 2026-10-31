@@ -381,7 +381,7 @@
         }
       }
 
-      if (Engine.Input.action('attack') && this.attackTimer <= 0 && this.dashTimer <= 0) {
+      if ((Engine.Input.action('attack') || Engine.Input.actionHit('attack')) && this.attackTimer <= 0 && this.dashTimer <= 0) {
         game.playerAttack(this);
       }
       if (this.attackTimer > 0) this.attackTimer -= dt;

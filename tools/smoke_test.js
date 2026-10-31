@@ -1338,6 +1338,44 @@ function release(key) { sandbox.Engine.Input.keys.delete(key); }
   assert(game.hasShadow('iron') && !!sandbox.ShadowArmy.def('iron'),
     'после Красных врат Ким Чхоль становится тенью Айроном');
 
+  // ---------- Короткий тап атаки и загрузка тайлов ----------
+  if (sandbox.Dialogue.active) sandbox.Dialogue.close();
+  sandbox.UI.closeAllPanels();
+  game.state = 'play';
+  game.player.dead = false;
+  game.player.hp = game.player.maxHp;
+  game.player.attackTimer = 0;
+  game.player.dashTimer = 0;
+  game.player.stunTimer = 0;
+  game.player.comboStep = 0;
+  game.player.comboTimer = 0;
+  sandbox.Engine.Input.pressed.add('j');
+  game.player.update(1 / 60, game.level, game);
+  sandbox.Engine.Input.pressed.clear();
+  assert(game.player.attackTimer > 0 || game.player.comboStep > 0,
+    'короткий тап атаки не теряется между кадрами');
+
+  const tileLevel = game.world.level;
+  const savedPatterns = tileLevel._patterns;
+  const savedTiles = {
+    floor: tileLevel.tileFloor.img,
+    wall: tileLevel.tileWall.img,
+    stairs: tileLevel.tileStairs.img
+  };
+  tileLevel._patterns = null;
+  tileLevel.tileFloor.img = {};
+  tileLevel.tileWall.img = {};
+  tileLevel.tileStairs.img = null;
+  const patternsBeforeStairs = tileLevel.patterns();
+  tileLevel.tileStairs.img = {};
+  const patternsAfterStairs = tileLevel.patterns();
+  tileLevel._patterns = savedPatterns;
+  tileLevel.tileFloor.img = savedTiles.floor;
+  tileLevel.tileWall.img = savedTiles.wall;
+  tileLevel.tileStairs.img = savedTiles.stairs;
+  assert(patternsBeforeStairs === null, 'паттерны пола ждут загрузки всех тайлов, включая ступени');
+  assert(patternsAfterStairs !== null, 'паттерны собираются после загрузки тайлов');
+
   // ---------- FX Lab и мини-стайлгайд ----------
   const labJs = fs.readFileSync(path.join(ROOT, 'tools', 'fx_lab.js'), 'utf8');
   const labHtml = fs.readFileSync(path.join(ROOT, 'tools', 'fx_lab.html'), 'utf8');

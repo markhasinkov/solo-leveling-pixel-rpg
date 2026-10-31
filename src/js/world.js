@@ -73,7 +73,7 @@
 
     patterns() {
       if (this._patterns) return this._patterns;
-      if (!this.tileFloor.img || !this.tileWall.img) return null;
+      if (!this.tileFloor.img || !this.tileWall.img || !this.tileStairs.img) return null;
       this._patterns = {
         floor: Engine.ctx.createPattern(this.tileFloor.img, 'repeat'),
         wall: Engine.ctx.createPattern(this.tileWall.img, 'repeat'),
